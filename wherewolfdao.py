@@ -33,8 +33,8 @@ class WherewolfDao:
 
     def create_player(self, username, password, firstname, lastname):
         """ registers a new player in the system """
-        #conn = self.conn
-        conn = sqlite3.connect(self.dbname)
+        conn = self.conn
+        # conn = sqlite3.connect(self.dbname)
         with conn:
             c = self.conn.cursor()
             c.execute('SELECT COUNT(*) from user WHERE username=?',(username,))
@@ -48,7 +48,8 @@ class WherewolfDao:
         
     def checkpassword(self, username, password):
         """ return true if password checks out """
-        conn = sqlite3.connect(self.dbname)
+        conn = self.conn
+        # conn = sqlite3.connect(self.dbname)
         with conn:
             c = self.conn.cursor()
             results = c.execute('SELECT password FROM user WHERE username=?',(username,))
