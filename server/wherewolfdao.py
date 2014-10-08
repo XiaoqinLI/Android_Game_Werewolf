@@ -114,9 +114,10 @@ class WherewolfDao:
             c.execute(sql, (username, username, game_id))
             for row in c.fetchall():
                 d = {}
-                d["player_id"] = row[0]
-                d["distance"] = row[1]
-                d["is_werewolf"] = row[2]
+                d["username"] = row[0]
+                d["player_id"] = row[1]
+                d["distance"] = row[2]
+                d["is_werewolf"] = row[3]
                 result.append(d)
         return result
 
@@ -383,31 +384,31 @@ if __name__ == "__main__":
     for item in items:
         print item["name"] + "\t" + str(item["quantity"])
     print
-    #
-    # # location stuff
-    # dao.set_location('rfdickerson', 30.25, 97.75)
-    # dao.set_location('oliver', 30.3, 97.76)
-    # dao.set_location('vanhelsing', 30.2, 97.7)
-    # loc = dao.get_location('rfdickerson')
-    # loc2 = dao.get_location('oliver')
-    # print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
-    # print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
-    #
-    # dao.award_achievement('rfdickerson', 'Children of the moon')
-    # dao.award_achievement('rfdickerson', 'A hairy situation')
-    # achievements = dao.get_achievements("rfdickerson")
-    #
-    # print
-    # print 'rfdickerson\'s achievements'
-    # print '--------------------------------'
-    # for a in achievements:
-    #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
-    # print
-    #
-    # nearby = dao.get_alive_nearby('rfdickerson', game_id, 20)
-    # for p in nearby:
-    #     print "{} a {} is {} miles away".format(p["player_id"], p["is_werewolf"], p["distance"])
-    #
+
+    # location stuff
+    dao.set_location('rfdickerson', 30.25, 97.75)
+    dao.set_location('oliver', 30.3, 97.76)
+    dao.set_location('vanhelsing', 30.2, 97.7)
+    loc = dao.get_location('rfdickerson')
+    loc2 = dao.get_location('oliver')
+    print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
+    print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
+
+    dao.award_achievement('rfdickerson', 'Children of the moon')
+    dao.award_achievement('rfdickerson', 'A hairy situation')
+    achievements = dao.get_achievements("rfdickerson")
+
+    print
+    print 'rfdickerson\'s achievements'
+    print '--------------------------------'
+    for a in achievements:
+        print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
+    print
+
+    nearby = dao.get_alive_nearby('rfdickerson', game_id, 20)
+    for p in nearby:
+        print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
+
     # dao.vote(game_id, 'rfdickerson', 'oliver')
     # dao.vote(game_id, 'oliver', 'vanhelsing')
     # dao.vote(game_id, 'vanhelsing', 'oliver')
