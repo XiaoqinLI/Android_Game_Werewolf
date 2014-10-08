@@ -1,150 +1,140 @@
--- turn off the foreign keys so we can drop tables without 
--- it complaining
-.header ON
-.mode column
-PRAGMA foreign_keys = OFF;
+-- schema for the Wherewolf game
 
-DROP TABLE IF EXISTS user;
-CREATE TABLE user (
-	userid 		INTEGER PRIMARY KEY AUTOINCREMENT,
-	firstname	TEXT NOT NULL,
-	lastname	TEXT NOT NULL,
-	created_at	DATE DEFAULT CURRENT_TIMESTAMP,
-	username	TEXT UNIQUE NOT NULL,
-	password	TEXT NOT NULL,
-	current_player	INTEGER DEFAULT 1
+CREATE EXTENSION cube;
+CREATE EXTENSION earthdistance;
+
+DROP TABLE IF EXISTS game cascade;
+CREATE TABLE game (
+	game_id 	serial primary key,
+	admin_id 	int NOT NULL REFERENCES gameuser,
+	status 		int NOT NULL DEFAULT 0,
+	name		varchar(80) NOT NULL,
+	description	text
 );
 
-DROP TABLE IF EXISTS player;
+DROP TABLE IF EXISTS player cascade;
 CREATE TABLE player (
-	playerid	INTEGER PRIMARY KEY AUTOINCREMENT,
-  userid		INTEGER NOT NULL,
-  is_dead		INTEGER NOT NULL,
-  lat			REAL	NOT NULL,
-  lng			REAL	NOT NULL,
+   	player_id	serial primary key,
+   	is_dead		INTEGER NOT NULL,
+  	lat		DECIMAL(11,8)	NOT NULL,
+    	lng		DECIMAL(11,8)	NOT NULL,
 	is_werewolf	INTEGER NOT NULL DEFAULT 0,
 	num_gold	INTEGER NOT NULL DEFAULT 0,
 	game_id		INTEGER REFERENCES game
 );
 
---adding point of interests and related table here
-Drop TABLE IF EXISTS points_of_interest;
-CREATE TABLE points_of_interest(
-	pointid  INTEGER PRIMARY KEY AUTOINCREMENT,
-	pointname  TEXT NOT NULL,
-	lat			REAL	NOT NULL,
-  lng			REAL	NOT NULL,
-  radius   REAL  NOT NULL,
-  pointattribute  INTEGER UNSIGNED NOT NULL DEFAULT 0 REFERENCES treature(treatureid)  -- 0 is saft place, positive int is a treature
-);
-
-Drop TABLE IF EXISTS treature;
-CREATE TABLE treature(
-	treatureid  INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1,
-	treaturename  TEXT NOT NULL
-);
-
-DROP TABLE IF EXISTS treature_inventory;
-CREATE TABLE treature_inventory (
-	treatureid 	INTEGER REFERENCES treature,
-	itemid 		INTEGER REFERENCES item,
-	quantity 	INTEGER UNSIGNED NOT NULL,
-	primary key (treatureid, itemid)
-);
----------------------------------------------------
-
-DROP TABLE IF EXISTS playerlook;
-CREATE TABLE playerlook (
-	playerlookid 	INTEGER PRIMARY KEY AUTOINCREMENT,
-	playerid		INTEGER NOT NULL,
-	picture			TEXT NOT NULL
-);
-
-DROP TABLE IF EXISTS game;
-CREATE TABLE game (
-	gameid 	INTEGER PRIMARY KEY AUTOINCREMENT,
-	adminid INTEGER NOT NULL REFERENCES user,
-	status 	INTEGER NOT NULL DEFAULT 0,
-	name	TEXT NOT NULL
+DROP TABLE IF EXISTS gameuser cascade;
+CREATE TABLE gameuser (
+	user_id 	serial primary key,
+	firstname	varchar(80) NOT NULL,
+	lastname	varchar(80) NOT NULL,
+	created_at	timestamp DEFAULT CURRENT_TIMESTAMP,
+	username	varchar(80) UNIQUE NOT NULL,
+	password	varchar(128) NOT NULL,
+	current_player  integer
 );
 
 
-DROP TABLE IF EXISTS achievement;
+-----------create table for points of interest
+DROP TABLE IF EXISTS landmark cascade;
+CREATE TABLE landmark (
+	landmark_id	serial primary key,
+	lat		float NOT NULL,
+	lng		float NOT NULL,
+	radius		float NOT NULL,
+	type		int NOT NULL,
+	game_id		int NOT NULL REFERENCES game,
+	is_active 	int NOT NULL DEFAULT 0,
+	created_at	date
+);
+
+DROP TABLE IF EXISTS achievement cascade;
 CREATE TABLE achievement (
-	achievementid	INTEGER PRIMARY KEY AUTOINCREMENT,
-	name			TEXT NOT NULL,
-	description		TEXT NOT NULL
+	achievement_id	serial primary key,
+	name		varchar(80) NOT NULL,
+	description	text NOT NULL
 );
 
-DROP TABLE IF EXISTS user_achievement;
+DROP TABLE IF EXISTS user_achievement cascade;
 CREATE TABLE user_achievement (
-	userid			INTEGER NOT NULL REFERENCES user,
-	achievementid	INTEGER NOT NULL REFERENCES achievement,
-	created_at		DATE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	primary key(userid,achievementid)
+	user_id		INTEGER references gameuser,
+	achievement_id	INTEGER references achievement,
+	created_at	timestamp
 );
 
-DROP TABLE IF EXISTS item;
+DROP TABLE IF EXISTS item cascade;
 CREATE TABLE item (
-	itemid 		INTEGER PRIMARY KEY AUTOINCREMENT,
-	name 		TEXT NOT NULL,
-	description TEXT
+	itemid 		serial primary key,
+	name 		varchar(80) NOT NULL,
+	description 	TEXT
 );
 
-DROP TABLE IF EXISTS inventory;
+DROP TABLE IF EXISTS inventory cascade;
 CREATE TABLE inventory (
-	playerid 	INTEGER REFERENCES user,
+	playerid 	INTEGER REFERENCES player,
 	itemid 		INTEGER REFERENCES item,
-	quantity 	INTEGER UNSIGNED,
+	quantity 	INTEGER,
 	primary key (playerid, itemid)
 );
 
+DROP TABLE IF EXISTS treasure cascade;
+CREATE TABLE treasure(
+	landmark_id	INTEGER REFERENCES landmark,
+	item_id	 	INTEGER references item,
+	quantity  	INTEGER NOT NULL,
+	primary key (landmark_id, item_id)
+);
+
 -- used to store number of kills in a game --
-DROP TABLE IF EXISTS player_stat;
+DROP TABLE IF EXISTS player_stat cascade;
 CREATE TABLE player_stat (
-	userid    INTEGER NOT NULL REFERENCES user,
-	playerid 	INTEGER NOT NULL REFERENCES player,
-	numKills	INTEGER
+	player_id 	INTEGER NOT NULL REFERENCES player,
+	stat_name	varchar(80) NOT NULL,
+	stat_value	varchar(80) NOT NULL,
+        primary key (player_id, stat_name)
 );
 
 -- used to store number of kills historically
-DROP TABLE IF EXISTS user_stat;
+DROP TABLE IF EXISTS user_stat cascade;
 CREATE TABLE user_stat (
-	userid 		INTEGER NOT NULL,
-	statName	TEXT NOT NULL
+	user_id 	INTEGER NOT NULL,
+	stat_name	varchar(80) NOT NULL,
+	stat_value	varchar(80) NOT NULL,
+        primary key (user_id, stat_name)
 );
 
--- creates a cascade delete so that all inventory items for the player
--- are automatically deleted
+DROP TABLE IF EXISTS vote cascade;
+CREATE TABLE vote (
+       vote_id		serial primary key,
+       game_id          integer references game,
+       player_id        integer references player,
+       target_id  	integer references player,
+       cast_date	timestamp
+);
 
-CREATE TRIGGER delete_inventory
-BEFORE DELETE ON player
-for each row
-begin
-	delete from inventory where playerid = 	old.playerid;
-END;
+
 
 CREATE INDEX playerindex ON inventory(playerid);
+CREATE INDEX username ON gameuser(username);
+CREATE INDEX indexitemname ON item(name);
+
+CREATE INDEX pos_index ON player USING gist (ll_to_earth(lat, lng));
 -- insert some data
 
-PRAGMA foreign_keys = ON;
+-- functions
 
-INSERT INTO user (userid, firstname, lastname, created_at, username, password) VALUES (1, 'Robert', 'Dickerson', '2014-08-30', 'rfdickerson', 'f96af09d8bd35393a14c456e2ab990b6');
-INSERT INTO user (userid, firstname, lastname, created_at, username, password) VALUES (2, 'Abraham', 'Van Helsing', '2014-08-30', 'vanhelsing', 'be121740bf988b2225a313fa1f107ca1');
 
-INSERT INTO player (playerid, userid, is_dead, lat, lng) VALUES (1, 1, 1, 38, 78);
-INSERT INTO player (playerid, userid, is_dead, lat, lng) VALUES (2, 2, 1, 37, 76);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 38, 79);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 39, 81);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 41, 77);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 41, 79);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 42, 82);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 100, 100);
-INSERT INTO player (userid, is_dead, lat, lng) VALUES (2, 1, 90, 90);
 
-INSERT INTO game (gameid, adminid, status, name) VALUES (1, 1, 1, 'game1');
-UPDATE player set game_id = 1 where userid = 1 and playerid = 1;
-UPDATE player set game_id = 1 where userid = 2 and playerid = 2;
+-- INSERT INTO gameuser (user_id, firstname, lastname, created_at, username, password) VALUES (1, 'Robert', 'Dickerson', timestamp '2004-10-19' , 'rfdickerson', 'be121740bf988b2225a313fa1f107ca1');
+-- INSERT INTO gameuser (user_id, firstname, lastname, created_at, username, password) VALUES (2, 'Abraham', 'Van Helsing', timestamp '2012-8-20 10:23:12', 'vanhelsing', 'be121740bf988b2225a313fa1f107ca1');
+
+-- INSERT INTO game (admin_id, status, name) VALUES (1, 0, 'TheGame');
+
+-- INSERT INTO player (player_id, is_dead, lat, lng, game_id) VALUES (1, 0, 38, 78, 1);
+-- INSERT INTO player (player_id, is_dead, lat, lng, game_id) VALUES (2, 0, 38.01, 77.01, 1);
+
+-- UPDATE gameuser SET current_player=1 WHERE username='rfdickerson'; 
+-- UPDATE gameuser SET current_player=2 WHERE username='vanhelsing'; 
 
 INSERT INTO achievement VALUES (1, 'Hair of the dog', 'Survive an attack by a werewolf');
 INSERT INTO achievement VALUES (2, 'Top of the pack', 'Finish the game as a werewolf and receive the top number of kills');
@@ -152,40 +142,14 @@ INSERT INTO achievement VALUES (3, 'Children of the moon', 'Stay alive and win t
 INSERT INTO achievement VALUES (4, 'It is never Lupus', 'Vote someone to be a werewolf, when they were a townsfolk');
 INSERT INTO achievement VALUES (5, 'A hairy situation', 'Been near 3 werewolves at once.');
 INSERT INTO achievement VALUES (6, 'Call in the Exterminators', 'Kill off all the werewolves in the game');
-INSERT INTO achievement VALUES (7, 'AAA', 'AAA');
-INSERT INTO achievement VALUES (8, 'BBB', 'BBB');
-INSERT INTO achievement VALUES (9, 'CCC', 'CCC');
-INSERT INTO achievement VALUES (10, 'DDD', 'DDD');
-INSERT INTO achievement VALUES (11, 'EEE', 'EEE');
-INSERT INTO achievement VALUES (12, 'FFF', 'FFF');
-INSERT INTO achievement VALUES (13, 'GGG', 'GGG');
-INSERT INTO achievement VALUES (14, 'HHH', 'HHH');
-INSERT INTO achievement VALUES (15, 'III', 'III');
-INSERT INTO achievement VALUES (16, 'JJJ', 'JJJ');
-INSERT INTO achievement VALUES (17, 'KKK', 'KKK');
 
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 1);
+-- INSERT INTO user_achievement (user_id, achievement_id, created_at) VALUES (1, 1, timestamp '2014-06-06 01:01:01');
+-- INSERT INTO user_achievement (user_id, achievement_id, created_at) VALUES (1, 2, timestamp '2014-08-08 03:03:03');
 
 INSERT INTO item VALUES (1, 'Wolfsbane Potion', 'Protects the drinker from werewolf attacks');
 INSERT INTO item VALUES (2, 'Blunderbuss', 'A muzzle-loading firearm with a short, large caliber barrel.');
 INSERT INTO item VALUES (3, 'Invisibility Potion', 'Makes the imbiber invisible for a short period of time.');
 INSERT INTO item VALUES (4, 'Silver Knife', 'A blade made from the purest of silvers');
 
-INSERT INTO inventory VALUES (1, 2, 1);
-INSERT INTO inventory VALUES (2, 1, 1);
-INSERT INTO inventory VALUES (1, 3, 5);
-
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 2);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 4);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 3);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 6);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 7);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 8);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 16);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 14);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 9);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 15);
-INSERT INTO user_achievement (userid, achievementid) VALUES (1, 5);
-
-INSERT INTO player_stat (userid, playerid, numKills) VALUES (1, 1, 20);
-
+-- INSERT INTO inventory VALUES (1, 2, 1);
+-- INSERT INTO inventory VALUES (2, 1, 1);
