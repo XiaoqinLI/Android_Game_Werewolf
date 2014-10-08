@@ -3,6 +3,17 @@
 CREATE EXTENSION cube;
 CREATE EXTENSION earthdistance;
 
+DROP TABLE IF EXISTS gameuser cascade;
+CREATE TABLE gameuser (
+	user_id     serial primary key,
+	firstname	varchar(80) NOT NULL,
+	lastname	varchar(80) NOT NULL,
+	created_at	timestamp DEFAULT CURRENT_TIMESTAMP,
+	username	varchar(80) UNIQUE NOT NULL,
+	password	varchar(128) NOT NULL,
+	current_player  integer
+);
+
 DROP TABLE IF EXISTS game cascade;
 CREATE TABLE game (
 	game_id 	serial primary key,
@@ -22,18 +33,6 @@ CREATE TABLE player (
 	num_gold	INTEGER NOT NULL DEFAULT 0,
 	game_id		INTEGER REFERENCES game
 );
-
-DROP TABLE IF EXISTS gameuser cascade;
-CREATE TABLE gameuser (
-	user_id 	serial primary key,
-	firstname	varchar(80) NOT NULL,
-	lastname	varchar(80) NOT NULL,
-	created_at	timestamp DEFAULT CURRENT_TIMESTAMP,
-	username	varchar(80) UNIQUE NOT NULL,
-	password	varchar(128) NOT NULL,
-	current_player  integer
-);
-
 
 -----------create table for points of interest
 DROP TABLE IF EXISTS landmark cascade;
