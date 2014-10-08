@@ -1,2 +1,9 @@
 server/wherewolf.db
 .DS_Store
+wherewolf.db
+query.sql
+flashisfun/
+server/schema_sqlite3.sql
+server/wherewolfdao_sprint1.py
+tasklist/
+.gitignore
