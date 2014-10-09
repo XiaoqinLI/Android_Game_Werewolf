@@ -242,10 +242,36 @@ class WherewolfDao:
 
     def get_user_stats(self, username):
         pass
-	    
+        # conn = self.get_db()
+        # with conn:
+        #     cur = conn.cursor()
+        #     cmd = ('SELECT user_stat.user_id, user_stat.stat_name, user_stat.stat_value from user_stat, gameuser '
+        #            ' where user_stat.user_id=gameuser.user_id and '
+        #            ' gameuser.username=%s')
+        #     cur.execute(cmd, (username,))
+        #     row = cur.fetchone()
+        #     uStats = {}
+        #     uStats["user_id"] = row[0]
+        #     uStats["stat_name"] = row[1]
+        #     uStats["stat_value"] = row[2]
+        # return uStats
+
         
     def get_player_stats(self, username):
         pass
+        # conn = self.get_db()
+        # with conn:
+        #     cur = conn.cursor()
+        #     cmd = ('SELECT player_stat.player_id, player_stat.stat_name, player_stat.stat_value from player_stat, gameuser '
+        #            ' where player_stat.player_id = gameuser.current_player and '
+        #            ' gameuser.username=%s')
+        #     cur.execute(cmd, (username,))
+        #     row = cur.fetchone()
+        #     pStats = {}
+        #     pStats["user_id"] = row[0]
+        #     pStats["stat_name"] = row[1]
+        #     pStats["stat_value"] = row[2]
+        #     return pStats
 
     # game methods    
     def join_game(self, username, gameid): # tested
@@ -435,3 +461,8 @@ if __name__ == "__main__":
     print 'Game Info'
     pprint(dao.game_info(1))
 
+    print 'User Stats'
+    pprint(dao.get_user_stats('rfdickerson'))
+
+    print 'Player Stats'
+    pprint(dao.get_player_stats('rfdickerson'))
