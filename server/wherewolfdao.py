@@ -3,6 +3,7 @@
 
 import psycopg2
 import md5
+from pprint import pprint
 
 
 class UserAlreadyExistsException(Exception):
@@ -31,10 +32,12 @@ class WherewolfDao:
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
 
+
     def get_db(self):
         return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
 
-    def create_user(self, username, password, firstname, lastname): # create gameuser
+
+    def create_user(self, username, password, firstname, lastname): # create gameuser, tested
         """ registers a new player in the system """
         conn = self.get_db()
         with conn:
@@ -49,8 +52,9 @@ class WherewolfDao:
                 conn.commit()
             else:
                 raise UserAlreadyExistsException('{} user already exists'.format((username)) )
-        
-    def check_password(self, username, password):
+
+
+    def check_password(self, username, password): # tested
         """ return true if password checks out """
         conn = self.get_db()
         with conn:
@@ -63,8 +67,9 @@ class WherewolfDao:
                 raise NoUserExistsException(username)
             # print 'database contains {}, entered password was {}'.format(u[0],hashedpass)
             return u[0] == hashedpass
-        
-    def set_location(self, username, lat, lng):
+
+
+    def set_location(self, username, lat, lng): # tested
         conn = self.get_db()
 	with conn:
 	    cur = conn.cursor()
@@ -75,7 +80,7 @@ class WherewolfDao:
             conn.commit()
 
 
-    def get_location(self, username):
+    def get_location(self, username): # tested
         conn = self.get_db()
 	result = {}
         with conn:
@@ -91,7 +96,7 @@ class WherewolfDao:
         return result
 
         
-    def get_alive_nearby(self, username, game_id, radius): 
+    def get_alive_nearby(self, username, game_id, radius): # modified and tested
         ''' returns all alive players near a player '''
         conn = self.get_db()
         result = []
@@ -122,7 +127,7 @@ class WherewolfDao:
         return result
 
         
-    def add_item(self, username, itemname):
+    def add_item(self, username, itemname): # tested
         conn = self.get_db()
 	with conn:
 	    cur=conn.cursor()
@@ -138,11 +143,10 @@ class WherewolfDao:
                    '(select 1 from inventory where itemid=(select itemid from item where name=%s)' 
                    'and playerid=(select current_player from gameuser where username=%s))')
             cur.execute(cmdupdate + cmd, (itemname, username, username, itemname, itemname, username))
-
 	    conn.commit()
 
  
-    def remove_item(self, username, itemname):
+    def remove_item(self, username, itemname):  # tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -156,7 +160,7 @@ class WherewolfDao:
             conn.commit()
 
 
-    def get_items(self, username):
+    def get_items(self, username):   # tested
         conn = self.get_db()
 	items = []
         with conn:
@@ -176,7 +180,7 @@ class WherewolfDao:
         return items
 
         
-    def award_achievement(self, username, achievementname):
+    def award_achievement(self, username, achievementname):  # tested
         conn = self.get_db()
         with conn:
 	    cur=conn.cursor()
@@ -187,7 +191,7 @@ class WherewolfDao:
             conn.commit()
 
         
-    def get_achievements(self, username):
+    def get_achievements(self, username):   # tested
         conn = self.get_db()
 	with conn:
             cur = conn.cursor()
@@ -205,7 +209,8 @@ class WherewolfDao:
                 achievements.append(d)
 	return achievements
 
-    def set_dead(self, username):
+
+    def set_dead(self, username): # tested
         conn = self.get_db()
 	with conn:
 	    cur = conn.cursor()
@@ -216,7 +221,7 @@ class WherewolfDao:
             conn.commit()
 
 
-    def get_players(self, gameid):
+    def get_players(self, gameid): # tested
         conn = self.get_db()
         players = []
         with conn:
@@ -234,6 +239,7 @@ class WherewolfDao:
                 players.append(p)
         return players
 
+
     def get_user_stats(self, username):
         pass
 	    
@@ -242,7 +248,7 @@ class WherewolfDao:
         pass
 
     # game methods    
-    def join_game(self, username, gameid):
+    def join_game(self, username, gameid): # tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -252,8 +258,9 @@ class WherewolfDao:
             cur.execute(cmd,( 0, 0, 0, gameid))
             cur.execute(cmd2, (cur.fetchone()[0], username));
             conn.commit()
-	
-    def leave_game(self, username):
+
+
+    def leave_game(self, username): # totally leave this game, not just a specific game; tested
         conn = self.get_db()
 	with conn:
             cur = conn.cursor()
@@ -262,7 +269,7 @@ class WherewolfDao:
             conn.commit()
 	    
         
-    def create_game(self, username, gamename):
+    def create_game(self, username, gamename): # tested
         ''' returns the game id for that game '''
         conn = self.get_db()
 	with conn:
@@ -276,7 +283,7 @@ class WherewolfDao:
             return game_id
 
 
-    def game_info(self, game_id):
+    def game_info(self, game_id): # tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -290,7 +297,8 @@ class WherewolfDao:
             d["name"] = row[3]
             return d
 
-    def get_games(self):
+
+    def get_games(self):  #tested
         conn = self.get_db()
         games = []
         with conn:
@@ -306,7 +314,7 @@ class WherewolfDao:
         return games
 
             
-    def set_game_status(self, game_id, status):
+    def set_game_status(self, game_id, status): #tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -315,7 +323,7 @@ class WherewolfDao:
             cur.execute(cmd, (game_id, status))
         
 
-    def vote(self, game_id, player_id, target_id):
+    def vote(self, game_id, player_id, target_id): # tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -329,7 +337,7 @@ class WherewolfDao:
             conn.commit()
             
     
-    def clear_tables(self):
+    def clear_tables(self):  # modified and tested
         conn = self.get_db()
         with conn:
             c = conn.cursor()
@@ -409,11 +417,21 @@ if __name__ == "__main__":
     for p in nearby:
         print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
 
-    # dao.vote(game_id, 'rfdickerson', 'oliver')
-    # dao.vote(game_id, 'oliver', 'vanhelsing')
-    # dao.vote(game_id, 'vanhelsing', 'oliver')
-    # # print 'Players in game 1 are'
-    # # print dao.get_players(1)
-    #
-    # dao.set_dead('rfdickerson')
+    dao.vote(game_id, 'rfdickerson', 'oliver')
+    dao.vote(game_id, 'oliver', 'vanhelsing')
+    dao.vote(game_id, 'vanhelsing', 'oliver')
+
+    print 'Players in game 1 are'
+    pprint(dao.get_players(1))
+
+    dao.set_dead('rfdickerson')
+
+    print 'Games are'
+    pprint(dao.get_games())
+
+    print 'Leaving a game'
+    dao.leave_game("oliver")
+
+    print 'Game Info'
+    pprint(dao.game_info(1))
 
