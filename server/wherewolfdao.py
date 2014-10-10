@@ -50,8 +50,12 @@ class WherewolfDao:
                 c.execute('INSERT INTO gameuser (username, password, firstname, lastname) VALUES (%s,%s,%s,%s)', 
                           (username, hashedpass, firstname, lastname))
                 conn.commit()
+                return True
             else:
-                raise UserAlreadyExistsException('{} user already exists'.format((username)) )
+                return False
+                # raise UserAlreadyExistsException('{} user already exists'.format((username)) )
+
+
 
 
     def check_password(self, username, password): # tested
@@ -295,18 +299,27 @@ class WherewolfDao:
             conn.commit()
 	    
         
-    def create_game(self, username, gamename): # tested
+    def create_game(self, username, gamename, description = ""): # tested
         ''' returns the game id for that game '''
         conn = self.get_db()
 	with conn:
 	    cur = conn.cursor()
-	    cmd = ('INSERT INTO game (admin_id, name) VALUES ( '
-                   '(SELECT user_id FROM gameuser where username=%s), '
-                   '%s) returning game_id')
-            cur.execute(cmd,(username, gamename,))
+# 'where player_id=(select current_player from gameuser '
+#                    'where username=%s)')
+        cur.execute('SELECT COUNT(*) from game WHERE admin_id=(select user_id from gameuser '
+                    'where username=%s)',(username,))
+        n = int(cur.fetchone()[0])
+            # print 'num of rfdickersons is ' + str(n)
+        if n == 0:
+            cmd = ('INSERT INTO game (admin_id, name, description) VALUES ( '
+                       '(SELECT user_id FROM gameuser where username=%s), '
+                       '%s,%s) returning game_id')
+            cur.execute(cmd,(username, gamename, description))
             game_id = cur.fetchone()[0]
             conn.commit()
             return game_id
+        else:
+            return None
 
 
     def game_info(self, game_id): # tested
@@ -397,6 +410,11 @@ if __name__ == "__main__":
     print 'Result: {} '.format( dao.check_password(username, incorrect_pass ))
 
     game_id = dao.create_game('rfdickerson', 'TheGame')
+    print "game_id {}".format(game_id)
+    game_id = dao.create_game('rfdickerson', 'TheGame')
+    print "game_id {}".format(game_id)
+    game_id = dao.create_game('oliver', 'TheGame')
+    print "game_id {}".format(game_id)
     # dao.create_game('oliver', 'AnotherGame')
 
     dao.join_game('oliver', game_id)

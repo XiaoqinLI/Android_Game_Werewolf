@@ -19,21 +19,19 @@ def create_user(username, password, firstname, lastname):
     payload = {'username': username, 'password': password, 'firstname': firstname, 'lastname': lastname}
     url = "{}{}{}".format(hostname, rest_prefix, "/register")
     r = requests.post(url, data=payload)
-
     response = r.json()
-    print response["status"]
+    print response
 
 def create_game(username, password, game_name, description):
-    payload = {'game_name': game_name, 'description': description}
+    payload = {'username': username, 'password':password, 'game_name': game_name, 'description': description}
     url = "{}{}{}".format(hostname, rest_prefix, "/game")
     print 'sending {} to {}'.format(payload, url)
     r = requests.post(url, auth=(username, password), data=payload)
-
     response = r.json()
     #rjson = json.loads(response)
     #print rjson["status"]
     print response["status"]
-    return response["results"]["game_id"]
+    return response["game_id"]
     
 def leave_game(username, password, game_name):
     r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id), 
@@ -111,15 +109,20 @@ def werewolf_winning_game():
     join_game('andy', 'paper', game_id)
     join_game('angela', 'paper', game_id)
     join_game('toby', 'paper', game_id)
-    start_game('michael', 'paper', game_id)
-    
-    leave_game('micheal', 'paper', game_id)
+    # start_game('michael', 'paper', game_id)
+    #
+    # leave_game('micheal', 'paper', game_id)
     
 
 if __name__ == "__main__":
 
     #create_users()
-    werewolf_winning_game()
+    # werewolf_winning_game()
+    # create_user('michael', 'paper', 'Michael', 'Scott')
+    # create_user('dwight', 'paper', 'Dwight', 'Schrute')
+    create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
+    create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
+
 
    # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
    # update_game('rfdickerson', 'awesome', 80, 20)
