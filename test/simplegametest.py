@@ -4,7 +4,7 @@ import json
 hostname = "http://localhost:5000"
 # user = 'rfdickerson'
 # password = 'awesome'
-game_id = 0
+game_id = 1
 
 rest_prefix = "/v1"
 
@@ -22,21 +22,36 @@ def create_user(username, password, firstname, lastname):
     response = r.json()
     print response
 
+def get_game(username, game_name):
+    pass
+
+# def get_tasks(username, password):
+#     url = hostname + "/tasks"
+#     r = requests.get(url, auth=(username, password))
+#     return r.json()
+
 def create_game(username, password, game_name, description):
     payload = {'username': username, 'password':password, 'game_name': game_name, 'description': description}
-    url = "{}{}{}".format(hostname, rest_prefix, "/game")
+    global game_id
+    url = "{}{}/game/{}".format(hostname, rest_prefix, game_id)
     print 'sending {} to {}'.format(payload, url)
     r = requests.post(url, auth=(username, password), data=payload)
     response = r.json()
-    #rjson = json.loads(response)
-    #print rjson["status"]
     print response["status"]
-    return response["game_id"]
+    if response["results"]["game_id"] != 0:
+        game_id+=1
+    return response["results"]["game_id"]
     
-def leave_game(username, password, game_name):
-    r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id), 
-                        auth=(username, password))
-    
+def leave_game(username, password, game_id):
+    '''
+    first of all, set game_id to null in player table if gameid = gameid, otherwise can't delete table since
+    game_id is a foreign key
+    Then, delete the game if exist.
+    '''
+    payload = {'username': username, 'password':password, 'game_id': game_id}
+    r = requests.get(hostname + rest_prefix + "/game/" + str(game_id),
+                        auth=(username, password), data=payload)
+
     response = r.json()
     print response
 
@@ -118,11 +133,11 @@ if __name__ == "__main__":
 
     #create_users()
     # werewolf_winning_game()
-    # create_user('michael', 'paper', 'Michael', 'Scott')
-    # create_user('dwight', 'paper', 'Dwight', 'Schrute')
+    create_user('michael', 'paper', 'Michael', 'Scott')
+    create_user('dwight', 'paper', 'Dwight', 'Schrute')
     create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
-    create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
-
+    create_game('oliver', 'paper', 'NightHunt', 'A game in Austin')
+    leave_game('rfdickerson', 'awesome', 1)
 
    # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
    # update_game('rfdickerson', 'awesome', 80, 20)

@@ -3,6 +3,7 @@
 
 import psycopg2
 import md5
+from sqlalchemy.exc import IntegrityError
 from pprint import pprint
 
 
@@ -25,17 +26,15 @@ class BadArgumentsException(Exception):
     def __str__(self):
         return 'Exception: ' + self.err
 
-class WherewolfDao:
+class WherewolfDao(object):
 
     def __init__(self, dbname='wherewolf', pgusername='postgres', pgpasswd='121314'):
         self.dbname = dbname
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
 
-
     def get_db(self):
         return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
-
 
     def create_user(self, username, password, firstname, lastname): # create gameuser, tested
         """ registers a new player in the system """
@@ -55,9 +54,6 @@ class WherewolfDao:
                 return False
                 # raise UserAlreadyExistsException('{} user already exists'.format((username)) )
 
-
-
-
     def check_password(self, username, password): # tested
         """ return true if password checks out """
         conn = self.get_db()
@@ -72,28 +68,26 @@ class WherewolfDao:
             # print 'database contains {}, entered password was {}'.format(u[0],hashedpass)
             return u[0] == hashedpass
 
-
     def set_location(self, username, lat, lng): # tested
         conn = self.get_db()
-	with conn:
-	    cur = conn.cursor()
+        with conn:
+            cur = conn.cursor()
             sql = ('update player set lat=%s, lng=%s '
                    'where player_id=(select current_player from gameuser '
                    'where username=%s)')
-	    cur.execute(sql, (lat, lng, username))
+            cur.execute(sql, (lat, lng, username))
             conn.commit()
-
 
     def get_location(self, username): # tested
         conn = self.get_db()
-	result = {}
+        result = {}
         with conn:
-	    c = conn.cursor()
+            c = conn.cursor()
             sql = ('select player_id, lat, lng from player, gameuser '
                    'where player.player_id = gameuser.current_player '
                    'and gameuser.username=%s')
-	    c.execute(sql, (username,))
-	    row = c.fetchone()
+            c.execute(sql, (username,))
+            row = c.fetchone()
             result["playerid"] = row[0]
             result["lat"] = row[1]
             result["lng"] = row[2]
@@ -130,12 +124,10 @@ class WherewolfDao:
                 result.append(d)
         return result
 
-        
     def add_item(self, username, itemname): # tested
         conn = self.get_db()
-	with conn:
-	    cur=conn.cursor()
-
+        with conn:
+            cur=conn.cursor()
             cmdupdate = ('update inventory set quantity=quantity+1'
                          'where itemid=(select itemid from item where name=%s)' 
                          'and playerid='
@@ -147,9 +139,8 @@ class WherewolfDao:
                    '(select 1 from inventory where itemid=(select itemid from item where name=%s)' 
                    'and playerid=(select current_player from gameuser where username=%s))')
             cur.execute(cmdupdate + cmd, (itemname, username, username, itemname, itemname, username))
-	    conn.commit()
+            conn.commit()
 
- 
     def remove_item(self, username, itemname):  # tested
         conn = self.get_db()
         with conn:
@@ -163,12 +154,11 @@ class WherewolfDao:
             cur.execute(cmd + cmddelete, (itemname, username, itemname, username))
             conn.commit()
 
-
     def get_items(self, username):   # tested
         conn = self.get_db()
-	items = []
+        items = []
         with conn:
-	    c = conn.cursor()
+            c = conn.cursor()
             sql = ('select item.name, item.description, quantity '
                    'from item, inventory, gameuser where '
                    'inventory.itemid = item.itemid and '
@@ -183,47 +173,43 @@ class WherewolfDao:
                 items.append(d)
         return items
 
-        
     def award_achievement(self, username, achievementname):  # tested
         conn = self.get_db()
         with conn:
-	    cur=conn.cursor()
+            cur=conn.cursor()
             cmd = ('insert into user_achievement (user_id, achievement_id, created_at) '
                    'values ((select user_id from gameuser where username=%s), '
                    '(select achievement_id from achievement where name=%s), now());')
             cur.execute(cmd, (username, achievementname))
             conn.commit()
 
-        
     def get_achievements(self, username):   # tested
         conn = self.get_db()
-	with conn:
+        with conn:
             cur = conn.cursor()
             cmd = ('select name, description, created_at from achievement, user_achievement '
                    'where achievement.achievement_id = user_achievement.achievement_id '
                    'and user_achievement.user_id = '
                    '(select user_id from gameuser where username=%s);')
             cur.execute(cmd, (username,))
-	    achievements = []
-	    for row in cur.fetchall():
+            achievements = []
+            for row in cur.fetchall():
                 d = {}
                 d["name"] = row[0]
                 d["description"] = row[1]
                 d["created_at"] = row[2]
                 achievements.append(d)
-	return achievements
-
+        return achievements
 
     def set_dead(self, username): # tested
         conn = self.get_db()
-	with conn:
-	    cur = conn.cursor()
+        with conn:
+            cur = conn.cursor()
             cmd = ('update player set is_dead=1 '
                    'where player_id='
                    '(select current_player from gameuser where username=%s);')
             cur.execute(cmd, (username,))
             conn.commit()
-
 
     def get_players(self, gameid): # tested
         conn = self.get_db()
@@ -243,7 +229,6 @@ class WherewolfDao:
                 players.append(p)
         return players
 
-
     def get_user_stats(self, username):
         pass
         # conn = self.get_db()
@@ -260,7 +245,6 @@ class WherewolfDao:
         #     uStats["stat_value"] = row[2]
         # return uStats
 
-        
     def get_player_stats(self, username):
         pass
         # conn = self.get_db()
@@ -289,38 +273,63 @@ class WherewolfDao:
             cur.execute(cmd2, (cur.fetchone()[0], username));
             conn.commit()
 
-
-    def leave_game(self, username): # totally leave this game, not just a specific game; tested
+    def quit_game(self, username): # totally quit wherewolf game, not just a specific game; tested
         conn = self.get_db()
-	with conn:
+        with conn:
             cur = conn.cursor()
             cmd1 = '''UPDATE gameuser set current_player = null where username=%s'''
             cur.execute(cmd1, (username,)) 
             conn.commit()
-	    
-        
+
+    def leave_game(self, game_id, player_id = None): # one specific or all players leave this game, #tested
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            if player_id == None:
+                cmd = '''UPDATE player set game_id = null where game_id=%s'''
+                cur.execute(cmd, (game_id,))
+                conn.commit()
+            else:
+                cmd = '''UPDATE player set game_id = null where game_id=%s and player_id=%s'''
+                cur.execute(cmd, (game_id, player_id))
+                conn.commit()
+
     def create_game(self, username, gamename, description = ""): # tested
         ''' returns the game id for that game '''
         conn = self.get_db()
-	with conn:
-	    cur = conn.cursor()
-# 'where player_id=(select current_player from gameuser '
-#                    'where username=%s)')
-        cur.execute('SELECT COUNT(*) from game WHERE admin_id=(select user_id from gameuser '
+        with conn:
+            cur = conn.cursor()
+            cur.execute('SELECT COUNT(*) from game WHERE admin_id=(select user_id from gameuser '
                     'where username=%s)',(username,))
-        n = int(cur.fetchone()[0])
+            n = int(cur.fetchone()[0])
             # print 'num of rfdickersons is ' + str(n)
-        if n == 0:
-            cmd = ('INSERT INTO game (admin_id, name, description) VALUES ( '
-                       '(SELECT user_id FROM gameuser where username=%s), '
-                       '%s,%s) returning game_id')
-            cur.execute(cmd,(username, gamename, description))
-            game_id = cur.fetchone()[0]
-            conn.commit()
-            return game_id
-        else:
-            return None
+            if n == 0:
+                cmd = ('INSERT INTO game (admin_id, name, description) VALUES ( '
+                    '(SELECT user_id FROM gameuser where username=%s), '
+                    '%s,%s) returning game_id')
+                cur.execute(cmd,(username, gamename, description))
+                game_id = cur.fetchone()[0]
+                conn.commit()
+                return game_id
+            else:
+                return None
 
+    def delete_game(self, username, game_id):  # tested
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+
+            cmd = ('select count(*) from game where game_id=%s and admin_id=(select user_id from gameuser where username=%s)' )
+            cur.execute(cmd, (game_id, username))
+            result = cur.fetchone()[0]
+            if result == 0:
+                return False
+            else:
+                cmddelete = ('delete from game where admin_id=(select user_id from gameuser where username=%s) '
+                             ' and game_id=%s ')
+                cur.execute(cmddelete, (username, game_id))
+                conn.commit()
+                return True
 
     def game_info(self, game_id): # tested
         conn = self.get_db()
@@ -336,6 +345,20 @@ class WherewolfDao:
             d["name"] = row[3]
             return d
 
+    # def get_game(self, username, game_name):  #tested
+    #     conn = self.get_db()
+    #
+    #     with conn:
+    #         cur = conn.cursor()
+    #         cmd = ('SELECT game_id from game where game_id=%s and admin_id=(select user_id from gameuser where username=%s)'')
+    #         cur.execute(cmd)
+    #         for row in cur.fetchall():
+    #             d = {}
+    #             d["game_id"] = row[0]
+    #             d["name"] = row[1]
+    #             d["status"] = row[2]
+    #             games.append(d)
+    #     return games
 
     def get_games(self):  #tested
         conn = self.get_db()
@@ -352,7 +375,6 @@ class WherewolfDao:
                 games.append(d)
         return games
 
-            
     def set_game_status(self, game_id, status): #tested
         conn = self.get_db()
         with conn:
@@ -360,7 +382,6 @@ class WherewolfDao:
             cmd = ('UPDATE game set status=%s '
                    'where game_id=%s')
             cur.execute(cmd, (game_id, status))
-        
 
     def vote(self, game_id, player_id, target_id): # tested
         conn = self.get_db()
@@ -374,8 +395,7 @@ class WherewolfDao:
                    'now())')
             cur.execute(sql, (game_id, player_id, target_id))
             conn.commit()
-            
-    
+
     def clear_tables(self):  # modified and tested
         conn = self.get_db()
         with conn:
@@ -417,70 +437,76 @@ if __name__ == "__main__":
     print "game_id {}".format(game_id)
     # dao.create_game('oliver', 'AnotherGame')
 
-    dao.join_game('oliver', game_id)
-    dao.join_game('rfdickerson', game_id)
-    dao.join_game('vanhelsing', game_id)
+    dao.join_game('oliver', 1)
+    dao.join_game('rfdickerson', 1)
+    dao.join_game('vanhelsing', 1)
 
-    print "Adding some items..."
-    dao.add_item('rfdickerson', 'Silver Knife')
-    dao.add_item('rfdickerson', 'Blunderbuss')
-    dao.add_item('rfdickerson', 'Blunderbuss')
-    dao.add_item('rfdickerson', 'Blunderbuss')
-    dao.add_item('oliver', 'Blunderbuss')
-    dao.remove_item('rfdickerson', 'Blunderbuss')
+    print(dao.delete_game('oliver',2))
+    print(dao.delete_game('oliver',2))
+    dao.create_game('vanhelsing', 'TheGame')
+    # dao.leave_game(1,1)
+    # dao.leave_game(1)
 
-    print
-    print 'rfdickerson items'
-    print '--------------------------------'
-    items = dao.get_items("rfdickerson")
-    for item in items:
-        print item["name"] + "\t" + str(item["quantity"])
-    print
-
-    # location stuff
-    dao.set_location('rfdickerson', 30.25, 97.75)
-    dao.set_location('oliver', 30.3, 97.76)
-    dao.set_location('vanhelsing', 30.2, 97.7)
-    loc = dao.get_location('rfdickerson')
-    loc2 = dao.get_location('oliver')
-    print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
-    print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
-
-    dao.award_achievement('rfdickerson', 'Children of the moon')
-    dao.award_achievement('rfdickerson', 'A hairy situation')
-    achievements = dao.get_achievements("rfdickerson")
-
-    print
-    print 'rfdickerson\'s achievements'
-    print '--------------------------------'
-    for a in achievements:
-        print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
-    print
-
-    nearby = dao.get_alive_nearby('rfdickerson', game_id, 20)
-    for p in nearby:
-        print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
-
-    dao.vote(game_id, 'rfdickerson', 'oliver')
-    dao.vote(game_id, 'oliver', 'vanhelsing')
-    dao.vote(game_id, 'vanhelsing', 'oliver')
-
-    print 'Players in game 1 are'
-    pprint(dao.get_players(1))
-
-    dao.set_dead('rfdickerson')
-
-    print 'Games are'
-    pprint(dao.get_games())
-
-    print 'Leaving a game'
-    dao.leave_game("oliver")
-
-    print 'Game Info'
-    pprint(dao.game_info(1))
-
-    print 'User Stats'
-    pprint(dao.get_user_stats('rfdickerson'))
-
-    print 'Player Stats'
-    pprint(dao.get_player_stats('rfdickerson'))
+    # print "Adding some items..."
+    # dao.add_item('rfdickerson', 'Silver Knife')
+    # dao.add_item('rfdickerson', 'Blunderbuss')
+    # dao.add_item('rfdickerson', 'Blunderbuss')
+    # dao.add_item('rfdickerson', 'Blunderbuss')
+    # dao.add_item('oliver', 'Blunderbuss')
+    # dao.remove_item('rfdickerson', 'Blunderbuss')
+    #
+    # print
+    # print 'rfdickerson items'
+    # print '--------------------------------'
+    # items = dao.get_items("rfdickerson")
+    # for item in items:
+    #     print item["name"] + "\t" + str(item["quantity"])
+    # print
+    #
+    # # location stuff
+    # dao.set_location('rfdickerson', 30.25, 97.75)
+    # dao.set_location('oliver', 30.3, 97.76)
+    # dao.set_location('vanhelsing', 30.2, 97.7)
+    # loc = dao.get_location('rfdickerson')
+    # loc2 = dao.get_location('oliver')
+    # print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
+    # print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
+    #
+    # dao.award_achievement('rfdickerson', 'Children of the moon')
+    # dao.award_achievement('rfdickerson', 'A hairy situation')
+    # achievements = dao.get_achievements("rfdickerson")
+    #
+    # print
+    # print 'rfdickerson\'s achievements'
+    # print '--------------------------------'
+    # for a in achievements:
+    #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
+    # print
+    #
+    # nearby = dao.get_alive_nearby('rfdickerson', game_id, 20)
+    # for p in nearby:
+    #     print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
+    #
+    # dao.vote(game_id, 'rfdickerson', 'oliver')
+    # dao.vote(game_id, 'oliver', 'vanhelsing')
+    # dao.vote(game_id, 'vanhelsing', 'oliver')
+    #
+    # print 'Players in game 1 are'
+    # pprint(dao.get_players(1))
+    #
+    # dao.set_dead('rfdickerson')
+    #
+    # print 'Games are'
+    # pprint(dao.get_games())
+    #
+    # print 'Leaving a game'
+    # dao.quit_game("oliver")
+    #
+    # print 'Game Info'
+    # pprint(dao.game_info(1))
+    #
+    # print 'User Stats'
+    # pprint(dao.get_user_stats('rfdickerson'))
+    #
+    # print 'Player Stats'
+    # pprint(dao.get_player_stats('rfdickerson'))
