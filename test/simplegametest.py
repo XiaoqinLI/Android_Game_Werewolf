@@ -49,11 +49,12 @@ def leave_game(username, password, game_id):
     Then, delete the game if exist.
     '''
     payload = {'username': username, 'password':password, 'game_id': game_id}
-    r = requests.get(hostname + rest_prefix + "/game/" + str(game_id),
+    r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id),
                         auth=(username, password), data=payload)
 
     response = r.json()
-    print response
+    return response
+    # print response
 
 def update_game(username, password, game_id, lat, lng):
     """ reports to the game your current location, and the game 
@@ -89,9 +90,9 @@ def set_game_state(game_state):
 
 def join_game(username, password, game_id):
     print 'Joining game id {}'.format(game_id)
-    payload = {'game_id': game_id}
+    payload = {'username': username, 'game_id': game_id}
     url = "{}{}/game/{}/lobby".format(hostname, rest_prefix, game_id)
-    r = requests.post(url, auth=(username, password))
+    r = requests.post(url, auth=(username, password), data=payload)
     r = r.json()
     print r
 

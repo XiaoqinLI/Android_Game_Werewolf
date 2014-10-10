@@ -42,8 +42,9 @@ def create_game(game_ID):
     response = {"status": "failure", "results": {"game_id": 0}} if result is None else {"status": "success", "results": {"game_id": result}}
     return jsonify(response)
 
-@app.route(rest_prefix+'/game/'+'<game_ID>')
+@app.route(rest_prefix+'/game/'+'<game_ID>', methods=["DELETE"])
 def leave_game(game_ID):
+    # return 'AAAA\n'
     username = request.form['username']
     game_id = request.form['game_id']
     dao.leave_game(game_id)
