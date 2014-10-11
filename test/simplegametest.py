@@ -53,8 +53,8 @@ def leave_game(username, password, game_id):
                         auth=(username, password), data=payload)
 
     response = r.json()
-    return response
-    # print response
+    print response
+    # return response
 
 def update_game(username, password, game_id, lat, lng):
     """ reports to the game your current location, and the game 
@@ -134,11 +134,15 @@ if __name__ == "__main__":
 
     #create_users()
     # werewolf_winning_game()
-    create_user('michael', 'paper', 'Michael', 'Scott')
-    create_user('dwight', 'paper', 'Dwight', 'Schrute')
-    create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
-    create_game('oliver', 'paper', 'NightHunt', 'A game in Austin')
-    leave_game('rfdickerson', 'awesome', 1)
+    # create_user('michael', 'paper', 'Michael', 'Scott')
+    # create_user('dwight', 'paper', 'Dwight', 'Schrute')
+    # create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
+    # create_game('oliver', 'paper', 'NightHunt', 'A game in Austin')
+    # leave_game('rfdickerson', 'awesome', 1)
+    # join_game('dwight', 'paper', 3)
+    # join_game('dwight', 'paper', 2)
+    # join_game('rfdickerson', 'awesome', 3)
+    join_game('rfdickerson', 'awesome', 2)
 
    # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
    # update_game('rfdickerson', 'awesome', 80, 20)

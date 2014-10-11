@@ -266,12 +266,22 @@ class WherewolfDao(object):
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
-            cmd = ('INSERT INTO player ( is_dead, lat, lng, game_id) '
-                   'VALUES ( %s, %s, %s, %s) returning player_id')
-            cmd2 = ('update gameuser set current_player=%s where username=%s')
-            cur.execute(cmd,( 0, 0, 0, gameid))
-            cur.execute(cmd2, (cur.fetchone()[0], username));
-            conn.commit()
+            cmd0 = ('Select game_id from player where player_id=(Select current_player from gameuser where username=%s)')
+            cur.execute(cmd0,(username,))
+            typechecker = cur.fetchone()
+            if type(typechecker).__name__ != 'NoneType':
+                typechecker = typechecker[0]
+
+            if typechecker != None:
+                return False
+            else:
+                cmd1 = ('INSERT INTO player ( is_dead, lat, lng, game_id) '
+                        'VALUES ( %s, %s, %s, %s) returning player_id')
+                cmd2 = ('update gameuser set current_player=%s where username=%s')
+                cur.execute(cmd1,( 0, 0, 0, gameid))
+                cur.execute(cmd2, (cur.fetchone()[0], username));
+                conn.commit()
+                return True
 
     def quit_game(self, username): # totally quit wherewolf game, not just a specific game; tested
         conn = self.get_db()
@@ -338,12 +348,15 @@ class WherewolfDao(object):
             cmd = '''SELECT game_id, admin_id, status, name from game where game_id=%s'''
             cur.execute(cmd, (game_id,))
             row = cur.fetchone()
-            d = {}
-            d["game_id"] = row[0]
-            d["admin_id"] = row[1]
-            d["status"] = row[2]
-            d["name"] = row[3]
-            return d
+            if row != None:
+                d = {}
+                d["game_id"] = row[0]
+                d["admin_id"] = row[1]
+                d["status"] = row[2]
+                d["name"] = row[3]
+                return d
+            else:
+                return None
 
     # def get_game(self, username, game_name):  #tested
     #     conn = self.get_db()
@@ -440,10 +453,11 @@ if __name__ == "__main__":
     dao.join_game('oliver', 1)
     dao.join_game('rfdickerson', 1)
     dao.join_game('vanhelsing', 1)
+    # print(dao.join_game('rfdickerson', 3))
 
-    print(dao.delete_game('oliver',2))
-    print(dao.delete_game('oliver',2))
-    dao.create_game('vanhelsing', 'TheGame')
+    # print(dao.delete_game('oliver',2))
+    # print(dao.delete_game('oliver',2))
+    # dao.create_game('vanhelsing', 'TheGame')
     # dao.leave_game(1,1)
     # dao.leave_game(1)
 
