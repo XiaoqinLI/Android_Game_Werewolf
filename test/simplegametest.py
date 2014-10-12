@@ -58,13 +58,14 @@ def leave_game(username, password, game_id):
 
 def update_game(username, password, game_id, lat, lng):
     """ reports to the game your current location, and the game 
-    returns to you a list of players nearby """
+    returns to you a list of players nearby
+    current radius is 5 (miles)
+    """
 
-    payload = {'lat': lat, 'lng': lng}
-    url = "{}{}/game/{}".format(hostname, rest_prefix, game_id)
+    payload = {'username': username, 'game_id': game_id, 'lat': lat, 'lng': lng, 'radius': 5}
+    url = "{}{}/game1/{}".format(hostname, rest_prefix, game_id)
     r = requests.put(url, auth=(username, password), data=payload)
     response = r.json()
-
     print response
 
 
@@ -101,7 +102,6 @@ def get_games(username, password):
     r = r.json()
     return r["results"]
 
-
 def create_users():
     create_user('michael', 'paper', 'Michael', 'Scott')
     create_user('dwight', 'paper', 'Dwight', 'Schrute')
@@ -128,22 +128,24 @@ def werewolf_winning_game():
     # start_game('michael', 'paper', game_id)
     #
     # leave_game('micheal', 'paper', game_id)
-    
+
 
 if __name__ == "__main__":
 
-    #create_users()
-    # werewolf_winning_game()
+    pass
     # create_user('michael', 'paper', 'Michael', 'Scott')
     # create_user('dwight', 'paper', 'Dwight', 'Schrute')
     # create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
     # create_game('oliver', 'paper', 'NightHunt', 'A game in Austin')
+    # update_game('rfdickerson','awesome', 1, 30, 97)
     # leave_game('rfdickerson', 'awesome', 1)
     # join_game('dwight', 'paper', 3)
     # join_game('dwight', 'paper', 2)
     # join_game('rfdickerson', 'awesome', 3)
-    join_game('rfdickerson', 'awesome', 2)
+    # join_game('rfdickerson', 'awesome', 2)
 
+   #create_users()
+   # werewolf_winning_game()
    # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
    # update_game('rfdickerson', 'awesome', 80, 20)
    # game_info('rfdickerson', 'awesome', 22)

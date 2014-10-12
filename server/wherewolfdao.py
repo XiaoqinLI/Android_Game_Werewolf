@@ -453,54 +453,52 @@ if __name__ == "__main__":
     dao.join_game('oliver', 1)
     dao.join_game('rfdickerson', 1)
     dao.join_game('vanhelsing', 1)
-    # print(dao.join_game('rfdickerson', 3))
+    print(dao.join_game('rfdickerson', 3))
 
-    # print(dao.delete_game('oliver',2))
-    # print(dao.delete_game('oliver',2))
-    # dao.create_game('vanhelsing', 'TheGame')
-    # dao.leave_game(1,1)
-    # dao.leave_game(1)
+    print(dao.delete_game('oliver',2))
+    print(dao.delete_game('oliver',2))
+    dao.create_game('vanhelsing', 'TheGame')
 
-    # print "Adding some items..."
-    # dao.add_item('rfdickerson', 'Silver Knife')
-    # dao.add_item('rfdickerson', 'Blunderbuss')
-    # dao.add_item('rfdickerson', 'Blunderbuss')
-    # dao.add_item('rfdickerson', 'Blunderbuss')
-    # dao.add_item('oliver', 'Blunderbuss')
-    # dao.remove_item('rfdickerson', 'Blunderbuss')
-    #
-    # print
-    # print 'rfdickerson items'
-    # print '--------------------------------'
-    # items = dao.get_items("rfdickerson")
-    # for item in items:
-    #     print item["name"] + "\t" + str(item["quantity"])
-    # print
-    #
-    # # location stuff
-    # dao.set_location('rfdickerson', 30.25, 97.75)
-    # dao.set_location('oliver', 30.3, 97.76)
-    # dao.set_location('vanhelsing', 30.2, 97.7)
-    # loc = dao.get_location('rfdickerson')
-    # loc2 = dao.get_location('oliver')
-    # print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
-    # print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
-    #
-    # dao.award_achievement('rfdickerson', 'Children of the moon')
-    # dao.award_achievement('rfdickerson', 'A hairy situation')
-    # achievements = dao.get_achievements("rfdickerson")
-    #
-    # print
-    # print 'rfdickerson\'s achievements'
-    # print '--------------------------------'
-    # for a in achievements:
-    #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
-    # print
-    #
-    # nearby = dao.get_alive_nearby('rfdickerson', game_id, 20)
-    # for p in nearby:
-    #     print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
-    #
+    print "Adding some items..."
+    dao.add_item('rfdickerson', 'Silver Knife')
+    dao.add_item('rfdickerson', 'Blunderbuss')
+    dao.add_item('rfdickerson', 'Blunderbuss')
+    dao.add_item('rfdickerson', 'Blunderbuss')
+    dao.add_item('oliver', 'Blunderbuss')
+    dao.remove_item('rfdickerson', 'Blunderbuss')
+
+    print
+    print 'rfdickerson items'
+    print '--------------------------------'
+    items = dao.get_items("rfdickerson")
+    for item in items:
+        print item["name"] + "\t" + str(item["quantity"])
+    print
+
+    # location stuff
+    dao.set_location('rfdickerson', 30.25, 97.75)
+    dao.set_location('oliver', 30.3, 97.76)
+    dao.set_location('vanhelsing', 30.2, 97.7)
+    loc = dao.get_location('rfdickerson')
+    loc2 = dao.get_location('oliver')
+    print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
+    print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
+
+    dao.award_achievement('rfdickerson', 'Children of the moon')
+    dao.award_achievement('rfdickerson', 'A hairy situation')
+    achievements = dao.get_achievements("rfdickerson")
+
+    print
+    print 'rfdickerson\'s achievements'
+    print '--------------------------------'
+    for a in achievements:
+        print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
+    print
+
+    nearby = dao.get_alive_nearby('rfdickerson', 1, 20)
+    for p in nearby:
+        print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
+
     # dao.vote(game_id, 'rfdickerson', 'oliver')
     # dao.vote(game_id, 'oliver', 'vanhelsing')
     # dao.vote(game_id, 'vanhelsing', 'oliver')
@@ -519,8 +517,12 @@ if __name__ == "__main__":
     # print 'Game Info'
     # pprint(dao.game_info(1))
     #
+    # print 'Leave a game'
+    # dao.leave_game(1,1)
+    # dao.leave_game(1)
     # print 'User Stats'
     # pprint(dao.get_user_stats('rfdickerson'))
     #
     # print 'Player Stats'
     # pprint(dao.get_player_stats('rfdickerson'))
+
