@@ -20,6 +20,9 @@ CREATE TABLE game (
 	admin_id 	int NOT NULL REFERENCES gameuser,
 	status 		int NOT NULL DEFAULT 0,
 	name		varchar(80) NOT NULL,
+	-- add game current time
+	-- checking current time, current time can be reset
+
 	description	text
 );
 
@@ -117,6 +120,7 @@ CREATE INDEX playerindex ON inventory(playerid);
 CREATE INDEX username ON gameuser(username);
 CREATE INDEX indexitemname ON item(name);
 
++-- adds an index so our lookups based on position will be exponentially faster
 CREATE INDEX pos_index ON player USING gist (ll_to_earth(lat, lng));
 -- insert some data
 

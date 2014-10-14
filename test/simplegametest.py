@@ -1,6 +1,10 @@
 import requests
 import json
 
+
+# def daybreak()
+
+
 hostname = "http://localhost:5000"
 # user = 'rfdickerson'
 # password = 'awesome'
@@ -15,31 +19,23 @@ update game state with location
 cast a vote
 '''
 
-def create_user(username, password, firstname, lastname):
+def create_user(username, password, firstname, lastname):  # Done
     payload = {'username': username, 'password': password, 'firstname': firstname, 'lastname': lastname}
     url = "{}{}{}".format(hostname, rest_prefix, "/register")
     r = requests.post(url, data=payload)
     response = r.json()
     print response
 
-def get_game(username, game_name):
-    pass
-
-# def get_tasks(username, password):
-#     url = hostname + "/tasks"
-#     r = requests.get(url, auth=(username, password))
-#     return r.json()
+# def get_game(username, game_name):
+#     pass
 
 def create_game(username, password, game_name, description):
     payload = {'username': username, 'password':password, 'game_name': game_name, 'description': description}
-    global game_id
-    url = "{}{}/game/{}".format(hostname, rest_prefix, game_id)
+    url = "{}{}/game".format(hostname, rest_prefix)
     print 'sending {} to {}'.format(payload, url)
     r = requests.post(url, auth=(username, password), data=payload)
     response = r.json()
     print response["status"]
-    if response["results"]["game_id"] != 0:
-        game_id+=1
     return response["results"]["game_id"]
     
 def leave_game(username, password, game_id):
@@ -83,8 +79,9 @@ def cast_vote(username, password, game_id, player_id):
 
     print response
 
-def set_game_state(game_state):
-    payload = {'game_id': game_id, 'game_state': 'night'}
+def set_game_time(game_time):
+    '''allows you to override the current time to a user specified one'''
+    payload = {'game_id': game_id, 'current_time': game_time}
     r = requests.post(hostname + rest_prefix + "/game/admin")
     response = r.json()
     print response
@@ -132,11 +129,10 @@ def werewolf_winning_game():
 
 if __name__ == "__main__":
 
-    pass
-    # create_user('michael', 'paper', 'Michael', 'Scott')
-    # create_user('dwight', 'paper', 'Dwight', 'Schrute')
-    # create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
-    # create_game('oliver', 'paper', 'NightHunt', 'A game in Austin')
+    # create_user('michael', 'paperpaper', 'Michael', 'Scott')
+    # create_user('dwight', 'paperpaper', 'Dwight', 'Schrute')
+    create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
+    create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
     # update_game('rfdickerson','awesome', 1, 30, 97)
     # leave_game('rfdickerson', 'awesome', 1)
     # join_game('dwight', 'paper', 3)

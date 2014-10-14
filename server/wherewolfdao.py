@@ -32,6 +32,7 @@ class WherewolfDao(object):
         self.dbname = dbname
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
+        print ('connection to database {}, user: {}, password: {}'.format(dbname, pgusername, pgpasswd))
 
     def get_db(self):
         return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
@@ -49,10 +50,10 @@ class WherewolfDao(object):
                 c.execute('INSERT INTO gameuser (username, password, firstname, lastname) VALUES (%s,%s,%s,%s)', 
                           (username, hashedpass, firstname, lastname))
                 conn.commit()
-                return True
+                # return True
             else:
-                return False
-                # raise UserAlreadyExistsException('{} user already exists'.format((username)) )
+                # return False
+                raise UserAlreadyExistsException('{} user already exists'.format((username)) )
 
     def check_password(self, username, password): # tested
         """ return true if password checks out """
@@ -100,27 +101,41 @@ class WherewolfDao(object):
         result = []
         with conn:
             c = conn.cursor()
-            sql = ('select username, player_id, point( '
-                   '(select lng from player, gameuser '
-                   'where player.player_id=gameuser.current_player '
-                   'and gameuser.username=%s), '
-                   '(select lat from player, gameuser '
-                   'where player.player_id=gameuser.current_player '
-                   'and gameuser.username=%s)) '
-                   '<@> point(lng, lat)::point as distance, '
-                   'is_werewolf '
-                   'from player, gameuser where game_id=%s '
-                   'and is_dead=0 '
-                   'and gameuser.current_player=player.player_id '
-                   'order by distance')
+            # sql = ('select username, player_id, point( '
+            #        '(select lng from player, gameuser '
+            #        'where player.player_id=gameuser.current_player '
+            #        'and gameuser.username=%s), '
+            #        '(select lat from player, gameuser '
+            #        'where player.player_id=gameuser.current_player '
+            #        'and gameuser.username=%s)) '
+            #        '<@> point(lng, lat)::point as distance, '
+            #        'is_werewolf '
+            #        'from player, gameuser where game_id=%s '
+            #        'and is_dead=0 '
+            #        'and gameuser.current_player=player.player_id '
+            #        'order by distance')
+
+            # using the radius for lookups now
+            sql = ( 'select player_id from player where '
+                    'earth_box(ll_to_earth( '
+                    '(select lat from player, gameuser '
+                    'where player.player_id = gameuser.current_player '
+                    'and gameuser.username=%s), '
+                    '(select lng from player, gameuser '
+                    'where player.player_id = gameuser.current_player '
+                    'and gameuser.username=%s)), %s) '
+                    '@> ll_to_earth(lat, lng) '
+                    'and is_dead = 0 '
+                    'and game_id = %s'
+                    )
             # print sql
-            c.execute(sql, (username, username, game_id))
+            c.execute(sql, (username, username, radius, game_id))
             for row in c.fetchall():
                 d = {}
-                d["username"] = row[0]
-                d["player_id"] = row[1]
-                d["distance"] = row[2]
-                d["is_werewolf"] = row[3]
+                d["player_id"] = row[0]
+                # d["player_id"] = row[1]
+                # d["distance"] = row[2]
+                # d["is_werewolf"] = row[3]
                 result.append(d)
         return result
 
@@ -420,7 +435,7 @@ class WherewolfDao(object):
 
             
 if __name__ == "__main__":
-    dao = WherewolfDao('wherewolf')
+    dao = WherewolfDao('wherewolf', 'postgres')
 
     dao.clear_tables()#clear gameuser, player and user_achievement table
     try:
@@ -495,9 +510,9 @@ if __name__ == "__main__":
         print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
     print
 
-    nearby = dao.get_alive_nearby('rfdickerson', 1, 20)
+    nearby = dao.get_alive_nearby('rfdickerson', 1, 0.00000000001)
     for p in nearby:
-        print "{} , player_id: {} is {} miles away, is she/he a wherewolf? {}".format(p["username"], p["player_id"], p["distance"], True if p["is_werewolf"] else False)
+        print "{}".format(p["player_id"])
 
     # dao.vote(game_id, 'rfdickerson', 'oliver')
     # dao.vote(game_id, 'oliver', 'vanhelsing')
