@@ -5,6 +5,8 @@ import psycopg2
 import md5
 from sqlalchemy.exc import IntegrityError
 from pprint import pprint
+# from datetime import time
+# from datetime import datetime
 
 
 class UserAlreadyExistsException(Exception):
@@ -238,8 +240,8 @@ class WherewolfDao(object):
                 p = {}
                 p["playerid"] = row[0]
                 p["is_dead"] = row[1]
-                p["lat"] = row[2]
-                p["lng"] = row[3]
+                p["lat"] = float(row[2])
+                p["lng"] = float(row[3])
                 p["is_werewolf"] = row[4]
                 players.append(p)
         return players
@@ -376,7 +378,7 @@ class WherewolfDao(object):
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
-            cmd = '''SELECT game_id, admin_id, status, name from game where game_id=%s'''
+            cmd = '''SELECT game_id, admin_id, status, name, daybreak, nightfall, currenttime from game where game_id=%s'''
             cur.execute(cmd, (game_id,))
             row = cur.fetchone()
             if row != None:
@@ -385,6 +387,9 @@ class WherewolfDao(object):
                 d["admin_id"] = row[1]
                 d["status"] = row[2]
                 d["name"] = row[3]
+                d["daybreak"] = row[4]
+                d["nightfall"] = row[5]
+                d["currenttime"] = row[6]
                 return d
             else:
                 return None
@@ -452,7 +457,7 @@ class WherewolfDao(object):
             
 if __name__ == "__main__":
     dao = WherewolfDao()
-    #
+
     # dao.clear_tables()#clear gameuser, player and user_achievement table
     # try:
     #     dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
@@ -479,7 +484,7 @@ if __name__ == "__main__":
     # print "game_id {}".format(game_id)
     # game_id = dao.create_game('oliver', 'TheGame')
     # print "game_id {}".format(game_id)
-    # # dao.create_game('oliver', 'AnotherGame')
+    # dao.create_game('oliver', 'AnotherGame')
     #
     # dao.join_game('oliver', 1)
     # dao.join_game('rfdickerson', 1)
@@ -558,5 +563,8 @@ if __name__ == "__main__":
     # pprint(dao.get_player_stats('rfdickerson'))
 
     # print 'get current player of a user'
-    print(dao.get_current_player('rfdickerson'))
-
+    # print(dao.get_current_player('rfdickerson'))
+    print(dao.game_info(1))
+    a = dao.game_info(1)
+    print a['daybreak']
+    print(type(a['daybreak']))

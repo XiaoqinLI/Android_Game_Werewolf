@@ -1,11 +1,8 @@
 # __author__ = 'daybreaklee'
 # game is the web rest service API for wherewolf game
 # the questions I have:
-  # write method get to show returned results on browser
+    # how to show get_game_info in the browser???
 
-  # GET /game/{gameid} reports the (current information??) about the game, def game_info
-    # daybreak night fall, game status, players
-    # methods to track time in game. Admin sets the round to night
 
   # Basic Game Logic
   # The WhereWolf game has two game states, a day and a night cycle. However, in terms of event-based handling,
@@ -14,6 +11,7 @@
 from flask import Flask, request, jsonify
 import psycopg2
 from wherewolfdao import WherewolfDao, BadArgumentsException, NoUserExistsException, UserAlreadyExistsException
+import datetime
 
 app = Flask(__name__)
 
@@ -121,17 +119,28 @@ def update_game(game_ID):
     # implement this later on.
 
     # need to check the identity of the current player
-    currentPlayer = dao.get_player_stats(username)
+    currentPlayer = dao.get_current_player(username)
     if currentPlayer['is_werewolf'] == 0:
         response = {'status': 'success'}
     else:
         result = dao.get_alive_nearby(username, game_id, RADIUS)
         response = {'status': 'success', 'results': {'werewolfscent': [{'player_id': entry['player_id'], 'distance': entry['distance']} for entry in result]}}
-
     return jsonify(response)
 
-
-
+@app.route(rest_prefix+'/game/'+'<game_ID>')
+def get_game_info(game_ID):
+    # daybreak, nightfall, game status, players
+    username = request.form['username']
+    password = request.form['password']
+    game_id = request.form['game_id']
+    players = dao.get_players(game_id)# player is a list
+    info = dao.game_info(game_id)
+    for key in info:
+        if isinstance(info[key], datetime.time):
+            info[key] = str(info[key])
+    info['players'] = players
+    return jsonify(info)
+    # methods to track time in game. Admin sets the round to night
 
 
 if __name__ == "__main__":

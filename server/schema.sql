@@ -16,13 +16,15 @@ CREATE TABLE gameuser (
 
 DROP TABLE IF EXISTS game cascade;
 CREATE TABLE game (
+	-- added game current time, daybreak and nightfall
+	-- checking current time, current time can be reset
 	game_id 	serial primary key,
 	admin_id 	int NOT NULL REFERENCES gameuser,
 	status 		int NOT NULL DEFAULT 0,
 	name		varchar(80) NOT NULL,
-	-- add game current time
-	-- checking current time, current time can be reset
-
+	daybreak    time NOT NULL DEFAULT time '07:00:00',
+	nightfall   time NOT NULL DEFAULT time '19:00:00',
+	currenttime time DEFAULT CURRENT_TIME,
 	description	text
 );
 
