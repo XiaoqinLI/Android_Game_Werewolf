@@ -1,16 +1,11 @@
 import requests
 import json
-
-
+from pprint import pprint
 # def daybreak()
 
-
 hostname = "http://localhost:5000"
-# user = 'rfdickerson'
-# password = 'awesome'
-game_id = 1
-
 rest_prefix = "/v1"
+# game_id = 1
 
 ''' Important functions
 create a game
@@ -25,9 +20,6 @@ def create_user(username, password, firstname, lastname):  # Done
     r = requests.post(url, data=payload)
     response = r.json()
     print response
-
-# def get_game(username, game_name):
-#     pass
 
 def create_game(username, password, game_name, description): # Done
     payload = {'username': username, 'password':password, 'game_name': game_name, 'description': description}
@@ -47,22 +39,9 @@ def leave_game(username, password, game_id): # Done
     payload = {'username': username, 'password':password, 'game_id': game_id}
     r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id),
                         auth=(username, password), data=payload)
-
     response = r.json()
     print response
     # return response
-
-def update_game(username, password, game_id, lat, lng):
-    """ reports to the game your current location, and the game 
-    returns to you a list of players nearby
-    current radius is 5 (miles)
-    """
-
-    payload = {'username': username, 'game_id': game_id, 'lat': lat, 'lng': lng, 'radius': 5}
-    url = "{}{}/game1/{}".format(hostname, rest_prefix, game_id)
-    r = requests.put(url, auth=(username, password), data=payload)
-    response = r.json()
-    print response
 
 def join_game(username, password, game_id):
     print 'Joining game id {}'.format(game_id)
@@ -71,6 +50,17 @@ def join_game(username, password, game_id):
     r = requests.post(url, auth=(username, password), data=payload)
     response = r.json()
     print response
+
+def update_game(username, password, game_id, lat, lng):
+    """ reports to the game your current location, and the game
+    returns to you a list of players nearby
+    current radius is 5 (miles)
+    """
+    payload = {'username': username, 'game_id': game_id, 'lat': lat, 'lng': lng}
+    url = "{}{}/game/{}".format(hostname, rest_prefix, game_id)
+    r = requests.put(url, auth=(username, password), data=payload)
+    response = r.json()
+    pprint (response)
 
 def game_info(username, password, game_id):
     ''' returns all the players, the time of day, and other options for the game '''
@@ -86,7 +76,7 @@ def cast_vote(username, password, game_id, player_id):
 
     print response
 
-def set_game_time(game_time):
+def set_game_time(game_id, game_time):
     '''allows you to override the current time to a user specified one'''
     payload = {'game_id': game_id, 'current_time': game_time}
     r = requests.post(hostname + rest_prefix + "/game/admin")
@@ -132,12 +122,13 @@ if __name__ == "__main__":
     # create_user('dwight', 'paperpaper', 'Dwight', 'Schrute')
     # create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
     # create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
-    # update_game('rfdickerson','awesome', 1, 30, 97)
+
     # leave_game('rfdickerson', 'awesome', 1)
-    join_game('dwight', 'paperpaper', 3)  # need to test game lobby status later on
+    # join_game('dwight', 'paperpaper', 3)  # need to test game lobby status later on
     # join_game('dwight', 'paper', 2)
     # join_game('rfdickerson', 'awesome', 3)
     # join_game('rfdickerson', 'awesome', 2)
+    update_game('rfdickerson','awesome', 1, 30, 97)
 
    #create_users()
    # werewolf_winning_game()

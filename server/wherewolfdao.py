@@ -94,7 +94,6 @@ class WherewolfDao(object):
             result["lng"] = row[2]
         return result
 
-        
     def get_alive_nearby(self, username, game_id, radius): # modified and tested
         ''' returns all alive players near a player '''
         conn = self.get_db()
@@ -116,6 +115,7 @@ class WherewolfDao(object):
             #        'order by distance')
 
             # using the radius for lookups now
+            # not fixed yet..
             sql = ( 'select player_id from player where '
                     'earth_box(ll_to_earth( '
                     '(select lat from player, gameuser '
@@ -243,6 +243,22 @@ class WherewolfDao(object):
                 p["is_werewolf"] = row[4]
                 players.append(p)
         return players
+
+    def get_current_player(self, username):
+        conn = self.get_db()
+        currentplayer = {}
+        with conn:
+            cur = conn.cursor()
+            cmd = ('select player_id, is_dead, lat, lng, is_werewolf from player '
+                   ' where player_id=(select current_player from gameuser where username=%s) ')
+            cur.execute(cmd, (username,))
+            row = cur.fetchone()
+            currentplayer["playerid"] = row[0]
+            currentplayer["is_dead"] = row[1]
+            currentplayer["lat"] = float(row[2])
+            currentplayer["lng"] = float(row[3])
+            currentplayer["is_werewolf"] = row[4]
+            return currentplayer
 
     def get_user_stats(self, username):
         pass
@@ -435,84 +451,84 @@ class WherewolfDao(object):
 
             
 if __name__ == "__main__":
-    dao = WherewolfDao('wherewolf', 'postgres')
-
-    dao.clear_tables()#clear gameuser, player and user_achievement table
-    try:
-        dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
-        dao.create_user('oliver','furry','Oliver','Cat')
-        dao.create_user('vanhelsing', 'van', 'Van', 'Helsing')
-        print 'Created new players!'
-    except UserAlreadyExistsException as e:
-        print e
-    except Exception:
-        print 'General error happened'
-
-    username = 'rfdickerson'
-    correct_pass = 'awesome'
-    incorrect_pass = 'scaley'
-    print 'Logging in {} with {}'.format(username, correct_pass)
-    print 'Result: {} '.format( dao.check_password(username, correct_pass ))
-
-    print 'Logging in {} with {}'.format(username, incorrect_pass)
-    print 'Result: {} '.format( dao.check_password(username, incorrect_pass ))
-
-    game_id = dao.create_game('rfdickerson', 'TheGame')
-    print "game_id {}".format(game_id)
-    game_id = dao.create_game('rfdickerson', 'TheGame')
-    print "game_id {}".format(game_id)
-    game_id = dao.create_game('oliver', 'TheGame')
-    print "game_id {}".format(game_id)
-    # dao.create_game('oliver', 'AnotherGame')
-
-    dao.join_game('oliver', 1)
-    dao.join_game('rfdickerson', 1)
-    dao.join_game('vanhelsing', 1)
-    print(dao.join_game('rfdickerson', 3))
-
-    print(dao.delete_game('oliver',2))
-    print(dao.delete_game('oliver',2))
-    dao.create_game('vanhelsing', 'TheGame')
-
-    print "Adding some items..."
-    dao.add_item('rfdickerson', 'Silver Knife')
-    dao.add_item('rfdickerson', 'Blunderbuss')
-    dao.add_item('rfdickerson', 'Blunderbuss')
-    dao.add_item('rfdickerson', 'Blunderbuss')
-    dao.add_item('oliver', 'Blunderbuss')
-    dao.remove_item('rfdickerson', 'Blunderbuss')
-
-    print
-    print 'rfdickerson items'
-    print '--------------------------------'
-    items = dao.get_items("rfdickerson")
-    for item in items:
-        print item["name"] + "\t" + str(item["quantity"])
-    print
-
-    # location stuff
-    dao.set_location('rfdickerson', 30.25, 97.75)
-    dao.set_location('oliver', 30.3, 97.76)
-    dao.set_location('vanhelsing', 30.2, 97.7)
-    loc = dao.get_location('rfdickerson')
-    loc2 = dao.get_location('oliver')
-    print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
-    print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
-
-    dao.award_achievement('rfdickerson', 'Children of the moon')
-    dao.award_achievement('rfdickerson', 'A hairy situation')
-    achievements = dao.get_achievements("rfdickerson")
-
-    print
-    print 'rfdickerson\'s achievements'
-    print '--------------------------------'
-    for a in achievements:
-        print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
-    print
-
-    nearby = dao.get_alive_nearby('rfdickerson', 1, 0.00000000001)
-    for p in nearby:
-        print "{}".format(p["player_id"])
+    dao = WherewolfDao()
+    #
+    # dao.clear_tables()#clear gameuser, player and user_achievement table
+    # try:
+    #     dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
+    #     dao.create_user('oliver','furry','Oliver','Cat')
+    #     dao.create_user('vanhelsing', 'van', 'Van', 'Helsing')
+    #     print 'Created new players!'
+    # except UserAlreadyExistsException as e:
+    #     print e
+    # except Exception:
+    #     print 'General error happened'
+    #
+    # username = 'rfdickerson'
+    # correct_pass = 'awesome'
+    # incorrect_pass = 'scaley'
+    # print 'Logging in {} with {}'.format(username, correct_pass)
+    # print 'Result: {} '.format( dao.check_password(username, correct_pass ))
+    #
+    # print 'Logging in {} with {}'.format(username, incorrect_pass)
+    # print 'Result: {} '.format( dao.check_password(username, incorrect_pass ))
+    #
+    # game_id = dao.create_game('rfdickerson', 'TheGame')
+    # print "game_id {}".format(game_id)
+    # game_id = dao.create_game('rfdickerson', 'TheGame')
+    # print "game_id {}".format(game_id)
+    # game_id = dao.create_game('oliver', 'TheGame')
+    # print "game_id {}".format(game_id)
+    # # dao.create_game('oliver', 'AnotherGame')
+    #
+    # dao.join_game('oliver', 1)
+    # dao.join_game('rfdickerson', 1)
+    # dao.join_game('vanhelsing', 1)
+    # print(dao.join_game('rfdickerson', 3))
+    #
+    # print(dao.delete_game('oliver',2))
+    # print(dao.delete_game('oliver',2))
+    # dao.create_game('vanhelsing', 'TheGame')
+    #
+    # print "Adding some items..."
+    # dao.add_item('rfdickerson', 'Silver Knife')
+    # dao.add_item('rfdickerson', 'Blunderbuss')
+    # dao.add_item('rfdickerson', 'Blunderbuss')
+    # dao.add_item('rfdickerson', 'Blunderbuss')
+    # dao.add_item('oliver', 'Blunderbuss')
+    # dao.remove_item('rfdickerson', 'Blunderbuss')
+    #
+    # print
+    # print 'rfdickerson items'
+    # print '--------------------------------'
+    # items = dao.get_items("rfdickerson")
+    # for item in items:
+    #     print item["name"] + "\t" + str(item["quantity"])
+    # print
+    #
+    # # location stuff
+    # dao.set_location('rfdickerson', 30.25, 97.75)
+    # dao.set_location('oliver', 30.3, 97.76)
+    # dao.set_location('vanhelsing', 30.2, 97.7)
+    # loc = dao.get_location('rfdickerson')
+    # loc2 = dao.get_location('oliver')
+    # print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
+    # print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
+    #
+    # dao.award_achievement('rfdickerson', 'Children of the moon')
+    # dao.award_achievement('rfdickerson', 'A hairy situation')
+    # achievements = dao.get_achievements("rfdickerson")
+    #
+    # print
+    # print 'rfdickerson\'s achievements'
+    # print '--------------------------------'
+    # for a in achievements:
+    #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
+    # print
+    #
+    # nearby = dao.get_alive_nearby('rfdickerson', 1, 0.00000000001)
+    # for p in nearby:
+    #     print "{}".format(p["player_id"])
 
     # dao.vote(game_id, 'rfdickerson', 'oliver')
     # dao.vote(game_id, 'oliver', 'vanhelsing')
@@ -540,4 +556,7 @@ if __name__ == "__main__":
     #
     # print 'Player Stats'
     # pprint(dao.get_player_stats('rfdickerson'))
+
+    # print 'get current player of a user'
+    print(dao.get_current_player('rfdickerson'))
 

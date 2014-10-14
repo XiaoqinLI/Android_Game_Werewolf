@@ -111,22 +111,23 @@ def join_game(game_ID):
 
 @app.route(rest_prefix+'/game/'+'<game_ID>', methods=["PUT"])
 def update_game(game_ID):
-    print 'aaaaaaaaa'
     username = request.form['username']
     game_id = request.form['game_id']
     lat = request.form['lat']
     lng = request.form['lng']
-    radius = request.form['radius']
-    #
-    # checking point of interest stuff
+    RADIUS = 5
     dao.set_location(username, lat, lng)
-    # need to check the identity of the current player
-    result = dao.get_alive_nearby(username, game_id, radius)
+    # checking point of interest stuff
+    # implement this later on.
 
-    response = {'status': 'success', 'results': {'werewolfscent': []}}
-    for entry in result:
-        if entry['distance'] < radius:
-            response['results']['werewolfscent'].append({'player_id': entry['player_id'], 'distance': entry['distance']})
+    # need to check the identity of the current player
+    currentPlayer = dao.get_player_stats(username)
+    if currentPlayer['is_werewolf'] == 0:
+        response = {'status': 'success'}
+    else:
+        result = dao.get_alive_nearby(username, game_id, RADIUS)
+        response = {'status': 'success', 'results': {'werewolfscent': [{'player_id': entry['player_id'], 'distance': entry['distance']} for entry in result]}}
+
     return jsonify(response)
 
 
