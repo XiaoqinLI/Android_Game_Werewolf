@@ -43,7 +43,7 @@ def leave_game(username, password, game_id): # Done
     print response
     # return response
 
-def join_game(username, password, game_id):
+def join_game(username, password, game_id): # Done
     print 'Joining game id {}'.format(game_id)
     payload = {'username': username, 'password': password, 'game_id': game_id}
     url = "{}{}/game/{}/lobby".format(hostname, rest_prefix, game_id)
@@ -51,7 +51,7 @@ def join_game(username, password, game_id):
     response = r.json()
     print response
 
-def update_game(username, password, game_id, lat, lng):
+def update_game(username, password, game_id, lat, lng): # Done
     """ reports to the game your current location, and the game
     returns to you a list of players nearby if you are alive werewolf
     """
@@ -61,7 +61,7 @@ def update_game(username, password, game_id, lat, lng):
     response = r.json()
     print response
 
-def game_info(username, password, game_id):
+def game_info(username, password, game_id): # Done
     ''' returns all the players, the time of day, and other options for the game '''
     payload = {'username': username, 'password': password, 'game_id': game_id}
     r = requests.get(hostname + rest_prefix + "/game/" + str(game_id), auth=(username, password), data=payload)
@@ -69,13 +69,15 @@ def game_info(username, password, game_id):
     pprint (response)
 
 
-def cast_vote(username, password, game_id, player_id):
-    payload = {'player_id': player_id}
-    
-    r = requests.post(hostname + rest_prefix + "/game/" + game_id + "/vote")
+def cast_vote(username, password, game_id, player_id): # in process
+    '''each call will vote for an particular target player'''
+    payload = {'username': username, 'password': password, 'game_id': game_id, 'player_id': player_id}
+    r = requests.post(hostname + rest_prefix + "/game/" + str(game_id) + "/vote",auth=(username, password), data=payload)
     response = r.json()
-
     print response
+
+def get_vote():
+    pass
 
 def set_game_time(game_id, game_time):
     '''allows you to override the current time to a user specified one'''
@@ -129,8 +131,8 @@ if __name__ == "__main__":
     # join_game('dwight', 'paper', 2)
     # join_game('rfdickerson', 'awesome', 3)
     # join_game('rfdickerson', 'awesome', 2)
-    # update_game('rfdickerson','awesome', 1, 30, 97)
-    game_info('rfdickerson','awesome','1')
+    update_game('rfdickerson','awesome', 1, 30, 97)
+    # game_info('rfdickerson','awesome','1')
    #create_users()
    # werewolf_winning_game()
    # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')

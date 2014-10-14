@@ -32,8 +32,8 @@ DROP TABLE IF EXISTS player cascade;
 CREATE TABLE player (
    	player_id	serial primary key,
    	is_dead		INTEGER NOT NULL,
-  	lat		DECIMAL(11,8)	NOT NULL,
-    lng		DECIMAL(11,8)	NOT NULL,
+  	lat		FLOAT	NOT NULL,
+    lng		FLOAT	NOT NULL,
 	is_werewolf	INTEGER NOT NULL DEFAULT 0,
 	num_gold	INTEGER NOT NULL DEFAULT 0,
 	game_id		INTEGER REFERENCES game

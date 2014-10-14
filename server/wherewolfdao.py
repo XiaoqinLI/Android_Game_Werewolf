@@ -96,48 +96,41 @@ class WherewolfDao(object):
             result["lng"] = row[2]
         return result
 
-    def get_alive_nearby(self, username, game_id, radius): # modified and tested
+    def get_alive_nearby(self, username, game_id, radius):
         ''' returns all alive players near a player '''
         conn = self.get_db()
         result = []
         with conn:
             c = conn.cursor()
-            # sql = ('select username, player_id, point( '
-            #        '(select lng from player, gameuser '
-            #        'where player.player_id=gameuser.current_player '
-            #        'and gameuser.username=%s), '
-            #        '(select lat from player, gameuser '
-            #        'where player.player_id=gameuser.current_player '
-            #        'and gameuser.username=%s)) '
-            #        '<@> point(lng, lat)::point as distance, '
-            #        'is_werewolf '
-            #        'from player, gameuser where game_id=%s '
-            #        'and is_dead=0 '
-            #        'and gameuser.current_player=player.player_id '
-            #        'order by distance')
+            sql_location = ('select lat, lng from player, gameuser where '
+                           'player.player_id = gameuser.current_player '
+                           'and gameuser.username=%s')
+            c.execute(sql_location, (username,))
+            location = c.fetchone()
 
-            # using the radius for lookups now
-            # not fixed yet..
-            sql = ( 'select player_id from player where '
-                    'earth_box(ll_to_earth( '
-                    '(select lat from player, gameuser '
-                    'where player.player_id = gameuser.current_player '
-                    'and gameuser.username=%s), '
-                    '(select lng from player, gameuser '
-                    'where player.player_id = gameuser.current_player '
-                    'and gameuser.username=%s)), %s) '
-                    '@> ll_to_earth(lat, lng) '
-                    'and is_dead = 0 '
-                    'and game_id = %s'
-                    )
-            # print sql
-            c.execute(sql, (username, username, radius, game_id))
+            if location == None:
+                return result
+
+            # using the radius for lookups now, just show alive villages who is in radius
+            sql = ('select player_id, '
+                   'earth_distance( ll_to_earth(player.lat, player.lng), '
+                   'll_to_earth(%s,%s) ) '
+                   'from player where '
+                   'earth_box(ll_to_earth(%s,%s),%s) '
+                   '@> ll_to_earth(player.lat, player.lng) '
+                   'and game_id=%s '
+                   'and is_werewolf = 0 '
+                   'and is_dead = 0')
+
+            c.execute(sql, (location[0], location[1],
+                            location[0], location[1],
+                            radius, game_id))
             for row in c.fetchall():
                 d = {}
                 d["player_id"] = row[0]
-                # d["player_id"] = row[1]
-                # d["distance"] = row[2]
-                # d["is_werewolf"] = row[3]
+                d["distance"] = row[1]
+                #d["distance"] = row[1]
+                #d["is_werewolf"] = row[2]
                 result.append(d)
         return result
 
@@ -261,6 +254,17 @@ class WherewolfDao(object):
             currentplayer["lng"] = float(row[3])
             currentplayer["is_werewolf"] = row[4]
             return currentplayer
+
+    def get_player_current_game_id(self, player_id):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            cmd = ('select game_id from player where player_id=%s ')
+            cur.execute(cmd, (player_id,))
+            current_game_id = cur.fetchone()
+            if type(current_game_id).__name__ != 'NoneType':
+                current_game_id = current_game_id[0]
+            return current_game_id
 
     def get_user_stats(self, username):
         pass
@@ -432,16 +436,14 @@ class WherewolfDao(object):
                    'where game_id=%s')
             cur.execute(cmd, (game_id, status))
 
-    def vote(self, game_id, player_id, target_id): # tested
+    def vote(self, game_id, player_id, target_id): # tested # ambigutuity here
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
             sql = ('insert into vote '
                    '(game_id, player_id, target_id, cast_date) '
-                   'values ( %s,'
-                   '(select current_player from gameuser where username=%s), '
-                   '(select current_player from gameuser where username=%s), '
-                   'now())')
+                   'values ( %s, %s, %s, '
+                   ' now())')
             cur.execute(sql, (game_id, player_id, target_id))
             conn.commit()
 
@@ -453,6 +455,8 @@ class WherewolfDao(object):
             c.execute('truncate player RESTART IDENTITY cascade')
             c.execute('truncate user_achievement RESTART IDENTITY cascade')
             conn.commit()
+
+
 
             
 if __name__ == "__main__":
@@ -531,9 +535,10 @@ if __name__ == "__main__":
     #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
     # print
     #
-    # nearby = dao.get_alive_nearby('rfdickerson', 1, 0.00000000001)
-    # for p in nearby:
-    #     print "{}".format(p["player_id"])
+    nearby = dao.get_alive_nearby('rfdickerson', 1, 700000)
+    print ('Nearby players: ')
+    for p in nearby:
+        print "{} is {} meters away".format(p["player_id"],p["distance"])
 
     # dao.vote(game_id, 'rfdickerson', 'oliver')
     # dao.vote(game_id, 'oliver', 'vanhelsing')
@@ -564,7 +569,11 @@ if __name__ == "__main__":
 
     # print 'get current player of a user'
     # print(dao.get_current_player('rfdickerson'))
-    print(dao.game_info(1))
-    a = dao.game_info(1)
-    print a['daybreak']
-    print(type(a['daybreak']))
+
+    # print 'game info of a game'
+    # print(dao.game_info(1))
+    #
+    # print 'current game_id of a player'
+    # print(dao.get_player_current_game_id(0))
+
+
