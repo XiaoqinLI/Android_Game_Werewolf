@@ -29,7 +29,7 @@ def create_user(username, password, firstname, lastname):  # Done
 # def get_game(username, game_name):
 #     pass
 
-def create_game(username, password, game_name, description):
+def create_game(username, password, game_name, description): # Done
     payload = {'username': username, 'password':password, 'game_name': game_name, 'description': description}
     url = "{}{}/game".format(hostname, rest_prefix)
     print 'sending {} to {}'.format(payload, url)
@@ -38,7 +38,7 @@ def create_game(username, password, game_name, description):
     print response["status"]
     return response["results"]["game_id"]
     
-def leave_game(username, password, game_id):
+def leave_game(username, password, game_id): # Done
     '''
     first of all, set game_id to null in player table if gameid = gameid, otherwise can't delete table since
     game_id is a foreign key
@@ -131,10 +131,10 @@ if __name__ == "__main__":
 
     # create_user('michael', 'paperpaper', 'Michael', 'Scott')
     # create_user('dwight', 'paperpaper', 'Dwight', 'Schrute')
-    create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
-    create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
+    # create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
+    # create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
     # update_game('rfdickerson','awesome', 1, 30, 97)
-    # leave_game('rfdickerson', 'awesome', 1)
+    leave_game('rfdickerson', 'awesome', 1)
     # join_game('dwight', 'paper', 3)
     # join_game('dwight', 'paper', 2)
     # join_game('rfdickerson', 'awesome', 3)

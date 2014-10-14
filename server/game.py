@@ -48,7 +48,7 @@ def create_user():  # Done
             return jsonify(response)
 
 @app.route(rest_prefix+'/game', methods=["POST"])
-def create_game():
+def create_game():  # Done
     username = request.form['username']
     password = request.form['password']
     game_name = request.form['game_name']
@@ -69,11 +69,19 @@ def create_game():
 def leave_game(game_ID):
     username = request.form['username']
     game_id = request.form['game_id']
-    #
-    dao.leave_game(game_id)
-    result = dao.delete_game(username, game_id)
-    response = {"status": "success"} if result else {"status": "failure"}
-    return jsonify(response)
+    password = request.form['password']
+    try:
+        auth_checker = dao.check_password(username, password)
+        if auth_checker:
+            dao.leave_game(game_id)
+            result = dao.delete_game(username, game_id)
+            response = {"status": "success"} if result else {"status": "failure"}
+        else:
+            response = {"status": "failure"}
+    except NoUserExistsException:
+        response = {"status": "failure"}
+    finally:
+        return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/lobby', methods=["POST"])
 def join_game(game_ID):
