@@ -87,17 +87,27 @@ def leave_game(game_ID):
 def join_game(game_ID):
     username = request.form['username']
     game_id = request.form['game_id']
+    password = request.form['password']
     gameinfo =  dao.game_info(game_id)
+
     if gameinfo == None:     # game does not exist
         response = {"status": "failure"}
         return jsonify(response)
-    if gameinfo["status"] != 0:  # 0: not stared, 1: started, 2: ended
+    elif gameinfo["status"] != 0:  # 0: not staretd, 1: started, 2: ended
         response = {"status": "failure"}
         return jsonify(response)
     else:
-        result = dao.join_game(username, game_id)
-        response = {"status": "success"} if result else {"status": "failure"}
-        return jsonify(response)
+        try:
+            auth_checker = dao.check_password(username, password)
+            if auth_checker:
+                result = dao.join_game(username, game_id)
+                response = {"status": "success"} if result else {"status": "failure"}
+            else:
+                response = {"status": "failure"}
+        except NoUserExistsException:
+            response = {"status": "failure"}
+        finally:
+            return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>', methods=["PUT"])
 def update_game(game_ID):

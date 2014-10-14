@@ -64,6 +64,13 @@ def update_game(username, password, game_id, lat, lng):
     response = r.json()
     print response
 
+def join_game(username, password, game_id):
+    print 'Joining game id {}'.format(game_id)
+    payload = {'username': username, 'password': password, 'game_id': game_id}
+    url = "{}{}/game/{}/lobby".format(hostname, rest_prefix, game_id)
+    r = requests.post(url, auth=(username, password), data=payload)
+    response = r.json()
+    print response
 
 def game_info(username, password, game_id):
     ''' returns all the players, the time of day, and other options for the game '''
@@ -85,14 +92,6 @@ def set_game_time(game_time):
     r = requests.post(hostname + rest_prefix + "/game/admin")
     response = r.json()
     print response
-
-def join_game(username, password, game_id):
-    print 'Joining game id {}'.format(game_id)
-    payload = {'username': username, 'game_id': game_id}
-    url = "{}{}/game/{}/lobby".format(hostname, rest_prefix, game_id)
-    r = requests.post(url, auth=(username, password), data=payload)
-    r = r.json()
-    print r
 
 def get_games(username, password):
     r = requests.get(hostname + rest_prefix + "/game")
@@ -134,8 +133,8 @@ if __name__ == "__main__":
     # create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
     # create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
     # update_game('rfdickerson','awesome', 1, 30, 97)
-    leave_game('rfdickerson', 'awesome', 1)
-    # join_game('dwight', 'paper', 3)
+    # leave_game('rfdickerson', 'awesome', 1)
+    join_game('dwight', 'paperpaper', 3)  # need to test game lobby status later on
     # join_game('dwight', 'paper', 2)
     # join_game('rfdickerson', 'awesome', 3)
     # join_game('rfdickerson', 'awesome', 2)
