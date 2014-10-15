@@ -251,6 +251,12 @@ def set_game_time(game_ID):
     response = {"status": "success"}
     return jsonify(response)
 
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/werewolf', methods=["POST"])
+def set_werewolf(game_ID):
+    werewolf_id = request.form['werewolf_id']
+    game_id = int(request.form['game_id'])
+    dao.set_werewolf(game_id, werewolf_id)
+
 def is_in_cooldown(playerid): # implement in player_stat
     player_stat = dao.get_player_stats(playerid, name='CoolDown')
     if player_stat == None:
@@ -278,21 +284,6 @@ def hair_of_dog(target_id):
 # - "A hairy situation" - be near 3 werewolves at once --  def hairy_situation()
 # - "It is never Lupus" - vote for someone to be a werewolf, when they were a townsfolk -- implement in cast_vote
 
-
-#
-# * POST /game/{gameid}/attack
-#   attacks a villager
-#   returns:
-#   {'status': 'success',
-#       results:
-#       { 'summary': 'death',
-#         'combatant': 20 }
-#     }
-#   failure conditions:
-#       bad auth
-#       not in game
-#       player is werewolf under cooldown period of 30 minutes
-#       player is a villager
 
 
 

@@ -1,6 +1,8 @@
 import requests
 import json
 from pprint import pprint
+import random
+import math
 
 hostname = "http://localhost:5000"
 rest_prefix = "/v1"
@@ -59,8 +61,8 @@ def game_info(username, password, game_id): # Done
     payload = {'username': username, 'password': password, 'game_id': game_id}
     r = requests.get(hostname + rest_prefix + "/game/" + str(game_id), auth=(username, password), data=payload)
     response = r.json()
-    pprint (response)
-    return r
+    # pprint (response)
+    return response
 
 def cast_vote(username, password, game_id, player_id): # Done
     '''each call will vote for an particular target player'''
@@ -90,9 +92,12 @@ def set_game_time(username, game_id, game_time):
     print response
 
 def set_game_status(username, game_id, game_status):
-    '''allows you to override the current time to a user specified one'''
     payload = {'username': username, 'game_id': game_id, 'game_status': game_status}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/status", data=payload )
+
+def set_werewolf(game_id, werewolf_id):
+    payload = {'werewolf_id': werewolf_id, 'game_id': game_id}
+    requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/werewolf", data=payload )
 
 def get_games(username, password):
     r = requests.get(hostname + rest_prefix + "/game")
@@ -118,7 +123,6 @@ def all_join_game(current_game_id):
     join_game('angela', 'paper07', current_game_id)
     join_game('toby', 'paper08', current_game_id)
 
-
 if __name__ == "__main__":
     game_round = 0
     #------------------Game Simulation---------------------------------
@@ -131,11 +135,19 @@ if __name__ == "__main__":
     # current_game_id = create_game('michael', 'paper01', 'NightHunt', 'A test for werewolf winning')
     # all_join_game(current_game_id)
 
-    # michael will set the game to active, and the first day round begins. 30% of the players rounding up will be
-    # set to be werewolves- 3 werewolves in our case.
-    # set_game_status('michael', 1, 1)
-    set_game_time('michael', 1, '08:00:00')
+    # michael will set the game to active, and the first day round begins.
+    # set_game_status('michael', current_game_id, 1)
+    # set_game_time('michael', current_game_id, '08:00:00')
     # game_round += 1
+
+    # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
+    current_game_info = game_info('michael', 'paper01', 1)
+    # random_playerid_list =[ entry['playerid'] for entry in current_game_info['players'] ]
+    # random.shuffle(random_playerid_list)
+    # num_werewolf = int(math.ceil(len(random_playerid_list)*0.3))
+    # for i in xrange(num_werewolf):
+    #     set_werewolf(1,random_playerid_list[i])
+
 
 
 

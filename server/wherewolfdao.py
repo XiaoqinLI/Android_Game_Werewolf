@@ -381,6 +381,14 @@ class WherewolfDao(object):
             else:
                 return None
 
+    def set_werewolf(self, game_id, werewolf_id):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            cmd = ('update player set is_werewolf=1 where game_id=%s and player_id=%s')
+            cur.execute(cmd, (game_id,werewolf_id))
+            conn.commit()
+
     # game methods    
     def join_game(self, username, gameid): # tested
         conn = self.get_db()
@@ -700,6 +708,9 @@ if __name__ == "__main__":
 
     # print "set game current time"
     # dao.set_game_current_time('michael',1,'09:00:00')
+
+    print "set werewolf"
+    dao.set_werewolf(1,2)
 
 
 
