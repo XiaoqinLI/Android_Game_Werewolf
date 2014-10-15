@@ -1,6 +1,7 @@
-# notes
+###### notes and introduction
+# reload database schema before you run game simulation for safety
 
-methods: isnight()
+# methods: isnight() adn isday() are integrated in attack and vote REST API, which works fine also.
 
 # my POSTgreSQL default password for postgres is 121314, you need to send your password as a kwarg to match yours when
   creating a Dao.

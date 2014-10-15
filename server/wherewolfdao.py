@@ -556,8 +556,24 @@ class WherewolfDao(object):
             cur.execute(sql, (lat, lng, radius, landmark_type, game_id, is_active))
             conn.commit()
 
-    def set_treasure(self):
-        pass
+    def set_treasure(self, landmark_id, item_id, quantity):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+
+            sql = ('select type from landmark where landmark_id=%s' )
+            cur.execute(sql, (landmark_id,))
+
+            landmark_type = cur.fetchone()
+            if landmark_type != None:
+                typeChecker = landmark_type[0]
+
+                if typeChecker == 1:  # do not add treasure to save zone
+                    sql = ('insert into treasure '
+                           '(landmark_id, item_id, quantity) '
+                           'values ( %s, %s, %s)')
+                    cur.execute(sql, (landmark_id, item_id, quantity))
+                    conn.commit()
 
     def clear_tables(self):  # modified and tested
         conn = self.get_db()
@@ -716,8 +732,11 @@ if __name__ == "__main__":
     # print "set game current time"
     # dao.set_game_current_time('michael',1,'09:00:00')
 
-    print "set werewolf"
-    dao.set_werewolf(1,2)
+    # print "set werewolf"
+    # dao.set_werewolf(1,2)
+
+    # print "set treasure"
+    dao.set_treasure(1,1,1)
 
 
 

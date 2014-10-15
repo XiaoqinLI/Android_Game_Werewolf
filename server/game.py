@@ -256,6 +256,8 @@ def set_werewolf(game_ID):
     werewolf_id = request.form['werewolf_id']
     game_id = int(request.form['game_id'])
     dao.set_werewolf(game_id, werewolf_id)
+    response = {"status": "success"}
+    return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/landmark', methods=["POST"])
 def set_landmark(game_ID):
@@ -270,7 +272,20 @@ def set_landmark(game_ID):
         lng = random.uniform(minValue, maxValue)
         landmark_type =  random.randint(0,1)
         dao.set_landmark(game_id, lat, lng, radius, landmark_type)
-    return None
+    response = {"status": "success"}
+    return jsonify(response)
+
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/treasure', methods=["POST"])
+def set_treasure(game_ID):
+    game_id = request.form['game_id']
+    num_landmark = int(request.form['num_landmark'])
+
+    for i in xrange(num_landmark):
+        item_id = random.randint(1,1)  # only support invisible portion
+        quantity = random.randint(1,2)
+        dao.set_treasure(i+1,item_id,quantity) # i is landmark id, # checking landmark type, and do not add treasure to save zone
+    response = {"status": "success"}
+    return jsonify(response)
 
 
 def is_in_cooldown(playerid): # implement in player_stat

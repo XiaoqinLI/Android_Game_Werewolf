@@ -113,6 +113,12 @@ def set_random_landmark(game_id):
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/landmark", data=payload )
     return num_landmark
 
+def set_treasure_to_landmark(game_id, num_landmark):
+    payload = {'game_id': game_id, 'num_landmark': num_landmark}
+    requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/treasure", data=payload )
+    return
+
+
 def create_users():
     create_user('michael', 'paper01', 'Michael', 'Scott')
     create_user('dwight', 'paper02', 'Dwight', 'Schrute')
@@ -174,15 +180,16 @@ if __name__ == "__main__":
     # The admin sets the round to night.
     # One werewolf will move to a location of one random villager. The werewolf will make an attack. The villager may or may not survive this encounter
     # The admin sets the round to day.
-    pprint (current_game_info)
+    pprint (current_game_info)  # print game_info before it starts.
     while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
         # set to a day time
         # set_game_time('michael', '1', '10:00:00')
         game_round += 1
         if game_round <= 1:      #There is no vote in first day round
 
-            numLandmark = set_random_landmark(1)   # set random land marks on the game in day 1
-            print numLandmark
+            # numLandmark = set_random_landmark(1)   # set random land marks on the game in day 1
+            set_treasure_to_landmark(1,5)
+            # print numLandmark
 
             # update_game('')
             # update_locations(1)
