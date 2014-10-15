@@ -262,8 +262,8 @@ def get_One_Kill(player_id): # done
     dao.set_player_stats(player_id) # default is kill + 1
 
 def hair_of_dog(target_id):
-    pass
-    # dao.update
+    player_id = dao.get_userID(target_id)
+    dao.set_user_achievements(player_id)
 
 # - "Leader of the Pack" have the most number of kills by the end of the game de def Leader of the Pack in end game
 # - "Hair of the dog" - survive an attack by a werewolf -- implement in attack

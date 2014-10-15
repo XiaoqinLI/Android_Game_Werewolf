@@ -251,7 +251,13 @@ class WherewolfDao(object):
         return achievements
 
     def set_user_achievements(self, user_id, achievement_id):
-        pass
+        conn = self.get_db()
+        with conn:
+            cur=conn.cursor()
+            sqlinsert = ('INSERT INTO user_achievement (user_id, achievement_id) '
+                         'SELECT %s, %s where not exists (select 1 from user_achievement where user_id=%s and achievement_id=%s)')
+            cur.execute(sqlinsert, (user_id, achievement_id, user_id, achievement_id))
+            conn.commit()
 
     def set_dead(self, player_id): # tested
         conn = self.get_db()
@@ -362,6 +368,18 @@ class WherewolfDao(object):
             else:
                 return None
 
+    def get_userID(self, player_id):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql = ('SELECT user_id from gameuser '
+                   ' where current_player=%s')
+            cur.execute(sql, (player_id,))
+            row = cur.fetchone()
+            if row != None:
+                return row[0]
+            else:
+                return None
 
     # game methods    
     def join_game(self, username, gameid): # tested
@@ -654,9 +672,20 @@ if __name__ == "__main__":
     # print 'current game_id of a player'
     # print(dao.get_player_current_game_id(0))
 
+    # print set player_stats
     # dao.set_player_stats(2)
     # dao.set_player_stats(2, 'CoolDown')
-    print(dao.get_player_stats(2, 'CoolDown'))
+
+    # print "check CoolDown"
+    # print(dao.get_player_stats(2, 'CoolDown'))
+
+    # print set user_achievements
+    # dao.set_user_achievements(1,1)
+    # dao.set_user_achievements(1,1)
+    # dao.set_user_achievements(1,2)
+
+    # print get userId by playerid:
+    # print dao.get_userID(1)
 
 
 

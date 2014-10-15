@@ -64,7 +64,8 @@ DROP TABLE IF EXISTS user_achievement cascade;
 CREATE TABLE user_achievement (
 	user_id		INTEGER references gameuser,
 	achievement_id	INTEGER references achievement,
-	created_at	timestamp
+	created_at	timestamp DEFAULT CURRENT_TIMESTAMP,
+	primary key (user_id, achievement_id)
 );
 
 DROP TABLE IF EXISTS item cascade;
