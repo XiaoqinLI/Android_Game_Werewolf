@@ -104,6 +104,15 @@ def get_games(username, password):
     r = r.json()
     return r["results"]
 
+def set_random_landmark(game_id):
+    minValue = 9.9
+    maxValue = 10.1
+    radius = 3000
+    num_landmark = random.randint(3,5)  # 3 to 5 landmark
+    payload = {'game_id': game_id, 'minValue': minValue, 'maxValue': maxValue, 'radius': radius, 'num_landmark': num_landmark}
+    requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/landmark", data=payload )
+    return num_landmark
+
 def create_users():
     create_user('michael', 'paper01', 'Michael', 'Scott')
     create_user('dwight', 'paper02', 'Dwight', 'Schrute')
@@ -122,6 +131,19 @@ def all_join_game(current_game_id):
     join_game('andy', 'paper06', current_game_id)
     join_game('angela', 'paper07', current_game_id)
     join_game('toby', 'paper08', current_game_id)
+
+def update_locations(current_game_id):
+    #positioned in a rectangular region (9.9, 9.9),(10.1, 10.1). Max possible Distance: 31210m
+    minValue = 9.9
+    maxValue = 10.1
+    update_game('michael', 'paper01', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('dwight', 'paper02', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('jim', 'paper03', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('pam', 'paper04', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('ryan', 'paper05', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('andy', 'paper06', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('angela', 'paper07', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+    update_game('toby', 'paper08', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
 
 if __name__ == "__main__":
     game_round = 0
@@ -148,6 +170,26 @@ if __name__ == "__main__":
     # for i in xrange(num_werewolf):
     #     set_werewolf(1,random_playerid_list[i])
 
+    # Daytime:  Vote starts at day 2. All Players will be randomly positioned in a rectangular region.
+    # The admin sets the round to night.
+    # One werewolf will move to a location of one random villager. The werewolf will make an attack. The villager may or may not survive this encounter
+    # The admin sets the round to day.
+    pprint (current_game_info)
+    while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
+        # set to a day time
+        # set_game_time('michael', '1', '10:00:00')
+        game_round += 1
+        if game_round <= 1:      #There is no vote in first day round
+
+            numLandmark = set_random_landmark(1)   # set random land marks on the game in day 1
+            print numLandmark
+
+            # update_game('')
+            # update_locations(1)
+            break
+        current_game_info = game_info('michael', 'paper01', 1)
+
+    print current_game_info['currenttime']
 
 
 

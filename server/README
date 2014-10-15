@@ -9,3 +9,5 @@ methods: isnight()
 
 # Items: Although there are 5 kinds of items in item table, I only support Invisibility potion as instructed,
  meaning only this item can be in treasure chest.
+
+# Treasure: treasure is always active, say michael grab it on day1, day2, if another player get in radius, he/she can grab it as well

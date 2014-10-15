@@ -546,8 +546,15 @@ class WherewolfDao(object):
                 results = []
             return (results)
 
-    def set_landmark(self):
-        pass
+    def set_landmark(self, game_id, lat, lng, radius, landmark_type, is_active = 1):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql = ('insert into landmark '
+                   '(lat, lng, radius, type, game_id, is_active) '
+                   'values ( %s, %s, %s, %s, %s, %s)')
+            cur.execute(sql, (lat, lng, radius, landmark_type, game_id, is_active))
+            conn.commit()
 
     def set_treasure(self):
         pass

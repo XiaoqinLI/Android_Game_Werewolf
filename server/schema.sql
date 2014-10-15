@@ -46,7 +46,7 @@ CREATE TABLE landmark (
 	radius		float NOT NULL,
 	type		int NOT NULL,
 	game_id		int NOT NULL REFERENCES game,
-	is_active 	int NOT NULL DEFAULT 0,
+	is_active 	int NOT NULL DEFAULT 1,
 	created_at	date
 );
 

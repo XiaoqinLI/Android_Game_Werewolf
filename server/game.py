@@ -107,7 +107,7 @@ def update_game(game_ID):  # need to implement save zone
     game_id = request.form['game_id']
     lat = request.form['lat']
     lng = request.form['lng']
-    RADIUS = 100000
+    RADIUS = 10000   # possible max distance is about 32000m, so let us set it as 10000m
     dao.set_location(username, lat, lng)
     player_id_location = dao.get_location(username)
     player_id = player_id_location['playerid']
@@ -256,6 +256,22 @@ def set_werewolf(game_ID):
     werewolf_id = request.form['werewolf_id']
     game_id = int(request.form['game_id'])
     dao.set_werewolf(game_id, werewolf_id)
+
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/landmark', methods=["POST"])
+def set_landmark(game_ID):
+    game_id = request.form['game_id']
+    minValue = float(request.form['minValue'])
+    maxValue = float(request.form['maxValue'])
+    num_landmark = int(request.form['num_landmark'])
+    radius = request.form['radius']
+
+    for i in xrange(num_landmark):
+        lat = random.uniform(minValue, maxValue)
+        lng = random.uniform(minValue, maxValue)
+        landmark_type =  random.randint(0,1)
+        dao.set_landmark(game_id, lat, lng, radius, landmark_type)
+    return None
+
 
 def is_in_cooldown(playerid): # implement in player_stat
     player_stat = dao.get_player_stats(playerid, name='CoolDown')
