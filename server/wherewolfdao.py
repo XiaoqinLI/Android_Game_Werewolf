@@ -81,6 +81,8 @@ class WherewolfDao(object):
             cur.execute(sql, (lat, lng, username))
             conn.commit()
 
+
+
     def get_location(self, username): # tested
         conn = self.get_db()
         result = {}
@@ -133,6 +135,44 @@ class WherewolfDao(object):
                 #d["is_werewolf"] = row[2]
                 result.append(d)
         return result
+
+    def get_landmark_nearby(self, lat, lng, game_id):   #tested
+        ''' returns all alive players near a player '''
+        conn = self.get_db()
+        result = []
+        with conn:
+            c = conn.cursor()
+            # using the radius for lookups now, just show alive villages who is in radius
+            sql = ('select landmark_id, type '
+                   'from landmark where '
+                   'earth_box(ll_to_earth(%s,%s),landmark.radius) '
+                   '@> ll_to_earth(landmark.lat, landmark.lng) '
+                   'and game_id=%s '
+                   'and is_active = 1')
+            c.execute(sql, (lat, lng, game_id))
+            for row in c.fetchall():
+                d = {}
+                d["landmark_id"] = row[0]
+                d["type"] = row[1]
+                result.append(d)
+        return result
+
+    def add_treasure(self, player_id, landmark_id):
+        conn = self.get_db()
+        with conn:
+            cur=conn.cursor()
+            sql = ('select item_id, quantity from treasure where landmark_id=%s ')
+            cur.execute(sql, (landmark_id, ))
+            row = cur.fetchone()
+            item_id = row[0]
+            quantity = row[1]
+
+            sqlupdate = ('UPDATE inventory SET quantity=quantity+%s '
+                         'where itemid=%s and playerid=%s; ')
+            sqlinsert = ('INSERT INTO inventory (playerid, itemid, quantity) '
+                         'SELECT %s, %s, %s where not exists (select 1 from inventory where playerid=%s and itemid=%s)')
+            cur.execute(sqlupdate + sqlinsert, (quantity, item_id, player_id, player_id, item_id, quantity, player_id, item_id))
+            conn.commit()
 
     def add_item(self, username, itemname): # tested
         conn = self.get_db()
@@ -454,6 +494,7 @@ class WherewolfDao(object):
             c.execute('truncate gameuser RESTART IDENTITY cascade')
             c.execute('truncate player RESTART IDENTITY cascade')
             c.execute('truncate user_achievement RESTART IDENTITY cascade')
+            c.execute('truncate landmark RESTART IDENTITY cascade')
             conn.commit()
 
 
@@ -535,10 +576,17 @@ if __name__ == "__main__":
     #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
     # print
     #
-    nearby = dao.get_alive_nearby('rfdickerson', 1, 700000)
-    print ('Nearby players: ')
-    for p in nearby:
-        print "{} is {} meters away".format(p["player_id"],p["distance"])
+    # nearby = dao.get_alive_nearby('rfdickerson', 1, 700000)
+    # print ('Nearby players: ')
+    # for p in nearby:
+    #     print "{} is {} meters away".format(p["player_id"],p["distance"])
+    #
+    landmark_nearby = dao.get_landmark_nearby(30, 97, 1)
+    print ('Nearby landmark: ')
+    for p in landmark_nearby:
+        print "id: {}, type: {}".format(p["landmark_id"],p["type"])
+
+    dao.add_treasure(2,1)
 
     # dao.vote(game_id, 'rfdickerson', 'oliver')
     # dao.vote(game_id, 'oliver', 'vanhelsing')

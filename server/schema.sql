@@ -38,7 +38,8 @@ CREATE TABLE player (
 	num_gold	INTEGER NOT NULL DEFAULT 0,
 	game_id		INTEGER REFERENCES game
 );
-
+-- INSERT INTO landmark (lat, lng, radius, type, game_id, is_active, created_at) VALUES (30.02, 97.02, 50000, 1, 1, 1,)
+-- INSERT INTO gameuser (user_id, firstname, lastname, created_at, username, password) 
 -----------create table for points of interest
 DROP TABLE IF EXISTS landmark cascade;
 CREATE TABLE landmark (
@@ -158,3 +159,4 @@ INSERT INTO item VALUES (4, 'Silver Knife', 'A blade made from the purest of sil
 
 -- INSERT INTO inventory VALUES (1, 2, 1);
 -- INSERT INTO inventory VALUES (2, 1, 1);
+

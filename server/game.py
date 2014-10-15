@@ -19,6 +19,8 @@ rest_prefix = "/v1"
 
 dao = WherewolfDao()
 
+#
+#-----------------APIs-----------------------------
 @app.route("/")
 def welcome():
     return "welcome to wherewolf game REST api"
@@ -34,7 +36,7 @@ def create_user():  # Done
         return jsonify(response)
     else:
         try:
-            result = dao.create_user(username, password, firstname, lastname)
+            dao.create_user(username, password, firstname, lastname)
             response = {"status": "success"} #if result else {"status": "failure"}
         except UserAlreadyExistsException:
             response = {"status": "failure"}
@@ -111,9 +113,15 @@ def update_game(game_ID):  # Hold
     lng = request.form['lng']
     RADIUS = 100000
     dao.set_location(username, lat, lng)
-    # checking point of interest stuff
-    # implement this later on.
+    player_id_location = dao.get_location(username)
+    player_id = player_id_location['playerid']
 
+    all_landmark = dao.get_landmark_nearby(lat, lng, game_id) # a list of receivable landmark.
+    for entry in all_landmark:
+        if entry['type'] == 0: # get in a save zone, # implement this later on.
+            pass
+        elif entry['type'] == 1:
+            dao.add_treasure(player_id, entry['landmark_id'])
 
     currentPlayer = dao.get_current_player(username)
     if currentPlayer['is_werewolf'] == 0:
