@@ -67,17 +67,21 @@ def game_info(username, password, game_id): # Done
     r = requests.get(hostname + rest_prefix + "/game/" + str(game_id), auth=(username, password), data=payload)
     response = r.json()
     pprint (response)
+    return r
 
-
-def cast_vote(username, password, game_id, player_id): # in process
+def cast_vote(username, password, game_id, player_id): # Done
     '''each call will vote for an particular target player'''
     payload = {'username': username, 'password': password, 'game_id': game_id, 'player_id': player_id}
     r = requests.post(hostname + rest_prefix + "/game/" + str(game_id) + "/vote",auth=(username, password), data=payload)
     response = r.json()
     print response
 
-def get_vote():
-    pass
+def get_vote_stats(username, password, game_id): # Done
+    payload = {'username': username, 'password': password, 'game_id': game_id}
+    r = requests.get(hostname + rest_prefix + "/game/" + str(game_id) + "/vote",auth=(username, password), data=payload)
+    response = r.json()
+    print response
+    return response
 
 def set_game_time(game_id, game_time):
     '''allows you to override the current time to a user specified one'''
@@ -125,14 +129,19 @@ if __name__ == "__main__":
     # create_user('dwight', 'paperpaper', 'Dwight', 'Schrute')
     # create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
     # create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
-
     # leave_game('rfdickerson', 'awesome', 1)
     # join_game('dwight', 'paperpaper', 3)  # need to test game lobby status later on
     # join_game('dwight', 'paper', 2)
     # join_game('rfdickerson', 'awesome', 3)
     # join_game('rfdickerson', 'awesome', 2)
-    update_game('rfdickerson','awesome', 1, 30, 97)
+    # update_game('rfdickerson','awesome', 1, 30, 97)
     # game_info('rfdickerson','awesome','1')
+    # cast_vote('rfdickerson', 'awesome',1,3)
+    get_vote_stats('rfdickerson','awesome','1')
+    pass
+
+
+
    #create_users()
    # werewolf_winning_game()
    # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')

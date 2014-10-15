@@ -82,6 +82,7 @@ CREATE TABLE inventory (
 	primary key (playerid, itemid)
 );
 
+-- INSERT INTO treasure (landmark_id, item_id, quantity) VALUES (1, 1, 3)
 DROP TABLE IF EXISTS treasure cascade;
 CREATE TABLE treasure(
 	landmark_id	INTEGER REFERENCES landmark,
@@ -98,6 +99,7 @@ CREATE TABLE player_stat (
 	stat_value	varchar(80) NOT NULL,
         primary key (player_id, stat_name)
 );
+-- portion comsume, 
 
 -- used to store number of kills historically
 DROP TABLE IF EXISTS user_stat cascade;
@@ -111,10 +113,10 @@ CREATE TABLE user_stat (
 DROP TABLE IF EXISTS vote cascade;
 CREATE TABLE vote (
        vote_id		serial primary key,
-       game_id          integer references game,
-       player_id        integer references player,
+       game_id      integer references game,
+       player_id    integer references player,
        target_id  	integer references player,
-       cast_date	timestamp
+       cast_date	timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 

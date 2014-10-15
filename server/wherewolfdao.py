@@ -3,6 +3,7 @@
 
 import psycopg2
 import md5
+import collections
 from sqlalchemy.exc import IntegrityError
 from pprint import pprint
 # from datetime import time
@@ -80,8 +81,6 @@ class WherewolfDao(object):
                    'where username=%s)')
             cur.execute(sql, (lat, lng, username))
             conn.commit()
-
-
 
     def get_location(self, username): # tested
         conn = self.get_db()
@@ -476,7 +475,7 @@ class WherewolfDao(object):
                    'where game_id=%s')
             cur.execute(cmd, (game_id, status))
 
-    def vote(self, game_id, player_id, target_id): # tested # ambigutuity here
+    def vote(self, game_id, player_id, target_id): # tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -486,6 +485,21 @@ class WherewolfDao(object):
                    ' now())')
             cur.execute(sql, (game_id, player_id, target_id))
             conn.commit()
+
+    def get_vote_stats(self, game_id):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql =('Select target_id, count(target_id) from vote '
+                  'where game_id=%s '
+                  'group by (target_id)')
+            cur.execute(sql, (game_id,))
+            rows = cur.fetchall()
+            if isinstance(rows, collections.Iterable):
+                results = [{'playerid': row[0], 'votes': int(row[1])} for row in rows]
+            else:
+                results = []
+            return (results)
 
     def clear_tables(self):  # modified and tested
         conn = self.get_db()
@@ -581,16 +595,15 @@ if __name__ == "__main__":
     # for p in nearby:
     #     print "{} is {} meters away".format(p["player_id"],p["distance"])
     #
-    landmark_nearby = dao.get_landmark_nearby(30, 97, 1)
-    print ('Nearby landmark: ')
-    for p in landmark_nearby:
-        print "id: {}, type: {}".format(p["landmark_id"],p["type"])
+    # landmark_nearby = dao.get_landmark_nearby(30, 97, 1)
+    # print ('Nearby landmark: ')
+    # for p in landmark_nearby:
+    #     print "id: {}, type: {}".format(p["landmark_id"],p["type"])
+    #
+    # dao.add_treasure(2,1)
 
-    dao.add_treasure(2,1)
-
-    # dao.vote(game_id, 'rfdickerson', 'oliver')
-    # dao.vote(game_id, 'oliver', 'vanhelsing')
-    # dao.vote(game_id, 'vanhelsing', 'oliver')
+    # dao.vote(1, 3, 2)
+    dao.get_vote_stats(1)
     #
     # print 'Players in game 1 are'
     # pprint(dao.get_players(1))

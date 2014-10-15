@@ -32,14 +32,14 @@ def create_user():  # Done
     firstname = request.form['firstname']
     lastname = request.form['lastname']
     if len(password)<6:
-        response = {"status": "failure"}
+        response = {"status": "failure(password too short-less than 6 characters)"}
         return jsonify(response)
     else:
         try:
             dao.create_user(username, password, firstname, lastname)
             response = {"status": "success"} #if result else {"status": "failure"}
         except UserAlreadyExistsException:
-            response = {"status": "failure"}
+            response = {"status": "failure(user already exists with that username)"}
         finally:
             return jsonify(response)
 
@@ -53,11 +53,11 @@ def create_game():  # Done
         auth_checker = dao.check_password(username, password)
         if auth_checker:  # if auth correct
             result = dao.create_game(username, game_name, description) # create game if user is not administering another game
-            response = {"status": "success", "results": {"game_id": result}} if result else {"status": "failure", "results": {"game_id": 0}}
+            response = {"status": "success", "results": {"game_id": result}} if result else {"status": "failure(already administering a game)", "results": {"game_id": 0}}
         else:
-            response = {"status": "failure", "results": {"game_id": 0}}
+            response = {"status": "failure(bad aut)", "results": {"game_id": 0}}
     except NoUserExistsException:
-        response = {"status": "failure", "results": {"game_id": 0}}
+        response = {"status": "failure(No such a user)", "results": {"game_id": 0}}
     finally:
         return jsonify(response)
 
@@ -71,11 +71,11 @@ def leave_game(game_ID):   # Done
         if auth_checker:
             dao.leave_game(game_id)
             result = dao.delete_game(username, game_id)
-            response = {"status": "success"} if result else {"status": "failure"}
+            response = {"status": "success"} if result else {"status": "failure(game does not exists)"}
         else:
-            response = {"status": "failure"}
+            response = {"status": "failure(not admin of the game)"}
     except NoUserExistsException:
-        response = {"status": "failure"}
+        response = {"status": "failure(No such a user)"}
     finally:
         return jsonify(response)
 
@@ -87,26 +87,26 @@ def join_game(game_ID):   # Done
     gameinfo =  dao.game_info(game_id)
 
     if gameinfo == None:     # game does not exist
-        response = {"status": "failure"}
+        response = {"status": "failure(game does not exist)"}
         return jsonify(response)
     elif gameinfo["status"] != 0:  # 0: not staretd, 1: started, 2: ended
-        response = {"status": "failure"}
+        response = {"status": "failure(game not in the lobby mode (started or ended))"}
         return jsonify(response)
     else:
         try:
             auth_checker = dao.check_password(username, password)
             if auth_checker:
                 result = dao.join_game(username, game_id)
-                response = {"status": "success"} if result else {"status": "failure"}
+                response = {"status": "success"} if result else {"status": "failure(already in another game)"}
             else:
-                response = {"status": "failure"}
+                response = {"status": "failure(bad auth)"}
         except NoUserExistsException:
-            response = {"status": "failure"}
+            response = {"status": "failure(No such a user)"}
         finally:
             return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>', methods=["PUT"])
-def update_game(game_ID):  # Hold
+def update_game(game_ID):  # need to implement save zone
     username = request.form['username']
     game_id = request.form['game_id']
     lat = request.form['lat']
@@ -122,10 +122,9 @@ def update_game(game_ID):  # Hold
             pass
         elif entry['type'] == 1:
             dao.add_treasure(player_id, entry['landmark_id'])
-
     currentPlayer = dao.get_current_player(username)
     if currentPlayer['is_werewolf'] == 0:
-        response = {'status': 'success'}
+        response = {'status': 'success(you are not a werewolf)'}
     else:
         result = dao.get_alive_nearby(username, game_id, RADIUS)
         response = {'status': 'success', 'results': {'werewolfscent': [{'player_id': entry['player_id'], 'distance': round(entry['distance'],2)} for entry in result]}}
@@ -133,10 +132,6 @@ def update_game(game_ID):  # Hold
 
 @app.route(rest_prefix+'/game/'+'<game_ID>')
 def get_game_info(game_ID):  # Done
-    # return 'aaa'
-    # daybreak, nightfall, game status, players
-    # username = request.form['username']
-    # password = request.form['password']
     game_id = request.form['game_id']
     players = dao.get_players(game_id)# player is a list
     gameInfo = dao.game_info(game_id)
@@ -145,19 +140,15 @@ def get_game_info(game_ID):  # Done
             gameInfo[key] = str(gameInfo[key])
     gameInfo['players'] = players
     return jsonify(gameInfo)
-    # methods to track time in game. Admin sets the round to night
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/vote', methods=["POST"])
-def cast_vote(game_ID):
+def cast_vote(game_ID): # Done
     username = request.form['username']
     password = request.form['password']
-    game_id = request.form['game_id']
+    game_id = int(request.form['game_id'])
     target_id = request.form['player_id']
     gameinfo =  dao.game_info(game_id)
-    if gameinfo["currenttime"] > gameinfo['nightfall'] and gameinfo["currenttime"] < gameinfo['daybreak']: #voting during night
-        response = {"status": "failure"}
-        return jsonify(response)
-    else:
+    if gameinfo['currenttime'] < gameinfo['nightfall'] and gameinfo['currenttime'] > gameinfo['daybreak']:
         try:
             auth_checker = dao.check_password(username, password)
             if auth_checker:
@@ -167,14 +158,38 @@ def cast_vote(game_ID):
                     response = {"status": "success"}
                     dao.vote(game_id, current_player["playerid"], target_id)
                 else:  #not in game
-                    response = {"status": "failure"}
+                    response = {"status": "failure(not in game)"}
             else:
-                response = {"status": "failure"}
+                response = {"status": "failure(bad auth)"}
         except NoUserExistsException:  # bad auth
-            response = {"status": "failure"}
+            response = {"status": "failure(No such a user)"}
         finally:
             return jsonify(response)
+    else:
+        response = {"status": "failure(voting during night)"}
+        return jsonify(response)
 
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/vote', methods=["GET"])
+def get_vote_stats(game_ID):
+    username = request.form['username']
+    password = request.form['password']
+    game_id = int(request.form['game_id'])
+    try:
+        auth_checker = dao.check_password(username, password)
+        if auth_checker:  # if auth correct
+            current_player = dao.get_current_player(username)
+            current_gameid = dao.get_player_current_game_id(current_player["playerid"])
+            if current_gameid == game_id:
+                result = dao.get_vote_stats(game_id)
+                response = {"status": "success", "results": result}
+            else:  #not in game
+                response = {"status": "failure(not in game)"}
+        else:
+            response = {"status": "failure(bad auth)"}
+    except NoUserExistsException:
+        response = {"status": "failure(No such a user)"}
+    finally:
+        return jsonify(response)
 
 if __name__ == "__main__":
     app.run(debug=True)
