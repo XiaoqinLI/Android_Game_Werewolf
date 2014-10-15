@@ -83,6 +83,12 @@ def get_vote_stats(username, password, game_id): # Done
     print response
     return response
 
+def attack(username, password, game_id, target_id):
+    payload = {'username': username, 'password': password, 'game_id': game_id, 'target_id': target_id}
+    r = requests.post(hostname + rest_prefix + "/game/" + str(game_id) + "/attack",auth=(username, password), data=payload)
+    response = r.json()
+    print response
+
 def set_game_time(game_id, game_time):
     '''allows you to override the current time to a user specified one'''
     payload = {'game_id': game_id, 'current_time': game_time}
@@ -137,8 +143,9 @@ if __name__ == "__main__":
     # update_game('rfdickerson','awesome', 1, 30, 97)
     # game_info('rfdickerson','awesome','1')
     # cast_vote('rfdickerson', 'awesome',1,3)
-    get_vote_stats('rfdickerson','awesome','1')
-    pass
+    # get_vote_stats('rfdickerson','awesome','1')
+    # pass
+    attack('rfdickerson', 'awesome', '1', '3')
 
 
 

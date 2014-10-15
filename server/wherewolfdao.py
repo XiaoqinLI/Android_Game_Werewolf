@@ -7,7 +7,7 @@ import collections
 from sqlalchemy.exc import IntegrityError
 from pprint import pprint
 # from datetime import time
-# from datetime import datetime
+from datetime import datetime
 
 
 class UserAlreadyExistsException(Exception):
@@ -250,14 +250,15 @@ class WherewolfDao(object):
                 achievements.append(d)
         return achievements
 
-    def set_dead(self, username): # tested
+    def set_user_achievements(self, user_id, achievement_id):
+        pass
+
+    def set_dead(self, player_id): # tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
-            cmd = ('update player set is_dead=1 '
-                   'where player_id='
-                   '(select current_player from gameuser where username=%s);')
-            cur.execute(cmd, (username,))
+            cmd = ('update player set is_dead=1 where player_id=%s')
+            cur.execute(cmd, (player_id,))
             conn.commit()
 
     def get_players(self, gameid): # tested
@@ -286,13 +287,19 @@ class WherewolfDao(object):
             cmd = ('select player_id, is_dead, lat, lng, is_werewolf from player '
                    ' where player_id=(select current_player from gameuser where username=%s) ')
             cur.execute(cmd, (username,))
-            row = cur.fetchone()
-            currentplayer["playerid"] = row[0]
-            currentplayer["is_dead"] = row[1]
-            currentplayer["lat"] = float(row[2])
-            currentplayer["lng"] = float(row[3])
-            currentplayer["is_werewolf"] = row[4]
-            return currentplayer
+            current_player_stats = cur.fetchone()
+            if type(current_player_stats).__name__ != 'NoneType':
+                currentplayer["playerid"] = current_player_stats[0]
+                currentplayer["is_dead"] = current_player_stats[1]
+                currentplayer["lat"] = float(current_player_stats[2])
+                currentplayer["lng"] = float(current_player_stats[3])
+                currentplayer["is_werewolf"] = current_player_stats[4]
+                return currentplayer
+            else:
+                return None
+
+        if type(current_game_id).__name__ != 'NoneType':
+                current_game_id = current_game_id[0]
 
     def get_player_current_game_id(self, player_id):
         conn = self.get_db()
@@ -321,21 +328,40 @@ class WherewolfDao(object):
         #     uStats["stat_value"] = row[2]
         # return uStats
 
-    def get_player_stats(self, username):
-        pass
-        # conn = self.get_db()
-        # with conn:
-        #     cur = conn.cursor()
-        #     cmd = ('SELECT player_stat.player_id, player_stat.stat_name, player_stat.stat_value from player_stat, gameuser '
-        #            ' where player_stat.player_id = gameuser.current_player and '
-        #            ' gameuser.username=%s')
-        #     cur.execute(cmd, (username,))
-        #     row = cur.fetchone()
-        #     pStats = {}
-        #     pStats["user_id"] = row[0]
-        #     pStats["stat_name"] = row[1]
-        #     pStats["stat_value"] = row[2]
-        #     return pStats
+    def set_player_stats(self, playerid, name='Kill', value=1):  # tested
+        conn = self.get_db()
+        with conn:
+            cur=conn.cursor()
+            if name == 'Kill':
+                sqlupdate = ('UPDATE player_stat SET stat_value=stat_value+%s '
+                             'where player_id=%s and stat_name=%s; ')
+                sqlinsert = ('INSERT INTO player_stat (player_id, stat_name, stat_value) '
+                             'SELECT %s, %s, %s where not exists (select 1 from player_stat where player_id=%s and stat_name=%s)')
+                cur.execute(sqlupdate + sqlinsert, (value, playerid, name, playerid, name, value, playerid, name))
+                conn.commit()
+            elif name == 'CoolDown':
+
+                sqlupdate = ('UPDATE player_stat SET stat_time=now() '
+                             'where player_id=%s and stat_name=%s; ')
+                sqlinsert = ('INSERT INTO player_stat (player_id, stat_name, stat_time) '
+                             'SELECT %s, %s, now() where not exists (select 1 from player_stat where player_id=%s and stat_name=%s)')
+                cur.execute(sqlupdate + sqlinsert, ( playerid, name, playerid, name, playerid, name))
+                conn.commit()
+
+    def get_player_stats(self,playerid, name='Kill'):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql = ('SELECT stat_value, stat_time from player_stat '
+                   ' where player_id=%s and stat_name=%s')
+            cur.execute(sql, (playerid,name))
+            row = cur.fetchone()
+            if row != None:
+                pStats = {"stat_value": row[0], "stat_time": row[1]}
+                return pStats
+            else:
+                return None
+
 
     # game methods    
     def join_game(self, username, gameid): # tested
@@ -437,21 +463,6 @@ class WherewolfDao(object):
             else:
                 return None
 
-    # def get_game(self, username, game_name):  #tested
-    #     conn = self.get_db()
-    #
-    #     with conn:
-    #         cur = conn.cursor()
-    #         cmd = ('SELECT game_id from game where game_id=%s and admin_id=(select user_id from gameuser where username=%s)'')
-    #         cur.execute(cmd)
-    #         for row in cur.fetchall():
-    #             d = {}
-    #             d["game_id"] = row[0]
-    #             d["name"] = row[1]
-    #             d["status"] = row[2]
-    #             games.append(d)
-    #     return games
-
     def get_games(self):  #tested
         conn = self.get_db()
         games = []
@@ -500,6 +511,12 @@ class WherewolfDao(object):
             else:
                 results = []
             return (results)
+
+    def set_landmark(self):
+        pass
+
+    def set_treasure(self):
+        pass
 
     def clear_tables(self):  # modified and tested
         conn = self.get_db()
@@ -603,7 +620,7 @@ if __name__ == "__main__":
     # dao.add_treasure(2,1)
 
     # dao.vote(1, 3, 2)
-    dao.get_vote_stats(1)
+    # dao.get_vote_stats(1)
     #
     # print 'Players in game 1 are'
     # pprint(dao.get_players(1))
@@ -629,12 +646,17 @@ if __name__ == "__main__":
     # pprint(dao.get_player_stats('rfdickerson'))
 
     # print 'get current player of a user'
-    # print(dao.get_current_player('rfdickerson'))
+    # print(dao.get_current_player('safa'))
 
     # print 'game info of a game'
     # print(dao.game_info(1))
     #
     # print 'current game_id of a player'
     # print(dao.get_player_current_game_id(0))
+
+    # dao.set_player_stats(2)
+    # dao.set_player_stats(2, 'CoolDown')
+    print(dao.get_player_stats(2, 'CoolDown'))
+
 
 

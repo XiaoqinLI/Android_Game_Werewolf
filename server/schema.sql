@@ -38,7 +38,7 @@ CREATE TABLE player (
 	num_gold	INTEGER NOT NULL DEFAULT 0,
 	game_id		INTEGER REFERENCES game
 );
--- INSERT INTO landmark (lat, lng, radius, type, game_id, is_active, created_at) VALUES (30.02, 97.02, 50000, 1, 1, 1,)
+-- 
 -- INSERT INTO gameuser (user_id, firstname, lastname, created_at, username, password) 
 -----------create table for points of interest
 DROP TABLE IF EXISTS landmark cascade;
@@ -82,7 +82,7 @@ CREATE TABLE inventory (
 	primary key (playerid, itemid)
 );
 
--- INSERT INTO treasure (landmark_id, item_id, quantity) VALUES (1, 1, 3)
+-- 
 DROP TABLE IF EXISTS treasure cascade;
 CREATE TABLE treasure(
 	landmark_id	INTEGER REFERENCES landmark,
@@ -96,7 +96,8 @@ DROP TABLE IF EXISTS player_stat cascade;
 CREATE TABLE player_stat (
 	player_id 	INTEGER NOT NULL REFERENCES player,
 	stat_name	varchar(80) NOT NULL,
-	stat_value	varchar(80) NOT NULL,
+	stat_value	INTEGER NOT NULL DEFAULT 0,
+	stat_time	time DEFAULT CURRENT_TIME,
         primary key (player_id, stat_name)
 );
 -- portion comsume, 
@@ -125,7 +126,7 @@ CREATE INDEX playerindex ON inventory(playerid);
 CREATE INDEX username ON gameuser(username);
 CREATE INDEX indexitemname ON item(name);
 
-+-- adds an index so our lookups based on position will be exponentially faster
+-- adds an index so our lookups based on position will be exponentially faster
 CREATE INDEX pos_index ON player USING gist (ll_to_earth(lat, lng));
 -- insert some data
 
@@ -140,12 +141,13 @@ CREATE INDEX pos_index ON player USING gist (ll_to_earth(lat, lng));
 
 -- INSERT INTO player (player_id, is_dead, lat, lng, game_id) VALUES (1, 0, 38, 78, 1);
 -- INSERT INTO player (player_id, is_dead, lat, lng, game_id) VALUES (2, 0, 38.01, 77.01, 1);
-
+-- INSERT INTO treasure (landmark_id, item_id, quantity) VALUES (1, 1, 3);
 -- UPDATE gameuser SET current_player=1 WHERE username='rfdickerson'; 
 -- UPDATE gameuser SET current_player=2 WHERE username='vanhelsing'; 
+--INSERT INTO landmark (lat, lng, radius, type, game_id, is_active) VALUES (30.02, 97.02, 50000, 1, 1, 1);
 
 INSERT INTO achievement VALUES (1, 'Hair of the dog', 'Survive an attack by a werewolf');
-INSERT INTO achievement VALUES (2, 'Top of the pack', 'Finish the game as a werewolf and receive the top number of kills');
+INSERT INTO achievement VALUES (2, 'Leader of the Pack', 'have the most number of kills by the end of the game');
 INSERT INTO achievement VALUES (3, 'Children of the moon', 'Stay alive and win the game as a werewolf');
 INSERT INTO achievement VALUES (4, 'It is never Lupus', 'Vote someone to be a werewolf, when they were a townsfolk');
 INSERT INTO achievement VALUES (5, 'A hairy situation', 'Been near 3 werewolves at once.');

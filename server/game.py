@@ -11,7 +11,10 @@
 from flask import Flask, request, jsonify
 import psycopg2
 from wherewolfdao import WherewolfDao, BadArgumentsException, NoUserExistsException, UserAlreadyExistsException
+
 import datetime
+import time
+import random
 
 app = Flask(__name__)
 
@@ -170,7 +173,7 @@ def cast_vote(game_ID): # Done
         return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/vote', methods=["GET"])
-def get_vote_stats(game_ID):
+def get_vote_stats(game_ID): #Done
     username = request.form['username']
     password = request.form['password']
     game_id = int(request.form['game_id'])
@@ -190,6 +193,103 @@ def get_vote_stats(game_ID):
         response = {"status": "failure(No such a user)"}
     finally:
         return jsonify(response)
+
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/attack', methods=["POST"])
+def attack(game_ID):
+    username = request.form['username']
+    password = request.form['password']
+    game_id = int(request.form['game_id'])
+    target_id = int(request.form['target_id'])
+    gameinfo =  dao.game_info(game_id)
+    if gameinfo['currenttime'] < gameinfo['nightfall'] and gameinfo['currenttime'] > gameinfo['daybreak']:
+        response = {"status": "failure(attack in daytime)"}
+        return jsonify(response)
+    else:
+        try:
+            auth_checker = dao.check_password(username, password)
+            if auth_checker:
+
+                current_player = dao.get_current_player(username)
+                if current_player == None:
+                    response = {"status": "failure(not in game)"}
+                    return jsonify(response)
+                elif current_player['is_werewolf'] != 0:
+                    response = {"status": "failure( attacker is a villager)"}
+                    return jsonify(response)
+                else:
+                    print "cccc"
+                    if is_in_cooldown(current_player['playerid']):
+                        response = {"status": "failure(player is werewolf under cooldown period of 30 minutes)"}
+                        return jsonify(response)
+                    else:
+                        avoidability = random.uniform(0.2,0.5)
+                        attackaccuracy = random.uniform(0.6,1)
+                        if attackaccuracy >= avoidability:
+                            dao.set_dead(target_id)
+                            get_One_Kill(current_player['playerid'])
+                            response = {'status': 'success', 'results': { 'summary': 'death', 'combatant': target_id }}
+                            set_cooldown(current_player['playerid']);
+                            return jsonify(response)
+                        else:
+                            hair_of_dog(target_id)
+                            response = {'status': 'success', 'results': { 'summary': 'no death', 'combatant': target_id }}
+                            set_cooldown(current_player['playerid']);
+                            return jsonify(response)
+            else:
+                response = {"status": "failure(bad auth)"}
+                return jsonify(response)
+        except NoUserExistsException:  # bad auth
+            response = {"status": "failure(No such a user)"}
+            return jsonify(response)
+
+
+def is_in_cooldown(playerid): # implement in player_stat
+    player_stat = dao.get_player_stats(playerid, name='CoolDown')
+    if player_stat == None:
+        return False
+    else:
+        current_time = str(datetime.datetime.time(datetime.datetime.now())).split(".")[0]
+        last_attack_time =  str(player_stat['stat_time']).split(".")[0]
+        FMT = '%H:%M:%S'
+        time_delta = (datetime.datetime.strptime(current_time, FMT) - datetime.datetime.strptime(last_attack_time, FMT))
+        cooldown = datetime.timedelta(minutes=30)
+        return time_delta < cooldown
+
+def set_cooldown(playerid): #done
+    dao.set_player_stats(playerid, name='CoolDown')
+
+def get_One_Kill(player_id): # done
+    dao.set_player_stats(player_id) # default is kill + 1
+
+def hair_of_dog(target_id):
+    pass
+    # dao.update
+
+# - "Leader of the Pack" have the most number of kills by the end of the game de def Leader of the Pack in end game
+# - "Hair of the dog" - survive an attack by a werewolf -- implement in attack
+# - "A hairy situation" - be near 3 werewolves at once --  def hairy_situation()
+# - "It is never Lupus" - vote for someone to be a werewolf, when they were a townsfolk -- implement in cast_vote
+
+
+#
+# * POST /game/{gameid}/attack
+#   attacks a villager
+#   returns:
+#   {'status': 'success',
+#       results:
+#       { 'summary': 'death',
+#         'combatant': 20 }
+#     }
+#   failure conditions:
+#       bad auth
+#       not in game
+#       player is werewolf under cooldown period of 30 minutes
+#       player is a villager
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
