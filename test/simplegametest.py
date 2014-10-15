@@ -85,7 +85,7 @@ def attack(username, password, game_id, target_id):
 def set_game_time(username, game_id, game_time):
     '''allows you to override the current time to a user specified one'''
     payload = {'username': username, 'game_id': game_id, 'current_time': game_time}
-    r = requests.post(hostname + rest_prefix + "/game/" + + str(game_id) +"/time", data=payload )
+    r = requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/time", data=payload)
     response = r.json()
     print response
 
@@ -134,8 +134,8 @@ if __name__ == "__main__":
     # michael will set the game to active, and the first day round begins. 30% of the players rounding up will be
     # set to be werewolves- 3 werewolves in our case.
     # set_game_status('michael', 1, 1)
-
-    game_round += 1
+    set_game_time('michael', 1, '08:00:00')
+    # game_round += 1
 
 
 

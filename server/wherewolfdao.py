@@ -504,6 +504,14 @@ class WherewolfDao(object):
                    'where game_id=%s and admin_id=(select user_id from gameuser where username=%s)')
             cur.execute(cmd, (status, game_id, username))
 
+    def set_game_current_time(self, username, game_id, current_time):  # tested
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            cmd = ('UPDATE game set currenttime=%s '
+                   'where game_id=%s and admin_id=(select user_id from gameuser where username=%s)')
+            cur.execute(cmd, (current_time, game_id, username))
+
     def vote(self, game_id, player_id, target_id): # tested
         conn = self.get_db()
         with conn:
@@ -688,7 +696,10 @@ if __name__ == "__main__":
     # print dao.get_userID(1)
 
     # print set game status
-    dao.set_game_status('toby',1,1)
+    # dao.set_game_status('michael',1,1)
+
+    # print "set game current time"
+    # dao.set_game_current_time('michael',1,'09:00:00')
 
 
 

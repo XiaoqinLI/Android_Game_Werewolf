@@ -242,6 +242,15 @@ def set_game_status(game_ID):
     game_status = int(request.form['game_status'])
     dao.set_game_status(username, game_id, game_status)
 
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/time', methods=["POST"])
+def set_game_time(game_ID):
+    username = request.form['username']
+    game_id = int(request.form['game_id'])
+    current_time = request.form['current_time']
+    dao.set_game_current_time(username, game_id, current_time)
+    response = {"status": "success"}
+    return jsonify(response)
+
 def is_in_cooldown(playerid): # implement in player_stat
     player_stat = dao.get_player_stats(playerid, name='CoolDown')
     if player_stat == None:
