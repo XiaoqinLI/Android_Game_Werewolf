@@ -2,4 +2,7 @@
 
 methods: isnight()
 
-
+# my POSTgreSQL default password for postgres is 121314, you need to send your password as a kwarg to match yours when
+  creating a Dao.
+# Items: Although there are 5 kinds of items in item table, I only support Invisibility potion as instructed,
+ meaning only this item can be in treasure chest.

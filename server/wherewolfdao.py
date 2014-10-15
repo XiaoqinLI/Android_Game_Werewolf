@@ -496,13 +496,13 @@ class WherewolfDao(object):
                 games.append(d)
         return games
 
-    def set_game_status(self, game_id, status): #tested
+    def set_game_status(self, username, game_id, status): #tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
             cmd = ('UPDATE game set status=%s '
-                   'where game_id=%s')
-            cur.execute(cmd, (game_id, status))
+                   'where game_id=%s and admin_id=(select user_id from gameuser where username=%s)')
+            cur.execute(cmd, (status, game_id, username))
 
     def vote(self, game_id, player_id, target_id): # tested
         conn = self.get_db()
@@ -550,8 +550,8 @@ class WherewolfDao(object):
 
             
 if __name__ == "__main__":
-    dao = WherewolfDao()
-
+    dao = WherewolfDao() # default password is '121314', change it if neeeded.
+    #---------------------------Testing Each Functions used in Game.py--------------------
     # dao.clear_tables()#clear gameuser, player and user_achievement table
     # try:
     #     dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
@@ -686,6 +686,9 @@ if __name__ == "__main__":
 
     # print get userId by playerid:
     # print dao.get_userID(1)
+
+    # print set game status
+    dao.set_game_status('toby',1,1)
 
 
 

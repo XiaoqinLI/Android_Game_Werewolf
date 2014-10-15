@@ -1,18 +1,10 @@
 import requests
 import json
 from pprint import pprint
-# def daybreak()
 
 hostname = "http://localhost:5000"
 rest_prefix = "/v1"
-# game_id = 1
 
-''' Important functions
-create a game
-leave a game
-update game state with location
-cast a vote
-'''
 
 def create_user(username, password, firstname, lastname):  # Done
     payload = {'username': username, 'password': password, 'firstname': firstname, 'lastname': lastname}
@@ -28,6 +20,7 @@ def create_game(username, password, game_name, description): # Done
     r = requests.post(url, auth=(username, password), data=payload)
     response = r.json()
     print response["status"]
+    join_game(username, password, response["results"]["game_id"]) # the guy created game gonna join it automatically
     return response["results"]["game_id"]
     
 def leave_game(username, password, game_id): # Done
@@ -89,12 +82,17 @@ def attack(username, password, game_id, target_id):
     response = r.json()
     print response
 
-def set_game_time(game_id, game_time):
+def set_game_time(username, game_id, game_time):
     '''allows you to override the current time to a user specified one'''
-    payload = {'game_id': game_id, 'current_time': game_time}
-    r = requests.post(hostname + rest_prefix + "/game/admin")
+    payload = {'username': username, 'game_id': game_id, 'current_time': game_time}
+    r = requests.post(hostname + rest_prefix + "/game/" + + str(game_id) +"/time", data=payload )
     response = r.json()
     print response
+
+def set_game_status(username, game_id, game_status):
+    '''allows you to override the current time to a user specified one'''
+    payload = {'username': username, 'game_id': game_id, 'game_status': game_status}
+    requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/status", data=payload )
 
 def get_games(username, password):
     r = requests.get(hostname + rest_prefix + "/game")
@@ -102,39 +100,50 @@ def get_games(username, password):
     return r["results"]
 
 def create_users():
-    create_user('michael', 'paper', 'Michael', 'Scott')
-    create_user('dwight', 'paper', 'Dwight', 'Schrute')
-    create_user('jim', 'paper', 'Jim', 'Halpert')
-    create_user('pam', 'paper', 'Pam', 'Beesly')
-    create_user('ryan', 'paper', 'Ryan', 'Howard')
-    create_user('andy', 'paper', 'Andy', 'Bernard')
-    create_user('angela', 'paper', 'Angela', 'Martin')
-    create_user('toby', 'paper', 'Toby', 'Flenderson')
+    create_user('michael', 'paper01', 'Michael', 'Scott')
+    create_user('dwight', 'paper02', 'Dwight', 'Schrute')
+    create_user('jim', 'paper03', 'Jim', 'Halpert')
+    create_user('pam', 'paper04', 'Pam', 'Beesly')
+    create_user('ryan', 'paper05', 'Ryan', 'Howard')
+    create_user('andy', 'paper06', 'Andy', 'Bernard')
+    create_user('angela', 'paper07', 'Angela', 'Martin')
+    create_user('toby', 'paper08', 'Toby', 'Flenderson')
 
-def werewolf_winning_game():
-    game_id = create_game('michael', 'paper', 'NightHunt', 'A test for werewolf winning')
-    games = get_games('michael', 'paper')
-    for game in games:
-        print "Id: {},\tName: {}".format(game["game_id"], game["name"])
-    
-    join_game('dwight', 'paper', game_id)
-    join_game('jim', 'paper', game_id)
-    join_game('pam', 'paper', game_id)
-    join_game('ryan', 'paper', game_id)
-    join_game('andy', 'paper', game_id)
-    join_game('angela', 'paper', game_id)
-    join_game('toby', 'paper', game_id)
-    # start_game('michael', 'paper', game_id)
-    #
-    # leave_game('micheal', 'paper', game_id)
+def all_join_game(current_game_id):
+    join_game('dwight', 'paper02', current_game_id)
+    join_game('jim', 'paper03', current_game_id)
+    join_game('pam', 'paper04', current_game_id)
+    join_game('ryan', 'paper05', current_game_id)
+    join_game('andy', 'paper06', current_game_id)
+    join_game('angela', 'paper07', current_game_id)
+    join_game('toby', 'paper08', current_game_id)
 
 
 if __name__ == "__main__":
+    game_round = 0
+    #------------------Game Simulation---------------------------------
+    # The client script will register 8 new users in the game (michael,
+    # dwight, jim, pam, ryan, andy, angela, toby)
+    # create_users()
 
-    # create_user('michael', 'paperpaper', 'Michael', 'Scott')
-    # create_user('dwight', 'paperpaper', 'Dwight', 'Schrute')
-    # create_game('michael', 'paperpaper', 'NightHunt', 'A test for werewolf winning')
-    # create_game('dwight', 'paperpaper', 'NightHunt', 'A game in Austin')
+    # A new game called NightHunt will be created by michael. michael will automatically be
+    # added to that game. Next, all the other users will join that game,creating new players for each.
+    # current_game_id = create_game('michael', 'paper01', 'NightHunt', 'A test for werewolf winning')
+    # all_join_game(current_game_id)
+
+    # michael will set the game to active, and the first day round begins. 30% of the players rounding up will be
+    # set to be werewolves- 3 werewolves in our case.
+    # set_game_status('michael', 1, 1)
+
+    game_round += 1
+
+
+
+
+
+
+
+
     # leave_game('rfdickerson', 'awesome', 1)
     # join_game('dwight', 'paperpaper', 3)  # need to test game lobby status later on
     # join_game('dwight', 'paper', 2)
@@ -145,7 +154,7 @@ if __name__ == "__main__":
     # cast_vote('rfdickerson', 'awesome',1,3)
     # get_vote_stats('rfdickerson','awesome','1')
     # pass
-    attack('rfdickerson', 'awesome', '1', '3')
+    # attack('rfdickerson', 'awesome', '1', '3')
 
 
 

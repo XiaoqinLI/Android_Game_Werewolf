@@ -1,12 +1,5 @@
 # __author__ = 'daybreaklee'
 # game is the web rest service API for wherewolf game
-# the questions I have:
-    # how to show get_game_info in the browser???
-
-
-  # Basic Game Logic
-  # The WhereWolf game has two game states, a day and a night cycle. However, in terms of event-based handling,
-  #  there is a daybreak and there is a nightfall. Create two functions that can be called.
 
 from flask import Flask, request, jsonify
 import psycopg2
@@ -58,7 +51,7 @@ def create_game():  # Done
             result = dao.create_game(username, game_name, description) # create game if user is not administering another game
             response = {"status": "success", "results": {"game_id": result}} if result else {"status": "failure(already administering a game)", "results": {"game_id": 0}}
         else:
-            response = {"status": "failure(bad aut)", "results": {"game_id": 0}}
+            response = {"status": "failure(bad auth)", "results": {"game_id": 0}}
     except NoUserExistsException:
         response = {"status": "failure(No such a user)", "results": {"game_id": 0}}
     finally:
@@ -242,6 +235,12 @@ def attack(game_ID):
             response = {"status": "failure(No such a user)"}
             return jsonify(response)
 
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/status', methods=["POST"])
+def set_game_status(game_ID):
+    username = request.form['username']
+    game_id = int(request.form['game_id'])
+    game_status = int(request.form['game_status'])
+    dao.set_game_status(username, game_id, game_status)
 
 def is_in_cooldown(playerid): # implement in player_stat
     player_stat = dao.get_player_stats(playerid, name='CoolDown')
