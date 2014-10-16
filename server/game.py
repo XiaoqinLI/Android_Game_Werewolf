@@ -193,6 +193,7 @@ def attack(game_ID):
     password = request.form['password']
     game_id = int(request.form['game_id'])
     target_id = int(request.form['target_id'])
+
     gameinfo =  dao.game_info(game_id)
     if gameinfo['daybreak'] < gameinfo['currenttime'] < gameinfo['nightfall']:
         response = {"status": "failure(attack in daytime)"}
@@ -206,17 +207,16 @@ def attack(game_ID):
                 if current_player == None:
                     response = {"status": "failure(not in game)"}
                     return jsonify(response)
-                elif current_player['is_werewolf'] != 0:
+                elif current_player['is_werewolf'] == 0:
                     response = {"status": "failure( attacker is a villager)"}
                     return jsonify(response)
                 else:
-                    print "cccc"
                     if is_in_cooldown(current_player['playerid']):
                         response = {"status": "failure(player is werewolf under cooldown period of 30 minutes)"}
                         return jsonify(response)
                     else:
-                        avoidability = random.uniform(0.2,0.5)
-                        attackaccuracy = random.uniform(0.6,1)
+                        avoidability = random.uniform(0.5,0.9)
+                        attackaccuracy = random.uniform(0.4,1)
                         if attackaccuracy >= avoidability:
                             dao.set_dead(target_id)
                             get_One_Kill(current_player['playerid'])
@@ -317,19 +317,23 @@ def check_game_results(game_ID):
         response = {"game_status": "continue"}
     return jsonify(response)
 
-# dao.set_dead(target_id)
-
 def is_in_cooldown(playerid): # implement in player_stat
-    player_stat = dao.get_player_stats(playerid, name='CoolDown')
-    if player_stat == None:
-        return False
-    else:
-        current_time = str(datetime.datetime.time(datetime.datetime.now())).split(".")[0]
-        last_attack_time =  str(player_stat['stat_time']).split(".")[0]
-        FMT = '%H:%M:%S'
-        time_delta = (datetime.datetime.strptime(current_time, FMT) - datetime.datetime.strptime(last_attack_time, FMT))
-        cooldown = datetime.timedelta(minutes=30)
-        return time_delta < cooldown
+    '''
+    The whole Logic here is tested and correct; however since one werewolves attacks once each night,
+    there is no reason to add it here to slowdown the process.
+    So I just disable it for now and may call it later on if multiple attacks allowed in the future
+    '''
+    return False
+    # player_stat = dao.get_player_stats(playerid, name='CoolDown')
+    # if player_stat == None:
+    #     return False
+    # else:
+    #     current_time = str(datetime.datetime.time(datetime.datetime.now())).split(".")[0]
+    #     last_attack_time =  str(player_stat['stat_time']).split(".")[0]
+    #     FMT = '%H:%M:%S'
+    #     time_delta = (datetime.datetime.strptime(current_time, FMT) - datetime.datetime.strptime(last_attack_time, FMT))
+    #     cooldown = datetime.timedelta(minutes=30)
+    #     return time_delta < cooldown
 
 def set_cooldown(playerid): #done
     dao.set_player_stats(playerid, name='CoolDown')
@@ -338,8 +342,8 @@ def get_One_Kill(player_id): # done
     dao.set_player_stats(player_id) # default is kill + 1
 
 def hair_of_dog(target_id):
-    player_id = dao.get_userID(target_id)
-    dao.set_user_achievements(player_id)
+    user_id = dao.get_userID(target_id)
+    dao.set_user_achievements(user_id, 1)  # No.1 is hair_of_dog
 
 # - "Leader of the Pack" have the most number of kills by the end of the game de def Leader of the Pack in end game
 # - "Hair of the dog" - survive an attack by a werewolf -- implement in attack

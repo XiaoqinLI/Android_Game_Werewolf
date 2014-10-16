@@ -7,7 +7,6 @@ import math
 hostname = "http://localhost:5000"
 rest_prefix = "/v1"
 
-
 def create_user(username, password, firstname, lastname):  # Done
     payload = {'username': username, 'password': password, 'firstname': firstname, 'lastname': lastname}
     url = "{}{}{}".format(hostname, rest_prefix, "/register")
@@ -189,20 +188,21 @@ if __name__ == "__main__":
     # A new game called NightHunt will be created by michael. michael will automatically be
     # added to that game. Next, all the other users will join that game,creating new players for each.
     print "------------------------------creating a game-------------------------------------"
-    # current_game_id = 1
-    current_game_id = create_game('michael', 'paper01', 'NightHunt', 'A test for werewolf winning')
+    admin_name = 'michael'
+    admin_pwd = 'paper01'
+    current_game_id = create_game(admin_name, admin_pwd, 'NightHunt', 'A test for werewolf winning')
     print '-----------------everyone joins the game----------------------'
     username_password_playerid_list = all_join_game(current_game_id)
 
     # michael will set the game to active, and the first day round begins.
     print '-----------------start the game----------------------'
-    set_game_status('michael', current_game_id, 1)
-    set_game_time('michael', current_game_id, '08:00:00')
+    set_game_status(admin_name, current_game_id, 1)
+    set_game_time(admin_name, current_game_id, '08:00:00')
     # game_round += 1
 
     # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
     print '-----------------current game info----------------------'
-    current_game_info = game_info('michael', 'paper01', current_game_id)
+    current_game_info = game_info(admin_name, admin_pwd, current_game_id)
     random_playerid_list =[ entry['playerid'] for entry in current_game_info['players'] ]
     random.shuffle(random_playerid_list)
     num_werewolf = int(math.ceil(len(random_playerid_list)*0.3))
@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
     while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
         print "------------set to a day time------------------"
-        set_game_time('michael', '1', '10:00:00')
+        set_game_time(admin_name, '1', '10:00:00')
         game_round += 1
 
         print "%%%%%%-----------------------Game in daytime-------------------------%%%%%%%%%%%"
@@ -253,7 +253,7 @@ if __name__ == "__main__":
                     cast_vote(userInfo['username'], userInfo['password'], current_game_id, target_id)
 
             print '-------showing vote results and checking if game is end, clear all vote info after pull over vote results'
-            vote_results = get_vote_stats('michael', 'paper01', current_game_id)
+            vote_results = get_vote_stats(admin_name, admin_pwd, current_game_id)
             vote_results_sorted = sorted(vote_results['results'], key = lambda k: k['votes'], reverse=True )
 
             print "-----------------voting results for round {}----------------------------".format(game_round)
@@ -276,16 +276,17 @@ if __name__ == "__main__":
             game_results = check_game_results(current_game_id)
             print game_results
             if game_results['game_status'] == 'villagers won' or game_results['game_status'] == 'werewolves won':
-                set_game_status('michael', current_game_id, 2)
+                set_game_status(admin_name, current_game_id, 2)
                 break  # game ended
             else:
                 update_locations(current_game_id)
 
         print "#-----------update current_game_info before night comes---------------------------"
-        current_game_info = game_info('michael', 'paper01', current_game_id)
+        current_game_info = game_info(admin_name, admin_pwd, current_game_id)
 
+        ########################THE NIGHT IS COMING###################################################
         print "set to a night time"
-        set_game_time('michael', current_game_id, '20:00:00')
+        set_game_time(admin_name, current_game_id, '20:00:00')
         print "%%%%%%-----------------------Game in night time-------------------------%%%%%%%%%%%"
         print "%%%%%%----------------------------round {}---------------------------%%%%%%%%%%%".format(game_round)
 
@@ -299,23 +300,35 @@ if __name__ == "__main__":
         # -------------every one votes--------------------
         print "----------------Attacking Begins-----------------------"
 
-        attacker_id = alive_werewolf_list[random.randint(0,len(alive_playerid_list)-1)]
-        target_id = alive_village_list[random.randint(0,len(alive_playerid_list)-1)]
+        attacker_id = alive_werewolf_list[random.randint(0,len(alive_werewolf_list)-1)]
+        target_id = alive_village_list[random.randint(0,len(alive_village_list)-1)]
 
         for i in xrange(len(username_password_playerid_list)):
             if username_password_playerid_list[i]['playerid'] == attacker_id:
                 attackerInfo = username_password_playerid_list[i]
-        # call vote function
+
+        # call attack function
         attack(attackerInfo['username'], attackerInfo['password'], current_game_id, target_id)
 
-
+        print '#---------------is game ended?? werewolves won???------------------'
+        game_results = check_game_results(current_game_id)
+        print game_results
+        if game_results['game_status'] == 'werewolves won':
+            set_game_status(admin_name, current_game_id, 2)
+            break  # game ended
+        else:
+            update_locations(current_game_id)
 
         # update current game info before going next loop.
-        current_game_info = game_info('michael', 'paper01', current_game_id)
+        current_game_info = game_info(admin_name, admin_pwd, current_game_id)
 
-
-
+    ########################THE GAME HAS ENDED#########################################
+    current_game_info = game_info(admin_name, admin_pwd, current_game_id)
+    print "Game status: {}".format(current_game_info['status'])
     print "------------------game ended--------------------"
+    #Set all the game's users' current player field to NULL
+    leave_game(admin_name, admin_pwd, current_game_id)
+
     print "------------------Assigning Achievements--------------------"
 
 
