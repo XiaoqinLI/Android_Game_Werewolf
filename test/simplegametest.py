@@ -107,7 +107,7 @@ def get_games(username, password):
 def set_random_landmark(game_id):
     minValue = 9.9
     maxValue = 10.1
-    radius = 3000
+    radius = 2000
     num_landmark = random.randint(3,5)  # 3 to 5 landmark
     payload = {'game_id': game_id, 'minValue': minValue, 'maxValue': maxValue, 'radius': radius, 'num_landmark': num_landmark}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/landmark", data=payload )
@@ -117,7 +117,6 @@ def set_treasure_to_landmark(game_id, num_landmark):
     payload = {'game_id': game_id, 'num_landmark': num_landmark}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/treasure", data=payload )
     return
-
 
 def create_users():
     create_user('michael', 'paper01', 'Michael', 'Scott')
@@ -138,6 +137,17 @@ def all_join_game(current_game_id):
     join_game('angela', 'paper07', current_game_id)
     join_game('toby', 'paper08', current_game_id)
 
+    username_password_playerid_list = []  # hard coded this for voting, no better way for our case
+    username_password_playerid_list.append({'username': 'michael', 'password': 'paper01', 'playerid': 1})
+    username_password_playerid_list.append({'username': 'dwight', 'password': 'paper02', 'playerid': 2})
+    username_password_playerid_list.append({'username': 'jim', 'password': 'paper03', 'playerid': 3})
+    username_password_playerid_list.append({'username': 'pam', 'password': 'paper04', 'playerid': 4})
+    username_password_playerid_list.append({'username': 'ryan', 'password': 'paper05', 'playerid': 5})
+    username_password_playerid_list.append({'username': 'andy', 'password': 'paper06', 'playerid': 6})
+    username_password_playerid_list.append({'username': 'angela', 'password': 'paper07', 'playerid': 7})
+    username_password_playerid_list.append({'username': 'toby', 'password': 'paper08', 'playerid': 8})
+    return username_password_playerid_list
+
 def update_locations(current_game_id):
     #positioned in a rectangular region (9.9, 9.9),(10.1, 10.1). Max possible Distance: 31210m
     minValue = 9.9
@@ -152,23 +162,25 @@ def update_locations(current_game_id):
     update_game('toby', 'paper08', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
 
 if __name__ == "__main__":
+
     game_round = 0
     #------------------Game Simulation---------------------------------
-    # The client script will register 8 new users in the game (michael,
-    # dwight, jim, pam, ryan, andy, angela, toby)
+    # # The client script will register 8 new users in the game (michael,
+    # # dwight, jim, pam, ryan, andy, angela, toby)
+
     # create_users()
 
-    # A new game called NightHunt will be created by michael. michael will automatically be
-    # added to that game. Next, all the other users will join that game,creating new players for each.
+    # # A new game called NightHunt will be created by michael. michael will automatically be
+    # # added to that game. Next, all the other users will join that game,creating new players for each.
     # current_game_id = create_game('michael', 'paper01', 'NightHunt', 'A test for werewolf winning')
-    # all_join_game(current_game_id)
+    username_password_playerid_list = all_join_game(1)
 
-    # michael will set the game to active, and the first day round begins.
+    # # michael will set the game to active, and the first day round begins.
     # set_game_status('michael', current_game_id, 1)
     # set_game_time('michael', current_game_id, '08:00:00')
     # game_round += 1
 
-    # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
+    # # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
     current_game_info = game_info('michael', 'paper01', 1)
     # random_playerid_list =[ entry['playerid'] for entry in current_game_info['players'] ]
     # random.shuffle(random_playerid_list)
@@ -176,24 +188,56 @@ if __name__ == "__main__":
     # for i in xrange(num_werewolf):
     #     set_werewolf(1,random_playerid_list[i])
 
-    # Daytime:  Vote starts at day 2. All Players will be randomly positioned in a rectangular region.
-    # The admin sets the round to night.
-    # One werewolf will move to a location of one random villager. The werewolf will make an attack. The villager may or may not survive this encounter
-    # The admin sets the round to day.
+    # # Daytime:  Vote starts at day 2. All Players will be randomly positioned in a rectangular region.
+    # # The admin sets the round to night.
+    # # One werewolf will move to a location of one random villager. The werewolf will make an attack. The villager may or may not survive this encounter
+    # # The admin sets the round to day.
     pprint (current_game_info)  # print game_info before it starts.
     while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
-        # set to a day time
+        # #set to a day time
         # set_game_time('michael', '1', '10:00:00')
-        game_round += 1
+        game_round += 2
         if game_round <= 1:      #There is no vote in first day round
-
             # numLandmark = set_random_landmark(1)   # set random land marks on the game in day 1
-            set_treasure_to_landmark(1,5)
-            # print numLandmark
-
-            # update_game('')
+            # set_treasure_to_landmark(1,5)         # link treasure to landmark
             # update_locations(1)
-            break
+            pass
+        else:
+            # get all alive playerid:
+            alive_playerid_list = []
+            for player in current_game_info['players']:
+                if player['is_dead'] == 0:
+                    alive_playerid_list.append(int(player['playerid']))
+
+            # -------------every one vote------------------
+            for player in current_game_info['players']:
+                if player['is_dead'] == 0:
+                    # get the user_info
+                    for i in xrange(len(username_password_playerid_list)):
+                        if username_password_playerid_list[i]['playerid'] == player['playerid']:
+                            userInfo = username_password_playerid_list[i]
+                            break
+                    # get target id, target id can not be voter's player id
+                    target_id = alive_playerid_list[random.randint(0,len(alive_playerid_list)-1)]
+                    while(target_id == player['playerid']):
+                        target_id = alive_playerid_list[random.randint(0,len(alive_playerid_list)-1)]
+
+                    # call vote function
+                    cast_vote(userInfo['username'], userInfo['password'], 1, target_id)
+
+            # needs vote and checking if game is end
+            get_vote_stats('michael', 1)
+
+            update_locations(1)
+
+        # set to a night time
+        set_game_time('michael', '1', '20:00:00')
+        # gameinfo
+
+        # else:
+        #     update_locations(1)
+
+            # break
         current_game_info = game_info('michael', 'paper01', 1)
 
     print current_game_info['currenttime']
