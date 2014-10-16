@@ -216,7 +216,7 @@ if __name__ == "__main__":
     # pprint (current_game_info)  # print game_info before it starts.
 
     while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
-        # set to a day time
+        print "------------set to a day time------------------"
         set_game_time('michael', '1', '10:00:00')
         game_round += 1
 
@@ -236,14 +236,15 @@ if __name__ == "__main__":
                     alive_playerid_list.append(int(player['playerid']))
 
             # -------------every one votes------------------
-            print "-----------Voting---------------"
+            print "-----------Voting begins---------------"
             for player in current_game_info['players']:
-                if player['is_dead'] == 0:
+                if int(player['is_dead']) == 0:
                     # get the user_info
                     for i in xrange(len(username_password_playerid_list)):
                         if username_password_playerid_list[i]['playerid'] == player['playerid']:
                             userInfo = username_password_playerid_list[i]
                             break
+
                     # get target id, target id can not be voter's player id
                     target_id = alive_playerid_list[random.randint(0,len(alive_playerid_list)-1)]
                     while(target_id == player['playerid']):
@@ -267,7 +268,7 @@ if __name__ == "__main__":
                         werewolf_checker = player['is_werewolf']
                         break
                 # werewolf_checker = current_game_info['players']['is_werewolf'] # check if the dead is werewolf
-                print '#-----------if the dead is not a werewolf----assign  lupus -------------------#'
+                print '#-----------if the dead is not a werewolf----assign lupus---------------------#'
                 if werewolf_checker == 0:   # then assign lupus to each player's stats
                     assign_lupus_and_clear_votes_table(current_game_id, dead_playerid)
 
@@ -276,17 +277,44 @@ if __name__ == "__main__":
             print game_results
             if game_results['game_status'] == 'villagers won' or game_results['game_status'] == 'werewolves won':
                 set_game_status('michael', current_game_id, 2)
+                break  # game ended
             else:
                 update_locations(current_game_id)
 
-
-        # print "%%%%%%-----------------------Game in night time-------------------------%%%%%%%%%%%"
-        # print "set to a night time"
-        # set_game_time('michael', current_game_id, '20:00:00')
-        # current_game_info = game_info('michael', 'paper01', 1)
-
-
+        print "#-----------update current_game_info before night comes---------------------------"
         current_game_info = game_info('michael', 'paper01', current_game_id)
+
+        print "set to a night time"
+        set_game_time('michael', current_game_id, '20:00:00')
+        print "%%%%%%-----------------------Game in night time-------------------------%%%%%%%%%%%"
+        print "%%%%%%----------------------------round {}---------------------------%%%%%%%%%%%".format(game_round)
+
+        alive_werewolf_list = []
+        alive_village_list = []
+        for player in current_game_info['players']:
+            if player['is_dead'] == 0 and player['is_werewolf'] == 0:
+                alive_village_list.append(int(player['playerid']))
+            elif player['is_dead'] == 0 and player['is_werewolf'] != 0:
+                alive_werewolf_list.append(int(player['playerid']))
+        # -------------every one votes--------------------
+        print "----------------Attacking Begins-----------------------"
+
+        attacker_id = alive_werewolf_list[random.randint(0,len(alive_playerid_list)-1)]
+        target_id = alive_village_list[random.randint(0,len(alive_playerid_list)-1)]
+
+        for i in xrange(len(username_password_playerid_list)):
+            if username_password_playerid_list[i]['playerid'] == attacker_id:
+                attackerInfo = username_password_playerid_list[i]
+        # call vote function
+        attack(attackerInfo['username'], attackerInfo['password'], current_game_id, target_id)
+
+
+
+        # update current game info before going next loop.
+        current_game_info = game_info('michael', 'paper01', current_game_id)
+
+
+
     print "------------------game ended--------------------"
     print "------------------Assigning Achievements--------------------"
 

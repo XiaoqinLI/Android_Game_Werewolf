@@ -1,7 +1,10 @@
-###### notes and introduction
+###### notes and introduction ##########
 # For safety, Please reload database schema before you run game simulation
 
-# methods: isnight() adn isday() are integrated in attack and vote REST API, which works fine also.
+The auto game has been tested on ly local machine, if you got some error, meaning you need to change your password for
+database, or contact me if you can't figure out what's going on.
+
+# methods: isnight() adn isday() are integrated in attack and vote REST API, which works fine also, so I do not have extra function support them
 
 # There is no need to Tally up all Vote at Nightfall, just do it in daytime after everyone voted
   and check if game is ended before we get into night.
@@ -11,12 +14,18 @@
 
 # Added Daybreak and Nightfall in game table.
 
-# Items: Although there are 5 kinds of items in item table, I only support Invisibility potion as instructed,
+# Items: Although there are 5 kinds of items in item table, I only support Invisibility potion as instructed in class,
  meaning only this item can be in treasure chest.
 
 # Landmarks and Treasure: Landmark and Treasures are set at daytime of round 1(day 1);
-treasure is always active, say michael grab it on day1,
-on day2 if another player get in radius, he/she can grab it as well
+treasure is always active, say if michael grab it on day 1, then
+on day 2 if any other player gets in radius, he/she can grab it as well
 
 # As instructed by Prof. Dickerson, instead of weapon and armor, werewolf have proper random attack accuracy and village have proper random avoidability
 so, if avoidability > accuracy, then village survive from attack.
+
+#  "A hairy situation" - be near 3 werewolves at once, This achievement is not implemented due to limited time, it needs other API to support it.
+Not hard, but just do not have time to do it...
+
+# CoolDown feature is implemented, but I disabled it since I realize in Instruction, it says each night only one werewolf attack only once, so next attack will be next day
+so, there is no reason to set up a 30 mins CoolDown.
