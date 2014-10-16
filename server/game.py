@@ -194,7 +194,7 @@ def attack(game_ID):
     game_id = int(request.form['game_id'])
     target_id = int(request.form['target_id'])
     gameinfo =  dao.game_info(game_id)
-    if gameinfo['currenttime'] < gameinfo['nightfall'] and gameinfo['currenttime'] > gameinfo['daybreak']:
+    if gameinfo['daybreak'] < gameinfo['currenttime'] < gameinfo['nightfall']:
         response = {"status": "failure(attack in daytime)"}
         return jsonify(response)
     else:
@@ -287,6 +287,27 @@ def set_treasure(game_ID):
     response = {"status": "success"}
     return jsonify(response)
 
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/vote_death', methods=["POST"])
+def set_top_voted_death(game_ID):
+    game_id = request.form['game_id']
+    target_id = int(request.form['player_id'])
+    dao.set_dead(target_id)
+    response = {"status": "success"}
+    return jsonify(response)
+
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/game_results', methods=["GET"])
+def check_game_results(game_ID):
+    game_id = request.form['game_id']
+    results = dao.get_all_players_status(game_id)
+    if results['alive_werewolf'] == 0:
+        response = {"game_status": "villagers won"}
+    elif results['alive_villager'] == 0:
+        response = {"game_status": "werewolves won"}
+    else:
+        response = {"game_status": "continue"}
+    return jsonify(response)
+
+# dao.set_dead(target_id)
 
 def is_in_cooldown(playerid): # implement in player_stat
     player_stat = dao.get_player_stats(playerid, name='CoolDown')

@@ -118,6 +118,16 @@ def set_treasure_to_landmark(game_id, num_landmark):
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/treasure", data=payload )
     return
 
+def set_top_voted_death(game_id, player_id):
+    payload = {'game_id': game_id, 'player_id': player_id}
+    requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/vote_death", data=payload )
+    return
+
+def check_game_results(game_id):
+    payload = {'game_id': game_id}
+    requests.get(hostname + rest_prefix + "/game/" + str(game_id) +"/game_results", data=payload )
+    return ""
+
 def create_users():
     create_user('michael', 'paper01', 'Michael', 'Scott')
     create_user('dwight', 'paper02', 'Dwight', 'Schrute')
@@ -167,13 +177,15 @@ if __name__ == "__main__":
     #------------------Game Simulation---------------------------------
     # # The client script will register 8 new users in the game (michael,
     # # dwight, jim, pam, ryan, andy, angela, toby)
-
+    # print "-----------creating users---------------------------------
     # create_users()
 
     # # A new game called NightHunt will be created by michael. michael will automatically be
     # # added to that game. Next, all the other users will join that game,creating new players for each.
+    current_game_id = 1
     # current_game_id = create_game('michael', 'paper01', 'NightHunt', 'A test for werewolf winning')
-    username_password_playerid_list = all_join_game(1)
+    # print '-----------------everyone joins the game----------------------'
+    username_password_playerid_list = all_join_game(current_game_id)
 
     # # michael will set the game to active, and the first day round begins.
     # set_game_status('michael', current_game_id, 1)
@@ -181,26 +193,27 @@ if __name__ == "__main__":
     # game_round += 1
 
     # # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
-    current_game_info = game_info('michael', 'paper01', 1)
+    # print '-----------------current game info----------------------'
+    current_game_info = game_info('michael', 'paper01', current_game_id)
     # random_playerid_list =[ entry['playerid'] for entry in current_game_info['players'] ]
     # random.shuffle(random_playerid_list)
     # num_werewolf = int(math.ceil(len(random_playerid_list)*0.3))
     # for i in xrange(num_werewolf):
-    #     set_werewolf(1,random_playerid_list[i])
+    #     set_werewolf(current_game_id,random_playerid_list[i])
 
     # # Daytime:  Vote starts at day 2. All Players will be randomly positioned in a rectangular region.
     # # The admin sets the round to night.
     # # One werewolf will move to a location of one random villager. The werewolf will make an attack. The villager may or may not survive this encounter
     # # The admin sets the round to day.
-    pprint (current_game_info)  # print game_info before it starts.
+    # pprint (current_game_info)  # print game_info before it starts.
     while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
         # #set to a day time
         # set_game_time('michael', '1', '10:00:00')
         game_round += 2
         if game_round <= 1:      #There is no vote in first day round
-            # numLandmark = set_random_landmark(1)   # set random land marks on the game in day 1
-            # set_treasure_to_landmark(1,5)         # link treasure to landmark
-            # update_locations(1)
+            numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game in day 1
+            set_treasure_to_landmark(current_game_id,5)         # link treasure to landmark
+            update_locations(current_game_id)
             pass
         else:
             # get all alive playerid:
@@ -209,7 +222,8 @@ if __name__ == "__main__":
                 if player['is_dead'] == 0:
                     alive_playerid_list.append(int(player['playerid']))
 
-            # -------------every one vote------------------
+            # -------------every one votes------------------
+            print "-----------Voting---------------"
             for player in current_game_info['players']:
                 if player['is_dead'] == 0:
                     # get the user_info
@@ -221,14 +235,30 @@ if __name__ == "__main__":
                     target_id = alive_playerid_list[random.randint(0,len(alive_playerid_list)-1)]
                     while(target_id == player['playerid']):
                         target_id = alive_playerid_list[random.randint(0,len(alive_playerid_list)-1)]
-
                     # call vote function
-                    cast_vote(userInfo['username'], userInfo['password'], 1, target_id)
+                    cast_vote(userInfo['username'], userInfo['password'], current_game_id, target_id)
 
-            # needs vote and checking if game is end
-            get_vote_stats('michael', 1)
+            print '-------showing vote results and checking if game is end, clear all vote info after pull over vote results'
+            vote_results = get_vote_stats('michael', 'paper01', current_game_id)
+            vote_results_sorted = sorted(vote_results['results'], key = lambda k: k['votes'], reverse=True )
 
-            update_locations(1)
+            print "-----------------voting results for round {}----------------------------".format(game_round)
+            pprint (vote_results_sorted)
+
+            print '#---------------set top voted player to death------------------'
+            if len(vote_results_sorted) > 0:
+                set_top_voted_death(current_game_id,vote_results_sorted[0]['playerid'])
+
+            print '#---------------is game ended?? who won??------------------'
+            game_results = check_game_results(current_game_id)
+            print game_results
+            if game_results['game_status'] == 'villagers won' or game_results['game_status'] == 'werewolves won':
+                set_game_status('michael', current_game_id, 2)
+            else:
+                update_locations(current_game_id)
+
+
+
 
         # set to a night time
         set_game_time('michael', '1', '20:00:00')

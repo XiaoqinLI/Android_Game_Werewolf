@@ -531,7 +531,7 @@ class WherewolfDao(object):
             cur.execute(sql, (game_id, player_id, target_id))
             conn.commit()
 
-    def get_vote_stats(self, game_id):
+    def get_vote_stats(self, game_id):   #tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -544,9 +544,24 @@ class WherewolfDao(object):
                 results = [{'playerid': row[0], 'votes': int(row[1])} for row in rows]
             else:
                 results = []
+            # clear all votes info after pull over the stats
+            cur.execute('truncate vote Restart Identity cascade')
             return (results)
 
-    def set_landmark(self, game_id, lat, lng, radius, landmark_type, is_active = 1):
+    def get_all_players_status(self, game_id):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql =('Select count(is_dead) from player '
+                  'where game_id=%s and is_dead=0'
+                  'group by (is_werewolf) '
+                  'order by is_werewolf DESC')
+            cur.execute(sql, (game_id,))
+            row = cur.fetchall()
+            results = {'alive_werewolf': int(row[0][0]), 'alive_villager': int(row[1][0])}
+            return (results)
+
+    def set_landmark(self, game_id, lat, lng, radius, landmark_type, is_active = 1):  #tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -556,7 +571,7 @@ class WherewolfDao(object):
             cur.execute(sql, (lat, lng, radius, landmark_type, game_id, is_active))
             conn.commit()
 
-    def set_treasure(self, landmark_id, item_id, quantity):
+    def set_treasure(self, landmark_id, item_id, quantity):  #tested
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
@@ -575,7 +590,7 @@ class WherewolfDao(object):
                     cur.execute(sql, (landmark_id, item_id, quantity))
                     conn.commit()
 
-    def clear_tables(self):  # modified and tested
+    def clear_tables(self):  # tested
         conn = self.get_db()
         with conn:
             c = conn.cursor()
@@ -590,7 +605,7 @@ class WherewolfDao(object):
             
 if __name__ == "__main__":
     dao = WherewolfDao() # default password is '121314', change it if neeeded.
-    #---------------------------Testing Each Functions used in Game.py--------------------
+    #---------------------------Testing Each Functions used in WherewolfDao.py--------------------
     # dao.clear_tables()#clear gameuser, player and user_achievement table
     # try:
     #     dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
@@ -736,7 +751,9 @@ if __name__ == "__main__":
     # dao.set_werewolf(1,2)
 
     # print "set treasure"
-    dao.set_treasure(1,1,1)
+    # dao.set_treasure(1,1,1)
 
+    print 'get all players status'
+    dao.get_all_players_status(1)
 
 
