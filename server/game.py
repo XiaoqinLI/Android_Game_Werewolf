@@ -299,9 +299,9 @@ def set_top_voted_death(game_ID):
 def check_game_results(game_ID):
     game_id = request.form['game_id']
     results = dao.get_all_players_status(game_id)
-    if results['alive_werewolf'] == 0:
+    if 'alive_werewolf' not in results:
         response = {"game_status": "villagers won"}
-    elif results['alive_villager'] == 0:
+    elif 'alive_villager' not in results:
         response = {"game_status": "werewolves won"}
     else:
         response = {"game_status": "continue"}

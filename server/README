@@ -17,3 +17,6 @@
 # Landmarks and Treasure: Landmark and Treasures are set at daytime of round 1(day 1);
 treasure is always active, say michael grab it on day1,
 on day2 if another player get in radius, he/she can grab it as well
+
+# As instructed by Prof. Dickerson, instead of weapon and armor, werewolf have proper random attack accuracy and village have proper random avoidability
+so, if avoidability > accuracy, then village survive from attack.

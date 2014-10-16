@@ -552,13 +552,18 @@ class WherewolfDao(object):
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
-            sql =('Select count(is_dead) from player '
+            sql =('Select is_werewolf, count(is_dead) from player '
                   'where game_id=%s and is_dead=0'
                   'group by (is_werewolf) '
                   'order by is_werewolf DESC')
             cur.execute(sql, (game_id,))
             row = cur.fetchall()
-            results = {'alive_werewolf': int(row[0][0]), 'alive_villager': int(row[1][0])}
+            results = {}
+            for ele in row:
+                if ele[0] == 1:
+                    results['alive_werewolf'] = int(ele[1])
+                if ele[0] == 0:
+                    results['alive_villager'] = int(ele[1])
             return (results)
 
     def set_landmark(self, game_id, lat, lng, radius, landmark_type, is_active = 1):  #tested
