@@ -107,7 +107,7 @@ def get_games(username, password):
 def set_random_landmark(game_id):
     minValue = 9.9
     maxValue = 10.1
-    radius = 2000
+    radius = 3000
     num_landmark = random.randint(3,5)  # 3 to 5 landmark
     payload = {'game_id': game_id, 'minValue': minValue, 'maxValue': maxValue, 'radius': radius, 'num_landmark': num_landmark}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/landmark", data=payload )
@@ -121,6 +121,11 @@ def set_treasure_to_landmark(game_id, num_landmark):
 def set_top_voted_death(game_id, player_id):
     payload = {'game_id': game_id, 'player_id': player_id}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/vote_death", data=payload )
+    return
+
+def assign_lupus_and_clear_votes_table(game_id, death_player_id):
+    payload = {'game_id': game_id, 'death_player_id': death_player_id}
+    requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/assign_lupus", data=payload )
     return
 
 def check_game_results(game_id):
@@ -184,7 +189,7 @@ if __name__ == "__main__":
     # A new game called NightHunt will be created by michael. michael will automatically be
     # added to that game. Next, all the other users will join that game,creating new players for each.
     print "------------------------------creating a game-------------------------------------"
-    current_game_id = 1
+    # current_game_id = 1
     current_game_id = create_game('michael', 'paper01', 'NightHunt', 'A test for werewolf winning')
     print '-----------------everyone joins the game----------------------'
     username_password_playerid_list = all_join_game(current_game_id)
@@ -193,7 +198,7 @@ if __name__ == "__main__":
     print '-----------------start the game----------------------'
     set_game_status('michael', current_game_id, 1)
     set_game_time('michael', current_game_id, '08:00:00')
-    game_round += 1
+    # game_round += 1
 
     # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
     print '-----------------current game info----------------------'
@@ -216,11 +221,13 @@ if __name__ == "__main__":
         game_round += 1
 
         print "%%%%%%-----------------------Game in daytime-------------------------%%%%%%%%%%%"
+        print "%%%%%%----------------------------round {}---------------------------%%%%%%%%%%%".format(game_round)
         if game_round <= 1:      #There is no vote in first day round
+            print "------------------------set all random landmark in random place in day 1------------------"
             numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game in day 1
+            print "------------------------attach treasure to each landmark if it is not a save zone------------------"
             set_treasure_to_landmark(current_game_id,5)         # link treasure to landmark
             update_locations(current_game_id)
-            pass
         else:
             #-------get all alive playerid:----------------
             alive_playerid_list = []
@@ -253,7 +260,16 @@ if __name__ == "__main__":
 
             print '#---------------set top voted player to death------------------'
             if len(vote_results_sorted) > 0:
-                set_top_voted_death(current_game_id,vote_results_sorted[0]['playerid'])
+                dead_playerid = vote_results_sorted[0]['playerid']
+                set_top_voted_death(current_game_id,dead_playerid)
+                for player in current_game_info['players']:
+                    if dead_playerid == player['playerid']:
+                        werewolf_checker = player['is_werewolf']
+                        break
+                # werewolf_checker = current_game_info['players']['is_werewolf'] # check if the dead is werewolf
+                print '#-----------if the dead is not a werewolf----assign  lupus -------------------#'
+                if werewolf_checker == 0:   # then assign lupus to each player's stats
+                    assign_lupus_and_clear_votes_table(current_game_id, dead_playerid)
 
             print '#---------------is game ended?? who won??------------------'
             game_results = check_game_results(current_game_id)
@@ -263,7 +279,6 @@ if __name__ == "__main__":
             else:
                 update_locations(current_game_id)
 
-        game_round += 1
 
         # print "%%%%%%-----------------------Game in night time-------------------------%%%%%%%%%%%"
         # print "set to a night time"

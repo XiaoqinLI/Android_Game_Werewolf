@@ -544,9 +544,30 @@ class WherewolfDao(object):
                 results = [{'playerid': row[0], 'votes': int(row[1])} for row in rows]
             else:
                 results = []
+            # # clear all votes info after pull over the stats
+            # cur.execute('truncate vote Restart Identity cascade')
+            return (results)
+
+    def assign_lupus_and_clear_votes_table(self, game_id, death_player_id, stat_name='lupus', stat_value=1):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql =('Select player_id from vote '
+                  'where game_id=%s and target_id=%s ')
+            cur.execute(sql, (game_id, death_player_id))
+            rows = cur.fetchall()
+
+            # sqlinsert = ('INSERT INTO inventory (playerid, itemid, quantity) '
+            #              'SELECT %s, %s, %s where not exists (select 1 from inventory where playerid=%s and itemid=%s)')
+
+            for player in rows:
+                sql = ('Insert Into player_stat (player_id, stat_name, stat_value)'
+                       'SELECT %s, %s, %s where not exists (select 1 from player_stat where player_id=%s and stat_name=%s)')
+                cur.execute(sql, (player[0], stat_name, stat_value, player[0], stat_name))
             # clear all votes info after pull over the stats
             cur.execute('truncate vote Restart Identity cascade')
-            return (results)
+            conn.commit()
+
 
     def get_all_players_status(self, game_id):
         conn = self.get_db()
@@ -758,7 +779,10 @@ if __name__ == "__main__":
     # print "set treasure"
     # dao.set_treasure(1,1,1)
 
-    print 'get all players status'
-    dao.get_all_players_status(1)
+    # print 'get all players status'
+    # dao.get_all_players_status(1)
+
+    print 'assign_lupus_and_clear_votes_table'
+    dao.assign_lupus_and_clear_votes_table(1,1)
 
 

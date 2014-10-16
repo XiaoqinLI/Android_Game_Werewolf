@@ -241,6 +241,8 @@ def set_game_status(game_ID):
     game_id = int(request.form['game_id'])
     game_status = int(request.form['game_status'])
     dao.set_game_status(username, game_id, game_status)
+    response = {"status": "success"}
+    return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/time', methods=["POST"])
 def set_game_time(game_ID):
@@ -292,6 +294,14 @@ def set_top_voted_death(game_ID):
     game_id = request.form['game_id']
     target_id = int(request.form['player_id'])
     dao.set_dead(target_id)
+    response = {"status": "success"}
+    return jsonify(response)
+
+@app.route(rest_prefix+'/game/'+'<game_ID>'+'/assign_lupus', methods=["POST"])
+def assign_lupus_and_clear_votes_table(game_ID):
+    game_id = request.form['game_id']
+    death_player_id = int(request.form['death_player_id'])
+    dao.assign_lupus_and_clear_votes_table(game_id, death_player_id)
     response = {"status": "success"}
     return jsonify(response)
 
