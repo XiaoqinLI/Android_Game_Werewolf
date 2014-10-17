@@ -135,12 +135,14 @@ def check_game_results(game_id):
     return response
 
 def assign_achievement():
-    r = requests.get(hostname + rest_prefix + "/assign_achievement")
+    r = requests.post(hostname + rest_prefix + "/assign_achievement")
     response = r.json()
     return response
 
 def get_all_achievement():
-    pass
+    r = requests.get(hostname + rest_prefix + "/get_achievement")
+    response = r.json()
+    return response
 
 def create_users():
     create_user('michael', 'paper01', 'Michael', 'Scott')
@@ -360,10 +362,9 @@ if __name__ == "__main__":
     leave_game(admin_name, admin_pwd, current_game_id)
     print "------------------Assigning Achievements----------------------"
     assign_achievement()
-    print "Show all achievement made in last game"
+    print "----------------Show all achievement made in last game--------------------------"
     all_achievement = get_all_achievement()
     pprint(all_achievement)
-
 
 
 

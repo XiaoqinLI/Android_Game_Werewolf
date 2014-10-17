@@ -332,11 +332,17 @@ def clean_landmark_treasure():
     return jsonify(response)
 
 
-@app.route(rest_prefix +'/clean_landmark_treasure', methods=["GET"])
+@app.route(rest_prefix +'/assign_achievement', methods=["POST"])
 def assign_achievement():
     dao.assign_achievement()
     response = {"status": "success"}
-    return response
+    return jsonify(response)
+
+@app.route(rest_prefix +'/get_achievement', methods=["GET"])
+def get_all_achievement():
+    assigned_achive_list = dao.get_all_achievement()
+    response = {'results': assigned_achive_list}
+    return jsonify(response)
 
 def is_in_cooldown(playerid): # implement in player_stat
     '''

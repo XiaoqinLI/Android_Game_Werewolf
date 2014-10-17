@@ -604,10 +604,21 @@ class WherewolfDao(object):
                       '4'
                 )
                 cur.execute(sql,(ele,))
-
             conn.commit()
 
-
+    def get_all_achievement(self):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql =('Select gameuser.username, achievement.name '
+                  'from user_achievement inner join achievement on user_achievement.achievement_id=achievement.achievement_id '
+                  'inner join gameuser on user_achievement.user_id=gameuser.user_id ')
+            cur.execute(sql)
+            rows = cur.fetchall()
+            if rows!= None:
+                return rows
+            else:
+                return []
 
     def get_all_players_status(self, game_id):
         conn = self.get_db()
@@ -838,6 +849,9 @@ if __name__ == "__main__":
     # print 'assign_lupus_and_clear_votes_table'
     # dao.assign_lupus_and_clear_votes_table(1,1)
 
-    print 'assigns assign_achievement'
-    dao.assign_achievement()
+    # print 'assigns assign_achievement'
+    # dao.assign_achievement()
+
+    print 'get all assigned achievement from last game'
+    dao.get_all_achievement()
 
