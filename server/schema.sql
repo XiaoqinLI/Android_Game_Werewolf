@@ -97,7 +97,6 @@ CREATE TABLE player_stat (
 	stat_time	time DEFAULT CURRENT_TIME,
         primary key (player_id, stat_name)
 );
--- portion comsume, 
 
 -- used to store number of kills historically
 DROP TABLE IF EXISTS user_stat cascade;
@@ -117,16 +116,13 @@ CREATE TABLE vote (
        cast_date	timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
-
 CREATE INDEX playerindex ON inventory(playerid);
 CREATE INDEX username ON gameuser(username);
 CREATE INDEX indexitemname ON item(name);
 -- adds an index so our lookups based on position will be exponentially faster
 CREATE INDEX pos_index ON player USING gist (ll_to_earth(lat, lng));
 
-
 -- insert default data
-
 INSERT INTO achievement VALUES (1, 'Hair of the dog', 'Survive an attack by a werewolf');
 INSERT INTO achievement VALUES (2, 'Leader of the Pack', 'have the most number of kills by the end of the game');
 INSERT INTO achievement VALUES (3, 'Children of the moon', 'Stay alive and win the game as a werewolf');
@@ -139,9 +135,3 @@ INSERT INTO item VALUES (2, 'Blunderbuss', 'A muzzle-loading firearm with a shor
 INSERT INTO item VALUES (3, 'Invisibility Potion', 'Makes the imbiber invisible for a short period of time.');
 INSERT INTO item VALUES (4, 'Silver Knife', 'A blade made from the purest of silvers');
 INSERT INTO item VALUES (5, 'Wolfsbane Potion', 'Protects the drinker from werewolf attacks');
-
--- INSERT INTO treasure (landmark_id, item_id, quantity) VALUES (1, 1, 3);
---INSERT INTO landmark (lat, lng, radius, type, game_id, is_active) VALUES (30.02, 97.02, 50000, 1, 1, 1);
-
-
-

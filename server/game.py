@@ -119,8 +119,8 @@ def update_game(game_ID):  # Done
 
     all_landmark = dao.get_landmark_nearby(lat, lng, game_id) # a list of receivable landmark.
     for entry in all_landmark:
-        if entry['type'] == 0: # get in a save zone, # implement this later on.
-            dao.set_player_stats(player_id,'Protected',1)
+        if entry['type'] == 0: # get in a save zone, then this player is protected
+            dao.set_player_stats(player_id,'Protected')
         elif entry['type'] == 1:
             dao.add_treasure(player_id, entry['landmark_id'])
     currentPlayer = dao.get_current_player(username)
@@ -220,19 +220,24 @@ def attack(game_ID):
                         response = {"status": "failure(player is werewolf under cooldown period of 30 minutes)"}
                         return jsonify(response)
                     else:
-                        avoidability = random.uniform(0.4,0.7)
-                        attackaccuracy = random.uniform(0.4,1)
-                        if attackaccuracy >= avoidability:
-                            dao.set_dead(target_id)
-                            get_One_Kill(current_player['playerid'])
-                            response = {'status': 'success', 'results': { 'summary': 'death', 'combatant': target_id }}
-                            set_cooldown(current_player['playerid']);
+                        if dao.checking_ifProtected(target_id):
+                            response = {'status': 'success', 'results': { 'summary': 'no death, the target is in save zone', 'combatant': target_id }}
+                            set_cooldown(current_player['playerid'])
                             return jsonify(response)
                         else:
-                            hair_of_dog(target_id)
-                            response = {'status': 'success', 'results': { 'summary': 'no death', 'combatant': target_id }}
-                            set_cooldown(current_player['playerid']);
-                            return jsonify(response)
+                            avoidability = random.uniform(0.4,0.8)
+                            attackaccuracy = random.uniform(0.4,1)
+                            if attackaccuracy >= avoidability:
+                                dao.set_dead(target_id)
+                                get_One_Kill(current_player['playerid'])
+                                response = {'status': 'success', 'results': { 'summary': 'death', 'combatant': target_id }}
+                                set_cooldown(current_player['playerid']);
+                                return jsonify(response)
+                            else:
+                                hair_of_dog(target_id)
+                                response = {'status': 'success', 'results': { 'summary': 'no death', 'combatant': target_id }}
+                                set_cooldown(current_player['playerid']);
+                                return jsonify(response)
             else:
                 response = {"status": "failure(bad auth)"}
                 return jsonify(response)
@@ -374,14 +379,6 @@ def get_One_Kill(player_id): # done
 def hair_of_dog(target_id):
     user_id = dao.get_userID(target_id)
     dao.set_user_achievements(user_id, 1)  # No.1 is hair_of_dog
-
-
-# - "Leader of the Pack" have the most number of kills by the end of the game de def Leader of the Pack in end game
-# - "Hair of the dog" - survive an attack by a werewolf -- implement in attack
-# - "A hairy situation" - be near 3 werewolves at once --  def hairy_situation()
-# - "It is never Lupus" - vote for someone to be a werewolf, when they were a townsfolk -- implement in cast_vote
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)

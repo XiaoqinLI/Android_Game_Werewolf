@@ -107,7 +107,7 @@ def get_games(username, password):
 def set_random_landmark(game_id):
     minValue = 9.9
     maxValue = 10.1
-    radius = 2000  # 2000 meters is quite far away
+    radius = 2500  # 2500 meters is quite far away
     num_landmark = random.randint(3,5)  # 3 to 5 landmark
     payload = {'game_id': game_id, 'minValue': minValue, 'maxValue': maxValue, 'radius': radius, 'num_landmark': num_landmark}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/landmark", data=payload )
@@ -200,33 +200,33 @@ def update_locations(current_game_id):
 
 if __name__ == "__main__":
 
-    print "--------------------Preparing the game---------------------"
+    print "--------------------Preparing the game------------------------------------------"
     clean_game_data()
 
     game_round = 0
     #------------------Game Simulation---------------------------------
     # The client script will register 8 new users in the game (michael,
     # dwight, jim, pam, ryan, andy, angela, toby)
-    print "-----------creating users---------------------------------"
+    print "-----------creating users-------------------------------------------------------"
     create_users()
 
     # A new game called NightHunt will be created by michael. michael will automatically be
     # added to that game. Next, all the other users will join that game,creating new players for each.
-    print "------------------------------creating a game-------------------------------------"
+    print "------------------------------creating a game-----------------------------------"
     admin_name = 'michael'
     admin_pwd = 'paper01'
     current_game_id = create_game(admin_name, admin_pwd, 'NightHunt', 'A test for werewolf winning')
-    print '-----------------everyone joins the game----------------------'
+    print '-----------------everyone joins the game----------------------------------------'
     username_password_playerid_list = all_join_game(current_game_id)
 
     # michael will set the game to active, and the first day round begins.
-    print '-----------------start the game----------------------'
+    print '-----------------start the game-------------------------------------------------'
     set_game_status(admin_name, current_game_id, 1)
     set_game_time(admin_name, current_game_id, '08:00:00')
     # game_round += 1
 
     # 30% of the players rounding up will be set to be werewolves (3 werewolves in our case)
-    print '-----------------current game info----------------------'
+    print '-----------------current game info----------------------------------------------'
     current_game_info = game_info(admin_name, admin_pwd, current_game_id)
     random_playerid_list =[ entry['playerid'] for entry in current_game_info['players'] ]
     random.shuffle(random_playerid_list)
@@ -238,26 +238,26 @@ if __name__ == "__main__":
     # The admin sets the round to night.
     # One werewolf will move to a location of one random villager. The werewolf will make an attack. The villager may or may not survive this encounter
     # The admin sets the round to day.
-    # pprint (current_game_info)  # print game_info before it starts.
+    pprint (current_game_info)  # print game_info before it starts.
 
     while(current_game_info['status'] == 1):  # as long as game not end yet, continue play
-        print "------------set to a day time------------------"
+        print "---------------------------set to a day time--------------------------------"
         set_game_time(admin_name, '1', '10:00:00')
         game_round += 1
 
-        print "%%%%%%-----------------------Game in daytime-------------------------%%%%%%%%%%%"
-        print "%%%%%%----------------------------round {}---------------------------%%%%%%%%%%%".format(game_round)
+        print "%%%%%%-----------------------Game in daytime-------------------------%%%%%%%"
+        print "%%%%%%----------------------------round {}---------------------------%%%%%%%".format(game_round)
         if game_round <= 1:      #There is no vote in first day round
-            print "------------------------set all random landmark in random place in day 1------------------"
+            print "------------set all random landmark in random place in day 1------------"
             numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game in day 1
-            print "------------------------attach treasure to each landmark if it is not a save zone------------------"
+            print "--------attach treasure to each landmark if it is not a save zone-------"
             set_treasure_to_landmark(current_game_id,numLandmark)         # link treasure to landmark
             update_locations(current_game_id)
         else:
-            print "------------------------ reset set all random landmark in random place after day 1------------------"
+            print "--------- reset all random landmark in random place after day 1---------"
             clean_landmark_treasure()
-            numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game in day 1
-            print "------------------------attach treasure to each landmark if it is not a save zone------------------"
+            numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game after day 1
+            print "----attach treasure to each landmark if it is not a save zone-----------"
             set_treasure_to_landmark(current_game_id,numLandmark)         # link treasure to landmark
 
             #-------get all alive playerid:----------------
@@ -267,7 +267,7 @@ if __name__ == "__main__":
                     alive_playerid_list.append(int(player['playerid']))
 
             # -------------every one votes------------------
-            print "-----------Voting begins---------------"
+            print "-----------Voting begins------------------------------------------------"
             for player in current_game_info['players']:
                 if int(player['is_dead']) == 0:
                     # get the user_info
@@ -290,7 +290,7 @@ if __name__ == "__main__":
             print "-----------------voting results for round {}----------------------------".format(game_round)
             pprint (vote_results_sorted)
 
-            print '#---------------set top voted player to death------------------'
+            print '#---------------set top voted player to death---------------------------'
             if len(vote_results_sorted) > 0:
                 dead_playerid = vote_results_sorted[0]['playerid']
                 set_top_voted_death(current_game_id,dead_playerid)
@@ -298,12 +298,12 @@ if __name__ == "__main__":
                     if dead_playerid == player['playerid']:
                         werewolf_checker = player['is_werewolf']
                         break
-                # werewolf_checker = current_game_info['players']['is_werewolf'] # check if the dead is werewolf
-                print '#-----------if the dead is not a werewolf----assign lupus---------------------#'
+
+                print '#-----------if the dead is not a werewolf----assign lupus----------#'
                 if werewolf_checker == 0:   # then assign lupus to each player's stats
                     assign_lupus_and_clear_votes_table(current_game_id, dead_playerid)
 
-            print '#---------------is game ended?? who won??------------------'
+            print '#---------------is game ended?? who won??-------------------------------'
             game_results = check_game_results(current_game_id)
             print game_results
             if game_results['game_status'] == 'villagers won' or game_results['game_status'] == 'werewolves won':
@@ -312,14 +312,14 @@ if __name__ == "__main__":
             else:
                 update_locations(current_game_id)
 
-        print "#-----------update current_game_info before night comes---------------------------"
+        print "#-----------update current_game_info before night comes---------------------"
         current_game_info = game_info(admin_name, admin_pwd, current_game_id)
 
         ########################THE NIGHT IS COMING###################################################
         print "set to a night time"
         set_game_time(admin_name, current_game_id, '20:00:00')
-        print "%%%%%%-----------------------Game in night time-------------------------%%%%%%%%%%%"
-        print "%%%%%%----------------------------round {}---------------------------%%%%%%%%%%%".format(game_round)
+        print "%%%%%%-----------------------Game in night time-------------------------%%%%"
+        print "%%%%%%----------------------------round {}---------------------------%%%%%%%".format(game_round)
 
         alive_werewolf_list = []
         alive_village_list = []
@@ -329,7 +329,7 @@ if __name__ == "__main__":
             elif player['is_dead'] == 0 and player['is_werewolf'] != 0:
                 alive_werewolf_list.append(int(player['playerid']))
         # -------------every one votes--------------------
-        print "----------------Attacking Begins-----------------------"
+        print "----------------Attacking Begins--------------------------------------------"
 
         attacker_id = alive_werewolf_list[random.randint(0,len(alive_werewolf_list)-1)]
         target_id = alive_village_list[random.randint(0,len(alive_village_list)-1)]
@@ -341,56 +341,29 @@ if __name__ == "__main__":
         # call attack function
         attack(attackerInfo['username'], attackerInfo['password'], current_game_id, target_id)
 
-        print '#---------------is game ended?? werewolves won???------------------'
+        print '#---------------is game ended?? werewolves won???---------------------------'
         game_results = check_game_results(current_game_id)
         print game_results
         if game_results['game_status'] == 'werewolves won':
             set_game_status(admin_name, current_game_id, 2)
             break  # game ended
-        # else:
-        #     update_locations(current_game_id)
-
+        else:
+            pass
         # update current game info before going next loop.
         current_game_info = game_info(admin_name, admin_pwd, current_game_id)
 
     ########################THE GAME HAS ENDED#########################################
     current_game_info = game_info(admin_name, admin_pwd, current_game_id)
     print "Game status: {}".format(current_game_info['status'])
-    print "------------------game ended--------------------"
+    print "------------------game ended----------------------------------------------------"
     #Set all the game's users' current player field to NULL
-    print "------------------everyone left the game-----------------------"
+    print "------------------everyone left the game----------------------------------------"
     leave_game(admin_name, admin_pwd, current_game_id)
-    print "------------------Assigning Achievements----------------------"
+    print "------------------Assigning Achievements----------------------------------------"
     assign_achievement()
     print "----------------Show all achievement made in last game--------------------------"
     all_achievement = get_all_achievement()
     pprint(all_achievement)
 
 
-
-
-
-
-
-
-    # leave_game('rfdickerson', 'awesome', 1)
-    # join_game('dwight', 'paperpaper', 3)  # need to test game lobby status later on
-    # join_game('dwight', 'paper', 2)
-    # join_game('rfdickerson', 'awesome', 3)
-    # join_game('rfdickerson', 'awesome', 2)
-    # update_game('rfdickerson','awesome', 1, 30, 97)
-    # game_info('rfdickerson','awesome','1')
-    # cast_vote('rfdickerson', 'awesome',1,3)
-    # get_vote_stats('rfdickerson','awesome','1')
-    # pass
-    # attack('rfdickerson', 'awesome', '1', '3')
-
-
-
-   #create_users()
-   # werewolf_winning_game()
-   # create_game('rfdickerson', 'awesome', 'NightHunt', 'A game in Austin')
-   # update_game('rfdickerson', 'awesome', 80, 20)
-   # game_info('rfdickerson', 'awesome', 22)
-   # leave_game('rfdickerson', 'awesome', 302)
 

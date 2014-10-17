@@ -369,6 +369,15 @@ class WherewolfDao(object):
             cur.execute(sql, (player_id, stat_name))
             conn.commit()
 
+    def checking_ifProtected(self, player_id):
+        conn = self.get_db()
+        with conn:
+            cur=conn.cursor()
+            sql = ("select count(*) from player_stat where player_id=%s and stat_name='Protected'")
+            cur.execute(sql, (player_id,))
+            result = cur.fetchone()[0]
+            return result == 1
+
     def get_player_stats(self,playerid, name='Kill'):
         conn = self.get_db()
         with conn:
@@ -869,5 +878,8 @@ if __name__ == "__main__":
     # dao.get_all_achievement()
 
     # print 'delete save zone protection'
-    dao.delete_save_zone_protection(2)
+    # dao.delete_save_zone_protection(2)
+
+    #print "checking if a player is protected"
+    dao.checking_ifProtected(2)
 
