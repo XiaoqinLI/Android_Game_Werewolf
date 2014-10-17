@@ -355,6 +355,19 @@ class WherewolfDao(object):
                              'SELECT %s, %s, now() where not exists (select 1 from player_stat where player_id=%s and stat_name=%s)')
                 cur.execute(sqlupdate + sqlinsert, ( playerid, name, playerid, name, playerid, name))
                 conn.commit()
+            elif name == 'Protected':
+                sqlinsert = ('INSERT INTO player_stat (player_id, stat_name, stat_value) '
+                             'SELECT %s, %s, 1 where not exists (select 1 from player_stat where player_id=%s and stat_name=%s and stat_value=1)')
+                cur.execute(sqlinsert, ( playerid, name, playerid, name))
+                conn.commit()
+
+    def delete_save_zone_protection(self, player_id, stat_name = "Protected"):
+        conn = self.get_db()
+        with conn:
+            cur=conn.cursor()
+            sql = ('delete from player_stat where player_id=%s and stat_name=%s')
+            cur.execute(sql, (player_id, stat_name))
+            conn.commit()
 
     def get_player_stats(self,playerid, name='Kill'):
         conn = self.get_db()
@@ -817,7 +830,7 @@ if __name__ == "__main__":
     # print(dao.get_player_current_game_id(0))
 
     # print set player_stats
-    # dao.set_player_stats(2)
+    # dao.set_player_stats(2, "Protected")
     # dao.set_player_stats(2, 'CoolDown')
 
     # print "check CoolDown"
@@ -852,6 +865,9 @@ if __name__ == "__main__":
     # print 'assigns assign_achievement'
     # dao.assign_achievement()
 
-    print 'get all assigned achievement from last game'
-    dao.get_all_achievement()
+    # print 'get all assigned achievement from last game'
+    # dao.get_all_achievement()
+
+    # print 'delete save zone protection'
+    dao.delete_save_zone_protection(2)
 

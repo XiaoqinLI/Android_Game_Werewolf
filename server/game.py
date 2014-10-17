@@ -104,7 +104,7 @@ def join_game(game_ID):   # Done
             return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>', methods=["PUT"])
-def update_game(game_ID):  # need to implement save zone
+def update_game(game_ID):  # Done
     username = request.form['username']
     game_id = request.form['game_id']
     lat = request.form['lat']
@@ -114,10 +114,13 @@ def update_game(game_ID):  # need to implement save zone
     player_id_location = dao.get_location(username)
     player_id = player_id_location['playerid']
 
+    #---------remove protection since the location changed---------------
+    dao.delete_save_zone_protection(player_id)
+
     all_landmark = dao.get_landmark_nearby(lat, lng, game_id) # a list of receivable landmark.
     for entry in all_landmark:
         if entry['type'] == 0: # get in a save zone, # implement this later on.
-            pass
+            dao.set_player_stats(player_id,'Protected',1)
         elif entry['type'] == 1:
             dao.add_treasure(player_id, entry['landmark_id'])
     currentPlayer = dao.get_current_player(username)
@@ -217,7 +220,7 @@ def attack(game_ID):
                         response = {"status": "failure(player is werewolf under cooldown period of 30 minutes)"}
                         return jsonify(response)
                     else:
-                        avoidability = random.uniform(0.5,0.9)
+                        avoidability = random.uniform(0.4,0.7)
                         attackaccuracy = random.uniform(0.4,1)
                         if attackaccuracy >= avoidability:
                             dao.set_dead(target_id)

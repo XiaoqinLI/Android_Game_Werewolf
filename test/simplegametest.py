@@ -347,8 +347,8 @@ if __name__ == "__main__":
         if game_results['game_status'] == 'werewolves won':
             set_game_status(admin_name, current_game_id, 2)
             break  # game ended
-        else:
-            update_locations(current_game_id)
+        # else:
+        #     update_locations(current_game_id)
 
         # update current game info before going next loop.
         current_game_info = game_info(admin_name, admin_pwd, current_game_id)
