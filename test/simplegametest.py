@@ -33,6 +33,7 @@ def leave_game(username, password, game_id): # Done
     payload = {'username': username, 'password':password, 'game_id': game_id}
     r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id),
                         auth=(username, password), data=payload)
+    print r
     response = r.json()
     print response
     # return response
@@ -106,7 +107,7 @@ def get_games(username, password):
 def set_random_landmark(game_id):
     minValue = 9.9
     maxValue = 10.1
-    radius = 3000
+    radius = 2000  # 2000 meters is quite far away
     num_landmark = random.randint(3,5)  # 3 to 5 landmark
     payload = {'game_id': game_id, 'minValue': minValue, 'maxValue': maxValue, 'radius': radius, 'num_landmark': num_landmark}
     requests.post(hostname + rest_prefix + "/game/" + str(game_id) +"/landmark", data=payload )
@@ -132,6 +133,14 @@ def check_game_results(game_id):
     r = requests.get(hostname + rest_prefix + "/game/" + str(game_id) +"/game_results", data=payload )
     response = r.json()
     return response
+
+def assign_achievement():
+    r = requests.get(hostname + rest_prefix + "/assign_achievement")
+    response = r.json()
+    return response
+
+def get_all_achievement():
+    pass
 
 def create_users():
     create_user('michael', 'paper01', 'Michael', 'Scott')
@@ -163,6 +172,17 @@ def all_join_game(current_game_id):
     username_password_playerid_list.append({'username': 'toby', 'password': 'paper08', 'playerid': 8})
     return username_password_playerid_list
 
+def clean_game_data():
+    r = requests.delete(hostname + rest_prefix +"/clean_database" )
+    response = r.json()
+    return response
+
+def clean_landmark_treasure():
+    r = requests.delete(hostname + rest_prefix +"/clean_landmark_treasure" )
+    response = r.json()
+    return response
+
+
 def update_locations(current_game_id):
     #positioned in a rectangular region (9.9, 9.9),(10.1, 10.1). Max possible Distance: 31210m
     minValue = 9.9
@@ -177,6 +197,9 @@ def update_locations(current_game_id):
     update_game('toby', 'paper08', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
 
 if __name__ == "__main__":
+
+    print "--------------------Preparing the game---------------------"
+    clean_game_data()
 
     game_round = 0
     #------------------Game Simulation---------------------------------
@@ -226,9 +249,15 @@ if __name__ == "__main__":
             print "------------------------set all random landmark in random place in day 1------------------"
             numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game in day 1
             print "------------------------attach treasure to each landmark if it is not a save zone------------------"
-            set_treasure_to_landmark(current_game_id,5)         # link treasure to landmark
+            set_treasure_to_landmark(current_game_id,numLandmark)         # link treasure to landmark
             update_locations(current_game_id)
         else:
+            print "------------------------ reset set all random landmark in random place after day 1------------------"
+            clean_landmark_treasure()
+            numLandmark = set_random_landmark(current_game_id)   # set random land marks on the game in day 1
+            print "------------------------attach treasure to each landmark if it is not a save zone------------------"
+            set_treasure_to_landmark(current_game_id,numLandmark)         # link treasure to landmark
+
             #-------get all alive playerid:----------------
             alive_playerid_list = []
             for player in current_game_info['players']:
@@ -327,9 +356,13 @@ if __name__ == "__main__":
     print "Game status: {}".format(current_game_info['status'])
     print "------------------game ended--------------------"
     #Set all the game's users' current player field to NULL
+    print "------------------everyone left the game-----------------------"
     leave_game(admin_name, admin_pwd, current_game_id)
-
-    print "------------------Assigning Achievements--------------------"
+    print "------------------Assigning Achievements----------------------"
+    assign_achievement()
+    print "Show all achievement made in last game"
+    all_achievement = get_all_achievement()
+    pprint(all_achievement)
 
 
 

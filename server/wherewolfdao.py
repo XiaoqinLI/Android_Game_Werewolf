@@ -4,6 +4,8 @@
 import psycopg2
 import md5
 import collections
+import operator
+
 from sqlalchemy.exc import IntegrityError
 from pprint import pprint
 # from datetime import time
@@ -568,6 +570,44 @@ class WherewolfDao(object):
             cur.execute('truncate vote Restart Identity cascade')
             conn.commit()
 
+    def assign_achievement(self):
+        conn = self.get_db()
+        with conn:
+            cur = conn.cursor()
+            sql =('Select player_id, stat_name, stat_value from player_stat ')
+            cur.execute(sql)
+            rows = cur.fetchall()
+            kill_results = {}
+            lupus_results = []
+            for ele in rows:
+                if ele[1] == 'Kill':
+                    kill_results[ele[0]] = ele[2]
+                elif ele[1] == 'lupus':
+                    lupus_results.append(ele[0])
+                else:
+                    pass
+            max_killer_number = max(kill_results.iteritems(), key=operator.itemgetter(1))[1]
+            max_killer_list = []
+            for key in kill_results:
+                if kill_results[key] == max_killer_number:
+                    max_killer_list.append(key)
+
+            for ele in max_killer_list:
+                sql =('Insert into user_achievement (user_id, achievement_id) '
+                      'select (select user_id from gameuser where current_player=%s) as uID, '
+                      '2'
+                )
+                cur.execute(sql,(ele,))
+            for ele in lupus_results:
+                sql =('Insert into user_achievement (user_id, achievement_id) '
+                      'select (select user_id from gameuser where current_player=%s) as uID, '
+                      '4'
+                )
+                cur.execute(sql,(ele,))
+
+            conn.commit()
+
+
 
     def get_all_players_status(self, game_id):
         conn = self.get_db()
@@ -622,12 +662,25 @@ class WherewolfDao(object):
             c = conn.cursor()
             c.execute('truncate gameuser RESTART IDENTITY cascade')
             c.execute('truncate player RESTART IDENTITY cascade')
+            c.execute('truncate game RESTART IDENTITY cascade')
             c.execute('truncate user_achievement RESTART IDENTITY cascade')
             c.execute('truncate landmark RESTART IDENTITY cascade')
+            c.execute('truncate user_achievement RESTART IDENTITY cascade')
+            c.execute('truncate treasure RESTART IDENTITY cascade')
+            c.execute('truncate inventory RESTART IDENTITY cascade')
+            c.execute('truncate player_stat RESTART IDENTITY cascade')
+            c.execute('truncate user_stat RESTART IDENTITY cascade')
+            c.execute('truncate vote RESTART IDENTITY cascade')
+            c.execute('truncate game RESTART IDENTITY cascade')
             conn.commit()
 
-
-
+    def clean_landmark_treasure(self):  # tested
+        conn = self.get_db()
+        with conn:
+            c = conn.cursor()
+            c.execute('truncate landmark RESTART IDENTITY cascade')
+            c.execute('truncate treasure RESTART IDENTITY cascade')
+            conn.commit()
             
 if __name__ == "__main__":
     dao = WherewolfDao() # default password is '121314', change it if neeeded.
@@ -781,8 +834,10 @@ if __name__ == "__main__":
 
     # print 'get all players status'
     # dao.get_all_players_status(1)
+    #
+    # print 'assign_lupus_and_clear_votes_table'
+    # dao.assign_lupus_and_clear_votes_table(1,1)
 
-    print 'assign_lupus_and_clear_votes_table'
-    dao.assign_lupus_and_clear_votes_table(1,1)
-
+    print 'assigns assign_achievement'
+    dao.assign_achievement()
 

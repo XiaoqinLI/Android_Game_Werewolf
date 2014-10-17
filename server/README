@@ -29,3 +29,5 @@ Not hard, but just do not have time to do it...
 
 # CoolDown feature is implemented, but I disabled it since I realize in Instruction, it says each night only one werewolf attack only once, so next attack will be next day
 so, there is no reason to set up a 30 mins CoolDown.
+
+# used player_stat table to track the conditions, assigns achievement to user_achievement, there is no use for user_stat

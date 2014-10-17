@@ -66,13 +66,15 @@ def leave_game(game_ID):   # Done
         auth_checker = dao.check_password(username, password)
         if auth_checker:
             dao.leave_game(game_id)
-            result = dao.delete_game(username, game_id)
-            response = {"status": "success"} if result else {"status": "failure(game does not exists)"}
+            # result = dao.delete_game(username, game_id)
+            # response = {"status": "success"} if result else {"status": "failure(game does not exists)"}
+            response = {"status": "success"}
+            return jsonify(response)
         else:
             response = {"status": "failure(not admin of the game)"}
+            return jsonify(response)
     except NoUserExistsException:
-        response = {"status": "failure(No such a user)"}
-    finally:
+        response = {"status": "failure(bad auth)"}
         return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/lobby', methods=["POST"])
@@ -317,6 +319,25 @@ def check_game_results(game_ID):
         response = {"game_status": "continue"}
     return jsonify(response)
 
+@app.route(rest_prefix +'/clean_database', methods=["DELETE"])
+def clean_game_data():
+    dao.clear_tables()
+    response = {"status": "success"}
+    return jsonify(response)
+
+@app.route(rest_prefix +'/clean_landmark_treasure', methods=["DELETE"])
+def clean_landmark_treasure():
+    dao.clean_landmark_treasure()
+    response = {"status": "success"}
+    return jsonify(response)
+
+
+@app.route(rest_prefix +'/clean_landmark_treasure', methods=["GET"])
+def assign_achievement():
+    dao.assign_achievement()
+    response = {"status": "success"}
+    return response
+
 def is_in_cooldown(playerid): # implement in player_stat
     '''
     The whole Logic here is tested and correct; however since one werewolves attacks once each night,
@@ -345,14 +366,11 @@ def hair_of_dog(target_id):
     user_id = dao.get_userID(target_id)
     dao.set_user_achievements(user_id, 1)  # No.1 is hair_of_dog
 
+
 # - "Leader of the Pack" have the most number of kills by the end of the game de def Leader of the Pack in end game
 # - "Hair of the dog" - survive an attack by a werewolf -- implement in attack
 # - "A hairy situation" - be near 3 werewolves at once --  def hairy_situation()
 # - "It is never Lupus" - vote for someone to be a werewolf, when they were a townsfolk -- implement in cast_vote
-
-
-
-
 
 
 
