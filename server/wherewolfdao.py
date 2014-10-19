@@ -714,172 +714,172 @@ class WherewolfDao(object):
             c.execute('truncate landmark RESTART IDENTITY cascade')
             c.execute('truncate treasure RESTART IDENTITY cascade')
             conn.commit()
-            
-if __name__ == "__main__":
-    dao = WherewolfDao() # default password is '121314', change it if neeeded.
-    #---------------------------Testing Each Functions used in WherewolfDao.py--------------------
-    # dao.clear_tables()#clear gameuser, player and user_achievement table
-    # try:
-    #     dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
-    #     dao.create_user('oliver','furry','Oliver','Cat')
-    #     dao.create_user('vanhelsing', 'van', 'Van', 'Helsing')
-    #     print 'Created new players!'
-    # except UserAlreadyExistsException as e:
-    #     print e
-    # except Exception:
-    #     print 'General error happened'
-    #
-    # username = 'rfdickerson'
-    # correct_pass = 'awesome'
-    # incorrect_pass = 'scaley'
-    # print 'Logging in {} with {}'.format(username, correct_pass)
-    # print 'Result: {} '.format( dao.check_password(username, correct_pass ))
-    #
-    # print 'Logging in {} with {}'.format(username, incorrect_pass)
-    # print 'Result: {} '.format( dao.check_password(username, incorrect_pass ))
-    #
-    # game_id = dao.create_game('rfdickerson', 'TheGame')
-    # print "game_id {}".format(game_id)
-    # game_id = dao.create_game('rfdickerson', 'TheGame')
-    # print "game_id {}".format(game_id)
-    # game_id = dao.create_game('oliver', 'TheGame')
-    # print "game_id {}".format(game_id)
-    # dao.create_game('oliver', 'AnotherGame')
-    #
-    # dao.join_game('oliver', 1)
-    # dao.join_game('rfdickerson', 1)
-    # dao.join_game('vanhelsing', 1)
-    # print(dao.join_game('rfdickerson', 3))
-    #
-    # print(dao.delete_game('oliver',2))
-    # print(dao.delete_game('oliver',2))
-    # dao.create_game('vanhelsing', 'TheGame')
-    #
-    # print "Adding some items..."
-    # dao.add_item('rfdickerson', 'Silver Knife')
-    # dao.add_item('rfdickerson', 'Blunderbuss')
-    # dao.add_item('rfdickerson', 'Blunderbuss')
-    # dao.add_item('rfdickerson', 'Blunderbuss')
-    # dao.add_item('oliver', 'Blunderbuss')
-    # dao.remove_item('rfdickerson', 'Blunderbuss')
-    #
-    # print
-    # print 'rfdickerson items'
-    # print '--------------------------------'
-    # items = dao.get_items("rfdickerson")
-    # for item in items:
-    #     print item["name"] + "\t" + str(item["quantity"])
-    # print
-    #
-    # # location stuff
-    # dao.set_location('rfdickerson', 30.25, 97.75)
-    # dao.set_location('oliver', 30.3, 97.76)
-    # dao.set_location('vanhelsing', 30.2, 97.7)
-    # loc = dao.get_location('rfdickerson')
-    # loc2 = dao.get_location('oliver')
-    # print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
-    # print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
-    #
-    # dao.award_achievement('rfdickerson', 'Children of the moon')
-    # dao.award_achievement('rfdickerson', 'A hairy situation')
-    # achievements = dao.get_achievements("rfdickerson")
-    #
-    # print
-    # print 'rfdickerson\'s achievements'
-    # print '--------------------------------'
-    # for a in achievements:
-    #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
-    # print
-    #
-    # nearby = dao.get_alive_nearby('rfdickerson', 1, 700000)
-    # print ('Nearby players: ')
-    # for p in nearby:
-    #     print "{} is {} meters away".format(p["player_id"],p["distance"])
-    #
-    # landmark_nearby = dao.get_landmark_nearby(30, 97, 1)
-    # print ('Nearby landmark: ')
-    # for p in landmark_nearby:
-    #     print "id: {}, type: {}".format(p["landmark_id"],p["type"])
-    #
-    # dao.add_treasure(2,1)
 
-    # dao.vote(1, 3, 2)
-    # dao.get_vote_stats(1)
-    #
-    # print 'Players in game 1 are'
-    # pprint(dao.get_players(1))
-    #
-    # dao.set_dead('rfdickerson')
-    #
-    # print 'Games are'
-    # pprint(dao.get_games())
-    #
-    # print 'Leaving a game'
-    # dao.quit_game("oliver")
-    #
-    # print 'Game Info'
-    # pprint(dao.game_info(1))
-    #
-    # print 'Leave a game'
-    # dao.leave_game(1,1)
-    # dao.leave_game(1)
-    # print 'User Stats'
-    # pprint(dao.get_user_stats('rfdickerson'))
-    #
-    # print 'Player Stats'
-    # pprint(dao.get_player_stats('rfdickerson'))
-
-    # print 'get current player of a user'
-    # print(dao.get_current_player('safa'))
-
-    # print 'game info of a game'
-    # print(dao.game_info(1))
-    #
-    # print 'current game_id of a player'
-    # print(dao.get_player_current_game_id(0))
-
-    # print set player_stats
-    # dao.set_player_stats(2, "Protected")
-    # dao.set_player_stats(2, 'CoolDown')
-
-    # print "check CoolDown"
-    # print(dao.get_player_stats(2, 'CoolDown'))
-
-    # print set user_achievements
-    # dao.set_user_achievements(1,1)
-    # dao.set_user_achievements(1,1)
-    # dao.set_user_achievements(1,2)
-
-    # print get userId by playerid:
-    # print dao.get_userID(1)
-
-    # print set game status
-    # dao.set_game_status('michael',1,1)
-
-    # print "set game current time"
-    # dao.set_game_current_time('michael',1,'09:00:00')
-
-    # print "set werewolf"
-    # dao.set_werewolf(1,2)
-
-    # print "set treasure"
-    # dao.set_treasure(1,1,1)
-
-    # print 'get all players status'
-    # dao.get_all_players_status(1)
-    #
-    # print 'assign_lupus_and_clear_votes_table'
-    # dao.assign_lupus_and_clear_votes_table(1,1)
-
-    # print 'assigns assign_achievement'
-    # dao.assign_achievement()
-
-    # print 'get all assigned achievement from last game'
-    # dao.get_all_achievement()
-
-    # print 'delete save zone protection'
-    # dao.delete_save_zone_protection(2)
-
-    #print "checking if a player is protected"
-    dao.checking_ifProtected(2)
+#---------------------------Testing Each Functions used in WherewolfDao.py--------------------
+# if __name__ == "__main__":
+#     dao = WherewolfDao() # default password is '121314', change it if neeeded.
+#     # dao.clear_tables()#clear gameuser, player and user_achievement table
+#     # try:
+#     #     dao.create_user('rfdickerson', 'awesome', 'Robert', 'Dickerson')
+#     #     dao.create_user('oliver','furry','Oliver','Cat')
+#     #     dao.create_user('vanhelsing', 'van', 'Van', 'Helsing')
+#     #     print 'Created new players!'
+#     # except UserAlreadyExistsException as e:
+#     #     print e
+#     # except Exception:
+#     #     print 'General error happened'
+#     #
+#     # username = 'rfdickerson'
+#     # correct_pass = 'awesome'
+#     # incorrect_pass = 'scaley'
+#     # print 'Logging in {} with {}'.format(username, correct_pass)
+#     # print 'Result: {} '.format( dao.check_password(username, correct_pass ))
+#     #
+#     # print 'Logging in {} with {}'.format(username, incorrect_pass)
+#     # print 'Result: {} '.format( dao.check_password(username, incorrect_pass ))
+#     #
+#     # game_id = dao.create_game('rfdickerson', 'TheGame')
+#     # print "game_id {}".format(game_id)
+#     # game_id = dao.create_game('rfdickerson', 'TheGame')
+#     # print "game_id {}".format(game_id)
+#     # game_id = dao.create_game('oliver', 'TheGame')
+#     # print "game_id {}".format(game_id)
+#     # dao.create_game('oliver', 'AnotherGame')
+#     #
+#     # dao.join_game('oliver', 1)
+#     # dao.join_game('rfdickerson', 1)
+#     # dao.join_game('vanhelsing', 1)
+#     # print(dao.join_game('rfdickerson', 3))
+#     #
+#     # print(dao.delete_game('oliver',2))
+#     # print(dao.delete_game('oliver',2))
+#     # dao.create_game('vanhelsing', 'TheGame')
+#     #
+#     # print "Adding some items..."
+#     # dao.add_item('rfdickerson', 'Silver Knife')
+#     # dao.add_item('rfdickerson', 'Blunderbuss')
+#     # dao.add_item('rfdickerson', 'Blunderbuss')
+#     # dao.add_item('rfdickerson', 'Blunderbuss')
+#     # dao.add_item('oliver', 'Blunderbuss')
+#     # dao.remove_item('rfdickerson', 'Blunderbuss')
+#     #
+#     # print
+#     # print 'rfdickerson items'
+#     # print '--------------------------------'
+#     # items = dao.get_items("rfdickerson")
+#     # for item in items:
+#     #     print item["name"] + "\t" + str(item["quantity"])
+#     # print
+#     #
+#     # # location stuff
+#     # dao.set_location('rfdickerson', 30.25, 97.75)
+#     # dao.set_location('oliver', 30.3, 97.76)
+#     # dao.set_location('vanhelsing', 30.2, 97.7)
+#     # loc = dao.get_location('rfdickerson')
+#     # loc2 = dao.get_location('oliver')
+#     # print "rfdickerson at {}, {}".format(loc["lat"], loc["lng"])
+#     # print "oliver at {}, {}".format(loc2["lat"], loc2["lng"])
+#     #
+#     # dao.award_achievement('rfdickerson', 'Children of the moon')
+#     # dao.award_achievement('rfdickerson', 'A hairy situation')
+#     # achievements = dao.get_achievements("rfdickerson")
+#     #
+#     # print
+#     # print 'rfdickerson\'s achievements'
+#     # print '--------------------------------'
+#     # for a in achievements:
+#     #     print "{} ({}) - {}".format(a["name"],a["description"],a["created_at"].strftime('%a, %H:%M'))
+#     # print
+#     #
+#     # nearby = dao.get_alive_nearby('rfdickerson', 1, 700000)
+#     # print ('Nearby players: ')
+#     # for p in nearby:
+#     #     print "{} is {} meters away".format(p["player_id"],p["distance"])
+#     #
+#     # landmark_nearby = dao.get_landmark_nearby(30, 97, 1)
+#     # print ('Nearby landmark: ')
+#     # for p in landmark_nearby:
+#     #     print "id: {}, type: {}".format(p["landmark_id"],p["type"])
+#     #
+#     # dao.add_treasure(2,1)
+#
+#     # dao.vote(1, 3, 2)
+#     # dao.get_vote_stats(1)
+#     #
+#     # print 'Players in game 1 are'
+#     # pprint(dao.get_players(1))
+#     #
+#     # dao.set_dead('rfdickerson')
+#     #
+#     # print 'Games are'
+#     # pprint(dao.get_games())
+#     #
+#     # print 'Leaving a game'
+#     # dao.quit_game("oliver")
+#     #
+#     # print 'Game Info'
+#     # pprint(dao.game_info(1))
+#     #
+#     # print 'Leave a game'
+#     # dao.leave_game(1,1)
+#     # dao.leave_game(1)
+#     # print 'User Stats'
+#     # pprint(dao.get_user_stats('rfdickerson'))
+#     #
+#     # print 'Player Stats'
+#     # pprint(dao.get_player_stats('rfdickerson'))
+#
+#     # print 'get current player of a user'
+#     # print(dao.get_current_player('safa'))
+#
+#     # print 'game info of a game'
+#     # print(dao.game_info(1))
+#     #
+#     # print 'current game_id of a player'
+#     # print(dao.get_player_current_game_id(0))
+#
+#     # print set player_stats
+#     # dao.set_player_stats(2, "Protected")
+#     # dao.set_player_stats(2, 'CoolDown')
+#
+#     # print "check CoolDown"
+#     # print(dao.get_player_stats(2, 'CoolDown'))
+#
+#     # print set user_achievements
+#     # dao.set_user_achievements(1,1)
+#     # dao.set_user_achievements(1,1)
+#     # dao.set_user_achievements(1,2)
+#
+#     # print get userId by playerid:
+#     # print dao.get_userID(1)
+#
+#     # print set game status
+#     # dao.set_game_status('michael',1,1)
+#
+#     # print "set game current time"
+#     # dao.set_game_current_time('michael',1,'09:00:00')
+#
+#     # print "set werewolf"
+#     # dao.set_werewolf(1,2)
+#
+#     # print "set treasure"
+#     # dao.set_treasure(1,1,1)
+#
+#     # print 'get all players status'
+#     # dao.get_all_players_status(1)
+#     #
+#     # print 'assign_lupus_and_clear_votes_table'
+#     # dao.assign_lupus_and_clear_votes_table(1,1)
+#
+#     # print 'assigns assign_achievement'
+#     # dao.assign_achievement()
+#
+#     # print 'get all assigned achievement from last game'
+#     # dao.get_all_achievement()
+#
+#     # print 'delete save zone protection'
+#     # dao.delete_save_zone_protection(2)
+#
+#     #print "checking if a player is protected"
+#     dao.checking_ifProtected(2)
 
