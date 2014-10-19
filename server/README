@@ -19,7 +19,7 @@ Therefore, I do not have extra function support them
 # treasure is always active, say if michael grab it on day 1, then on day 2 if
  any other player gets in the new radius, he/she can grab it as well
 
-# As instructed by Prof. Dickerson, instead of weapon and armor and HP feature, werewolf can
+# As instructed by Prof. Dickerson on last Tuesday (14th, October), instead of weapon and armor and HP feature, werewolf can
 have proper random attack accuracy and village have proper random avoidability
 so, if avoidability > accuracy, then village survive from attack.
 
