@@ -33,7 +33,7 @@ class BadArgumentsException(Exception):
 
 class WherewolfDao(object):
 
-    def __init__(self, dbname='wherewolf', pgusername='postgres', pgpasswd='121314'):
+    def __init__(self, dbname='wherewolf', pgusername='daybreaklee', pgpasswd='LXQtonghua0906'):
         self.dbname = dbname
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
