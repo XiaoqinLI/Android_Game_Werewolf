@@ -6,3 +6,7 @@ flashisfun/
 server/schema_sqlite3.sql
 server/wherewolfdao_sprint1.py
 tasklist/
+*.pyc
+testtest.py
+.pyc
+.py~
