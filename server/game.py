@@ -21,6 +21,11 @@ dao = WherewolfDao()
 def welcome():
     return "welcome to wherewolf game REST api"
 
+@app.route('/healthcheck')
+def health_check():
+	return "healthy"
+
+
 @app.route(rest_prefix+'/register', methods=["POST"])
 def create_user():  # Done
     username = request.form['username']
