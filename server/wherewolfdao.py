@@ -5,10 +5,6 @@ import psycopg2
 import md5
 import collections
 import operator
-
-from sqlalchemy.exc import IntegrityError
-from pprint import pprint
-# from datetime import time
 from datetime import datetime
 
 
