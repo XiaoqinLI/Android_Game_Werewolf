@@ -4,7 +4,7 @@ from pprint import pprint
 import random
 import math
 
-hostname = "wherewolfLB-1277079358.us-west-2.elb.amazonaws.com"
+hostname = "http://wherewolfLB-1277079358.us-west-2.elb.amazonaws.com"
 rest_prefix = "/v1"
 
 def create_user(username, password, firstname, lastname):  # Done
