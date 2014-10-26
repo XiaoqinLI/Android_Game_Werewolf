@@ -1,0 +1,29 @@
+###### notes and introduction ##########
+
+The auto game has been tested on my local machine, if you got some error, meaning you need to change/specify
+your password in order to access the database.(My POSTgreSQL default password for postgres is 121314, you need
+to send your password as a kwarg to match yours when creating a Dao.)
+
+# methods: isnight() adn isday() are integrated in attack and vote REST API, which works fine also.
+Therefore, I do not have extra function support them
+
+# There is no need to Tally up all Vote at Nightfall, just do it in daytime after everyone voted
+  then we send the top vated guy to death and check if game is ended before we get into night.
+  if not ended, then a nigth will come
+
+# Added Daybreak and Nightfall column in the game table.
+
+# Items: Although there are 5 kinds of items in item table, I only support
+ Invisibility potion as instructed in class, meaning only this item can be in treasure chest.
+
+# treasure is always active, say if michael grab it on day 1, then on day 2 if
+ any other player gets in the new radius, he/she can grab it as well
+
+# As instructed by Prof. Dickerson on last Tuesday (14th, October), instead of weapon and armor and HP feature, werewolf can
+have proper random attack accuracy and village have proper random avoidability
+so, if avoidability > accuracy, then village survive from attack.
+
+# CoolDown feature is implemented, but I disabled it since I realize in Instruction, it says each
+night only one werewolf attack only once, so next attack will be next day so, there is no reason to set up a 30 mins CoolDown.
+
+# used player_stat table to track the conditions, assigns achievement to user_achievement, there is no use for user_stat
