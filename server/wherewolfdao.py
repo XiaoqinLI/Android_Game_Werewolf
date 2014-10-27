@@ -29,14 +29,15 @@ class BadArgumentsException(Exception):
 
 class WherewolfDao(object):
 
-    def __init__(self, dbname='wherewolf', pgusername='daybreaklee', pgpasswd='LXQtonghua0906'):
+    def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='lxq121314'):
         self.dbname = dbname
+        self.host = host
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
         print ('connection to database {}, user: {}, password: {}'.format(dbname, pgusername, pgpasswd))
 
     def get_db(self):
-        return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
+        return psycopg2.connect(host=self.host,database=self.dbname,user=self.pgusername,password=self.pgpasswd)
 
     def create_user(self, username, password, firstname, lastname): # create gameuser, tested
         """ registers a new player in the system """

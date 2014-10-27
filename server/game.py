@@ -386,5 +386,5 @@ def hair_of_dog(target_id):
     dao.set_user_achievements(user_id, 1)  # No.1 is hair_of_dog
 
 if __name__ == "__main__":
-    app.run(host="http://wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com", debug=True)
+    app.run(host="0.0.0.0", debug=True)
 
