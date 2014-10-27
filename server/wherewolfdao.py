@@ -29,7 +29,7 @@ class BadArgumentsException(Exception):
 
 class WherewolfDao(object):
 
-    def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='lxq121314'):
+    def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='12131415'):
         self.dbname = dbname
         self.host = host
         self.pgusername = pgusername
