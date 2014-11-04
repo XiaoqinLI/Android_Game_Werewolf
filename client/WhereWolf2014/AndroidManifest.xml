@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
+            android:name="edu.utexas.LI.wherewolf.LoginActivity"
             android:label="@string/login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name="edu.utexas.LI.wherewolf.RegisterActivity"
             android:label="@string/register" >
         </activity>
     </application>
