@@ -1,6 +1,5 @@
 package edu.utexas.LI.wherewolf;
 
-import edu.cs.utexas.rfdickerson.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

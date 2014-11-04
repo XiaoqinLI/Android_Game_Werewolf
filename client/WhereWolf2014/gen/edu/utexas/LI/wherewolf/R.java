@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package edu.cs.utexas.rfdickerson;
+package edu.utexas.LI.wherewolf;
 
 public final class R {
     public static final class attr {
@@ -26,11 +26,11 @@ public final class R {
         public static final int orangebutton=0x7f020001;
     }
     public static final class id {
-        public static final int EditText01=0x7f080007;
         public static final int LinearLayout1=0x7f080000;
         public static final int action_settings=0x7f080009;
         public static final int loginButton=0x7f080003;
         public static final int needtoregister=0x7f080004;
+        public static final int passwordConfirmText=0x7f080007;
         public static final int passwordText=0x7f080002;
         public static final int registerButton=0x7f080005;
         public static final int register_layout=0x7f080006;
@@ -50,8 +50,9 @@ public final class R {
         public static final int clickme=0x7f050006;
         public static final int hello_world=0x7f050001;
         public static final int login=0x7f050003;
-        public static final int needtoregister=0x7f050008;
+        public static final int needtoregister=0x7f050009;
         public static final int password=0x7f050007;
+        public static final int passwordConfirm=0x7f050008;
         public static final int register=0x7f050004;
         public static final int username=0x7f050005;
     }
