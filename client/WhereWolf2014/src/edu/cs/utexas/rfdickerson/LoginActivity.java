@@ -13,14 +13,6 @@ public class LoginActivity extends Activity {
 
 	private static final String TAG = "loginactivity";
 	private int numberOfPresses;
-
-	private int startRegisterActivity()
-	{
-		Log.v(TAG, "User pressed the register button");
-		Intent intent = new Intent(this, RegisterActivity.class);
-		startActivity(intent);
-		return 8;
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +20,15 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.activity_login);
 		Log.i(TAG, "created the login activity");
 
-		final Button button = (Button) findViewById(R.id.registerButton);
+		final Button registerButton = (Button) findViewById(R.id.registerButton);
 
-		View.OnClickListener jim = new View.OnClickListener() {
+		registerButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				startRegisterActivity();
+				Log.v(TAG, "User pressed the register button");
+				Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+				startActivity(intent);
 			}
-		};
-
-		button.setOnClickListener(jim);
+		});
 		/*
 		 * button.setOnClickListener(new View.OnClickListener() { public void
 		 * onClick(View v) { // Perform action on click } });
