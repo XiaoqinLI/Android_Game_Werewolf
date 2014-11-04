@@ -12,7 +12,6 @@ import android.widget.Button;
 public class LoginActivity extends Activity {
 
 	private static final String TAG = "loginactivity";
-	private int numberOfPresses;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +28,10 @@ public class LoginActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		/*
-		 * button.setOnClickListener(new View.OnClickListener() { public void
-		 * onClick(View v) { // Perform action on click } });
-		 */
 	}
 
 	@Override
 	protected void onStart() {
-		numberOfPresses = 0;
 		Log.i(TAG, "started the login activity");
 		super.onStart();
 	}

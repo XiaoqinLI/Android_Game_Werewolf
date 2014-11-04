@@ -11,11 +11,7 @@ import android.widget.Button;
 public class RegisterActivity extends Activity {
 
 	private static final String TAG = "registeractivity";
-	public void stopRegistering()
-	{
-		Log.v(TAG, "closing the register screen");
-		this.finish();
-	}
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,15 +19,13 @@ public class RegisterActivity extends Activity {
 		setContentView(R.layout.register_layout);
 	
 		final Button button = (Button) findViewById(R.id.register_user_button);
-
-		View.OnClickListener jim = new View.OnClickListener() {
-			public void onClick(View v) {
-				Log.v(TAG, "TESTTTTTTTTTT");
-				stopRegistering();
-			}
-		};
 		
-		button.setOnClickListener(jim);
+		button.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {			
+				Log.v(TAG, "closing the register screen");
+				finish();
+			}
+		});
 	}
 
 	@Override

@@ -21,7 +21,7 @@
     </EditText>
 
     <EditText
-        android:id="@+id/EditText01"
+        android:id="@+id/passwordText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="35"
@@ -29,11 +29,11 @@
         android:inputType="textPassword" />
 
     <EditText
-        android:id="@+id/passwordText"
+        android:id="@+id/passwordConfirmText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="35"
-        android:hint="@string/password"
+        android:hint="@string/passwordConfirm"
         android:inputType="textPassword" />
     
     <Button
