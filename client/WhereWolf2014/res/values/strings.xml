@@ -6,9 +6,9 @@
     <string name="action_settings">Settings</string>
 	<string name="login">Login</string>
 	<string name="register">Register</string>
-    <string name="username">Username</string>
+    <string name="username">&#160;&#160;Username</string>
     <string name="clickme">Click Me</string>
-    <string name="password">Password</string>
-    <string name="passwordConfirm">Comfirm your password</string>
+    <string name="password">&#160;Password</string>
+    <string name="passwordConfirm">&#160;Comfirm your password</string>
     <string name="needtoregister">Need an account?</string>
 </resources>

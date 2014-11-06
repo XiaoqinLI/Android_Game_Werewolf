@@ -8,27 +8,54 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class LoginActivity extends Activity {
 
 	private static final String TAG = "loginactivity";
+	private static final int GET_TEXT_REQUEST_CODE = 1;
+	private EditText usernameEdit;
+	private EditText passwordEdit;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		Log.i(TAG, "created the login activity");
-
-		final Button registerButton = (Button) findViewById(R.id.registerButton);
-
+		
+		usernameEdit = (EditText) findViewById(R.id.usernameText);
+		passwordEdit = (EditText) findViewById(R.id.passwordText);
+		
+		final Button registerButton = (Button) findViewById(R.id.registerButton);		
 		registerButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Log.v(TAG, "User pressed the register button");
-				Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-				startActivity(intent);
+				Intent explicitIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+				startActivityForResult(explicitIntent, GET_TEXT_REQUEST_CODE);
+			}
+		});
+		
+		final Button loginButton = (Button) findViewById(R.id.loginButton);		
+		loginButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Log.v(TAG, "User pressed the login button");
+				//				
 			}
 		});
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        
+		Log.i(TAG, "Entered onActivityResult()");
+		
+		// If so, update the username editText showing the user-entered username.	
+		if (requestCode == GET_TEXT_REQUEST_CODE){
+			if (resultCode == RESULT_OK){
+				usernameEdit.setText(data.getStringExtra("Explicit_Activity"));
+			}
+		}   
+    }
 
 	@Override
 	protected void onStart() {

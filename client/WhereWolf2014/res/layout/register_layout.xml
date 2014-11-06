@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/register_layout"
     android:layout_width="match_parent"
@@ -8,39 +8,49 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="edu.utexas.LI.wherewolf.RegisterActivity" >
-
+    tools:context="edu.utexas.LI.wherewolf.RegisterActivity" 
+    android:background="@drawable/wherewolfbg">
     <EditText
         android:id="@+id/usernameText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="35"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="159dp"
+        android:layout_marginBottom="10dp" 
+        android:background="@drawable/edittextbackground"
         android:hint="@string/username" >
-
         <requestFocus />
     </EditText>
-
+      
     <EditText
         android:id="@+id/passwordText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="35"
+        android:layout_height="40dp"
+        android:layout_alignLeft="@+id/usernameText"
+        android:layout_below="@+id/usernameText"
         android:hint="@string/password"
-        android:inputType="textPassword" />
-
-    <EditText
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/edittextbackground"
+        android:inputType="textPassword" />       
+   
+	<EditText
         android:id="@+id/passwordConfirmText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="35"
+        android:layout_height="40dp"
+        android:layout_alignLeft="@+id/passwordText"
+        android:layout_below="@+id/passwordText"
         android:hint="@string/passwordConfirm"
+        android:background="@drawable/edittextbackground"  
         android:inputType="textPassword" />
-    
-    <Button
+ 
+	<Button
         android:id="@+id/register_user_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_alignLeft="@+id/passwordConfirmText"
+        android:layout_below="@+id/passwordConfirmText"
+        android:layout_marginTop="80dp"
         android:text="@string/register" />
-
-</LinearLayout>
+	
+</RelativeLayout>

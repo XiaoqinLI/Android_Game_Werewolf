@@ -22,19 +22,35 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int orangebutton=0x7f020001;
+        public static final int buttonbggray=0x7f020000;
+        public static final int buttonbgpurple=0x7f020001;
+        public static final int cloud2=0x7f020002;
+        public static final int cloud3=0x7f020003;
+        public static final int day=0x7f020004;
+        public static final int dusk1=0x7f020005;
+        public static final int dusk2=0x7f020006;
+        public static final int edittextbackground=0x7f020007;
+        public static final int ic_launcher=0x7f020008;
+        public static final int moon3=0x7f020009;
+        public static final int night=0x7f02000a;
+        public static final int purplebg=0x7f02000b;
+        public static final int sun=0x7f02000c;
+        public static final int villager3=0x7f02000d;
+        public static final int werewolflogo=0x7f02000e;
+        public static final int wherewolfbg=0x7f02000f;
+        public static final int wherewolfdesign3=0x7f020010;
+        public static final int wwlogo=0x7f020011;
     }
     public static final class id {
         public static final int LinearLayout1=0x7f080000;
         public static final int action_settings=0x7f080009;
-        public static final int loginButton=0x7f080003;
-        public static final int needtoregister=0x7f080004;
+        public static final int loginButton=0x7f080004;
         public static final int passwordConfirmText=0x7f080007;
         public static final int passwordText=0x7f080002;
-        public static final int registerButton=0x7f080005;
+        public static final int registerButton=0x7f080003;
         public static final int register_layout=0x7f080006;
         public static final int register_user_button=0x7f080008;
+        public static final int textView1=0x7f080005;
         public static final int usernameText=0x7f080001;
     }
     public static final class layout {
