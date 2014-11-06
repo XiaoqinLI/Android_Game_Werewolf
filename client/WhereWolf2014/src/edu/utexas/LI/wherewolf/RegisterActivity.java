@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
@@ -22,8 +24,6 @@ public class RegisterActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register_layout);
-//		SharedPreferences sharedPref  = this.getSharedPreferences("myPrefs", MODE_WORLD_WRITEABLE);
-		
 		usernameEdit = (EditText) findViewById(R.id.usernameText);
 		passwordEdit = (EditText) findViewById(R.id.passwordText);
 		confirmPasswordEdit = (EditText) findViewById(R.id.passwordConfirmText);
@@ -35,10 +35,7 @@ public class RegisterActivity extends Activity {
 				Log.v(TAG, "closing the register screen");
 				signupClicked();
 			}
-		});
-		
-
-		
+		});	
 	}
 	
 	private void signupClicked() {
@@ -48,7 +45,7 @@ public class RegisterActivity extends Activity {
 		String password = passwordEdit.getText().toString();
 		String confirmPassword = confirmPasswordEdit.getText().toString();
 		
-		if (password.equals(confirmPassword)){
+		if (password.equals(confirmPassword) && password.length() != 0){
 			Log.i(TAG,"Entered Registration Succeeded");
 			@SuppressWarnings("deprecation")
 			SharedPreferences sharedPref  = this.getSharedPreferences("myPrefs", MODE_WORLD_WRITEABLE);
@@ -63,15 +60,16 @@ public class RegisterActivity extends Activity {
 			this.finish();
 		}
 		else{
-			// create a notification
+			// create a notification showing that password mismatched
+			Toast toast = new Toast(getApplicationContext());
+
+	        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+	        toast.setDuration(Toast.LENGTH_LONG);
+	        
+	        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
+
+	        toast.show();
 		}
-		
-//		Intent explicitCallbackIntent = new Intent(this, ActivityLoaderActivity.class);
-//		explicitCallbackIntent.putExtra("Explicit_Activity", editTextString);// (String name, String value)
-//		// TODO - Set Activity's result with result code RESULT_OK
-//		setResult(RESULT_OK, explicitCallbackIntent);
-//		// TODO - Finish the Activity
-//		this.finish();
 
 	}
 
