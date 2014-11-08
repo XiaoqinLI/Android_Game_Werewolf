@@ -4,8 +4,8 @@
     <string name="app_name">WhereWolf2014</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-	<string name="login">Login</string>
-	<string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
     <string name="username">&#160;&#160;Username</string>
     <string name="clickme">Click Me</string>
     <string name="password">&#160;Password</string>
@@ -13,4 +13,7 @@
     <string name="needtoregister">Need an account?</string>
     <string name="wrong_string">Wrong</string>
     <string name="toast_string">Password not matched</string>
+    <string name="title_activity_game_selection">GameSelectionActivity</string>
+    <string name="gameSelector">Please select a game:</string>
+
 </resources>

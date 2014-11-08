@@ -39,7 +39,8 @@ public class LoginActivity extends Activity {
 		loginButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Log.v(TAG, "User pressed the login button");
-				//				
+				Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
+				startActivity(loginIntent);			
 			}
 		});
 	}
