@@ -22,6 +22,8 @@
     <string name="start_game">Start Game</string>    
     <string name="game_players">Curreny players joined in: </string>
     <string name="title_activity_create_game">CreateGameActivity</string>
-    <string name="title_activity_join_game">JoinGameActivity</string>
+    <string name="title_activity_join_game">GameLobbyActivity</string>
+    <string name="empty_string">&#160;</string>
+    
 
 </resources>

@@ -38,7 +38,7 @@ public class PlayerAdapter extends ArrayAdapter<Player>{
         }
 	    playerIdTV.setText(String.valueOf(player.getPlayerId()));
 	    playerNameTV.setText(player.getName());
-	    playervotesTV.setText(String.valueOf(player.getNumVotes()));    
+//	    playervotesTV.setText(String.valueOf(player.getNumVotes()));    
 	    // Return the completed view to render on screen
 	    return convertView;
 	}

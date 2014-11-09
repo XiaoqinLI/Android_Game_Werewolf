@@ -31,7 +31,7 @@
      android:textSize="28sp"
      android:textColor="#FFFFFF"
      android:textStyle="italic"
-     android:text="Name" />
+     android:text="@string/empty_string" />
 
    <TextView
      android:id="@+id/player_votes"
@@ -42,5 +42,5 @@
      android:padding="10dp"
      android:textSize="28sp"
      android:textColor="#FFF638"  
-     android:text="Votes" />
+     android:text="" />
 </RelativeLayout>

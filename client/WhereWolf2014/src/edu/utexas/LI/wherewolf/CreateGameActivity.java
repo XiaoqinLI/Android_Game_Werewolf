@@ -42,7 +42,7 @@ public class CreateGameActivity extends Activity {
 		String gameName= gameNameEdit.getText().toString();
 		if (gameName.length() != 0){
 			Log.i(TAG,"Creating Game Succeeded");
-			Intent createGameIntent = new Intent(CreateGameActivity.this, JoinGameActivity.class);
+			Intent createGameIntent = new Intent(CreateGameActivity.this, GameLobbyActivity.class);
 			startActivity(createGameIntent);	
 		}
 		

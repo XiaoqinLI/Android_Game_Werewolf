@@ -35,7 +35,7 @@
             android:label="@string/title_activity_create_game" >
         </activity>
         <activity
-            android:name=".JoinGameActivity"
+            android:name=".GameLobbyActivity"
             android:label="@string/title_activity_join_game" >
         </activity>
     </application>

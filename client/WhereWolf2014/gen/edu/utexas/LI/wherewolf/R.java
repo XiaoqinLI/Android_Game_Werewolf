@@ -93,6 +93,7 @@ public final class R {
         public static final int clickme=0x7f050006;
         public static final int create_game=0x7f05000f;
         public static final int create_new_game=0x7f05000e;
+        public static final int empty_string=0x7f050016;
         public static final int gameSelector=0x7f05000d;
         public static final int game_description=0x7f050011;
         public static final int game_players=0x7f050013;

@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class JoinGameActivity extends ListActivity {
+public class GameLobbyActivity extends ListActivity {
 	private static final String TAG = "JoinGameActivity";
 	private static ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
 	
@@ -31,8 +31,8 @@ public class JoinGameActivity extends ListActivity {
 		adapter.clear();
 		adapter.add(new Player(1, "villagermale", "Tom", 5));
 		adapter.add(new Player(2, "villagermale", "George", 3));
-		adapter.add(new Player(3, "villagermale", "Abigail", 1));
-		adapter.add(new Player(4, "villagermale", "Martha", 0));
+		adapter.add(new Player(3, "villagerfemale", "Abigail", 1));
+		adapter.add(new Player(4, "villagerfemale", "Martha", 0));
 		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
