@@ -1,16 +1,55 @@
 package edu.utexas.LI.wherewolf;
 
-import android.app.Activity;
+import java.util.ArrayList;
+
+import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
-public class JoinGameActivity extends Activity {
-
+public class JoinGameActivity extends ListActivity {
+	private static final String TAG = "JoinGameActivity";
+	private static ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_join_game);
+		
+		// Create the adapter to convert the array to views
+		PlayerAdapter adapter = new PlayerAdapter(this, arrayOfPlayers);
+		// Attach the adapter to a ListView
+		ListView playerListView = getListView();
+		playerListView.setAdapter(adapter);
+		adapter.clear();
+		adapter.add(new Player(1, "villagermale", "Tom", 5));
+		adapter.add(new Player(2, "villagermale", "George", 3));
+		adapter.add(new Player(3, "villagermale", "Abigail", 1));
+		adapter.add(new Player(4, "villagermale", "Martha", 0));
+		
+		playerListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				Log.v(TAG, "Hit on a player, doing nothing");
+				// do nothing
+			}
+		});
+		
+		final Button startGameButton = (Button) findViewById(R.id.start_game_button);		
+		startGameButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Log.v(TAG, "User pressed the create new game button");
+//				Intent createGameIntent = new Intent(GameSelectionActivity.this, CreateGameActivity.class);
+//				startActivity(createGameIntent);			
+			}
+		});	
 	}
 
 	@Override

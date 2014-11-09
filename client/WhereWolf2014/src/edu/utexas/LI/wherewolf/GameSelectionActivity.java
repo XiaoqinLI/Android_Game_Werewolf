@@ -12,8 +12,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class GameSelectionActivity extends ListActivity {
@@ -32,6 +30,7 @@ public class GameSelectionActivity extends ListActivity {
 //		ListView gameListView = (ListView) findViewById(android.R.id.list);
 		ListView gameListView = getListView();
 		gameListView.setAdapter(adapter);
+		adapter.clear();
 		adapter.add(new Game(1, "eclipse", "Tom"));
 		adapter.add(new Game(2, "twinlight", "George"));
 		adapter.add(new Game(3, "new moon", "Abigail"));
@@ -52,10 +51,6 @@ public class GameSelectionActivity extends ListActivity {
 		gameListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-
-				// Display a Toast message indicting the selected item
-//				Toast.makeText(getApplicationContext(),
-//						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
 				Log.v(TAG, "User joined a specific game from the list");
 				Intent joinGameIntent = new Intent(GameSelectionActivity.this, JoinGameActivity.class);
 				startActivity(joinGameIntent);

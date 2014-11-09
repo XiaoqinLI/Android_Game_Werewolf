@@ -2,35 +2,35 @@ package edu.utexas.LI.wherewolf;
 
 public class Player {
 	private int PlayerId;
-	private String name;
+	private String playerName;
 	private String profilePicUrl;
 	private int numVotes;
 	
-	private Player(int playerId, String name, String profilePicUrl, int numVotes) {
+	public Player(int playerId, String profilePicUrl, String name, int numVotes) {
 		this.PlayerId = playerId;
-		this.name = name;
 		this.profilePicUrl = profilePicUrl;
+		this.playerName = name;
 		this.numVotes = numVotes;
 	}
 
 	public int getPlayerId() {
-		return PlayerId;
+		return this.PlayerId;
 	}
 
 	public void setPlayerId(int playerId) {
-		PlayerId = playerId;
+		this.PlayerId = playerId;
 	}
 
 	public String getName() {
-		return name;
+		return this.playerName;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.playerName = name;
 	}
 
 	public String getProfilePicUrl() {
-		return profilePicUrl;
+		return this.profilePicUrl;
 	}
 
 	public void setProfilePicUrl(String profilePicUrl) {
@@ -38,7 +38,7 @@ public class Player {
 	}
 
 	public int getNumVotes() {
-		return numVotes;
+		return this.numVotes;
 	}
 
 	public void setNumVotes(int numVotes) {

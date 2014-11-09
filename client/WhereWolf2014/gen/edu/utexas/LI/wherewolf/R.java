@@ -36,38 +36,40 @@ public final class R {
         public static final int purplebg=0x7f02000b;
         public static final int purplelogobg=0x7f02000c;
         public static final int sun=0x7f02000d;
-        public static final int villager3=0x7f02000e;
-        public static final int werewolflogo=0x7f02000f;
-        public static final int wherewolfbg=0x7f020010;
-        public static final int wherewolfdesign3=0x7f020011;
-        public static final int wrong=0x7f020012;
-        public static final int wwlogo=0x7f020013;
+        public static final int villagerfemale=0x7f02000e;
+        public static final int villagermale=0x7f02000f;
+        public static final int werewolflogo=0x7f020010;
+        public static final int wherewolfbg=0x7f020011;
+        public static final int wherewolfdesign3=0x7f020012;
+        public static final int wrong=0x7f020013;
+        public static final int wwlogo=0x7f020014;
     }
     public static final class id {
-        public static final int LinearLayout1=0x7f080006;
-        public static final int action_settings=0x7f080017;
-        public static final int admin_name=0x7f08000f;
+        public static final int LinearLayout1=0x7f080007;
+        public static final int action_settings=0x7f080018;
+        public static final int admin_name=0x7f080010;
         public static final int create_game_button=0x7f080003;
         public static final int create_new_game_button=0x7f080005;
         public static final int gameDescription=0x7f080002;
         public static final int gameNameText=0x7f080000;
-        public static final int game_id=0x7f08000d;
-        public static final int game_name=0x7f08000e;
-        public static final int image=0x7f08000b;
-        public static final int loginButton=0x7f080009;
-        public static final int passwordConfirmText=0x7f080015;
+        public static final int game_id=0x7f08000e;
+        public static final int game_name=0x7f08000f;
+        public static final int image=0x7f08000c;
+        public static final int loginButton=0x7f08000a;
+        public static final int passwordConfirmText=0x7f080016;
         public static final int passwordText=0x7f080001;
-        public static final int player_list=0x7f080013;
-        public static final int player_name=0x7f080011;
-        public static final int player_votes=0x7f080012;
-        public static final int playerimg=0x7f080010;
-        public static final int registerButton=0x7f080008;
-        public static final int register_layout=0x7f080014;
-        public static final int register_user_button=0x7f080016;
-        public static final int text=0x7f08000c;
+        public static final int player_id=0x7f080012;
+        public static final int player_img=0x7f080011;
+        public static final int player_votes=0x7f080014;
+        public static final int registerButton=0x7f080009;
+        public static final int register_layout=0x7f080015;
+        public static final int register_user_button=0x7f080017;
+        public static final int start_game_button=0x7f080006;
+        public static final int text=0x7f08000d;
         public static final int textView1=0x7f080004;
-        public static final int toast_layout_root=0x7f08000a;
-        public static final int usernameText=0x7f080007;
+        public static final int toast_layout_root=0x7f08000b;
+        public static final int username=0x7f080013;
+        public static final int usernameText=0x7f080008;
     }
     public static final class layout {
         public static final int activity_create_game=0x7f030000;
@@ -77,8 +79,7 @@ public final class R {
         public static final int custom_toast=0x7f030004;
         public static final int item_game=0x7f030005;
         public static final int item_player=0x7f030006;
-        public static final int player_selection_list=0x7f030007;
-        public static final int register_layout=0x7f030008;
+        public static final int register_layout=0x7f030007;
     }
     public static final class menu {
         public static final int create_game=0x7f070000;
@@ -94,6 +95,7 @@ public final class R {
         public static final int create_new_game=0x7f05000e;
         public static final int gameSelector=0x7f05000d;
         public static final int game_description=0x7f050011;
+        public static final int game_players=0x7f050013;
         public static final int hello_world=0x7f050001;
         public static final int login=0x7f050003;
         public static final int needtoregister=0x7f050009;
@@ -101,9 +103,10 @@ public final class R {
         public static final int password=0x7f050007;
         public static final int passwordConfirm=0x7f050008;
         public static final int register=0x7f050004;
-        public static final int title_activity_create_game=0x7f050012;
+        public static final int start_game=0x7f050012;
+        public static final int title_activity_create_game=0x7f050014;
         public static final int title_activity_game_selection=0x7f05000c;
-        public static final int title_activity_join_game=0x7f050013;
+        public static final int title_activity_join_game=0x7f050015;
         public static final int toast_string=0x7f05000b;
         public static final int username=0x7f050005;
         public static final int wrong_string=0x7f05000a;
