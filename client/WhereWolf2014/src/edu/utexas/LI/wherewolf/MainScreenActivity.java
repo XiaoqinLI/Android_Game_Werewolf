@@ -1,7 +1,6 @@
 package edu.utexas.LI.wherewolf;
 
 import java.util.ArrayList;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,26 +13,24 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class GameLobbyActivity extends ListActivity {
-	private static final String TAG = "GameLobbyActivity";
+public class MainScreenActivity extends ListActivity {
+	private static final String TAG = "MainScreenActivity";
 	private static ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_game_lobby);
-		
+		setContentView(R.layout.activity_main_screen);
 		// Create the adapter to convert the array to views
-		PlayerAdapter adapter = new PlayerAdapter(this, arrayOfPlayers);
+		MainScreenPlayerAdapter adapter = new MainScreenPlayerAdapter(this, arrayOfPlayers);
 		// Attach the adapter to a ListView
 		ListView playerListView = getListView();
 		playerListView.setAdapter(adapter);
 		adapter.clear();
-		adapter.add(new Player(1, "villagermale", "Tom", 5));
+		adapter.add(new Player(1, "villagermale", "Tom", 4));
 		adapter.add(new Player(2, "villagermale", "George", 3));
 		adapter.add(new Player(3, "villagerfemale", "Abigail", 1));
 		adapter.add(new Player(4, "villagerfemale", "Martha", 0));
-		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -41,21 +38,12 @@ public class GameLobbyActivity extends ListActivity {
 				// do nothing
 			}
 		});
-		
-		final Button startGameButton = (Button) findViewById(R.id.start_game_button);		
-		startGameButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				Log.v(TAG, "User pressed the create new game button");
-				Intent createGameIntent = new Intent(GameLobbyActivity.this, MainScreenActivity.class);
-				startActivity(createGameIntent);			
-			}
-		});	
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.join_game, menu);
+		getMenuInflater().inflate(R.menu.main_screen, menu);
 		return true;
 	}
 
