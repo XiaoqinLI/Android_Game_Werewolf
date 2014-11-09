@@ -45,7 +45,7 @@ public class RegisterActivity extends Activity {
 		String password = passwordEdit.getText().toString();
 		String confirmPassword = confirmPasswordEdit.getText().toString();
 		
-		if (password.equals(confirmPassword) && password.length() != 0){
+		if (password.equals(confirmPassword) && password.length() != 0 && username.length() != 0){
 			Log.i(TAG,"Entered Registration Succeeded");
 //			@SuppressWarnings("deprecation")
 //			SharedPreferences sharedPref  = this.getSharedPreferences("myPrefs", MODE_WORLD_WRITEABLE);
@@ -60,7 +60,6 @@ public class RegisterActivity extends Activity {
 			this.finish();
 		}
 		else{
-			// create a notification showing that password mismatched
 			Toast toast = new Toast(getApplicationContext());
 
 	        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);

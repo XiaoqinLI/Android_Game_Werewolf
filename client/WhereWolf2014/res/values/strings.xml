@@ -6,14 +6,20 @@
     <string name="action_settings">Settings</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
-    <string name="username">&#160;&#160;Username</string>
+    <string name="username">&#160;Username</string>
     <string name="clickme">Click Me</string>
     <string name="password">&#160;Password</string>
     <string name="passwordConfirm">&#160;Comfirm your password</string>
     <string name="needtoregister">Need an account?</string>
     <string name="wrong_string">Wrong</string>
-    <string name="toast_string">Password not matched</string>
+    <string name="toast_string">Empty Name or Password not matched</string>
     <string name="title_activity_game_selection">GameSelectionActivity</string>
     <string name="gameSelector">Please select a game:</string>
+    <string name="create_new_game">Create New Game</string>
+    <string name="create_game">Create Game</string>
+    <string name="new_game_name">&#160;Game Name</string>
+    <string name="game_description">&#160;Game Description</string>
+    <string name="title_activity_create_game">CreateGameActivity</string>
+    <string name="title_activity_join_game">JoinGameActivity</string>
 
 </resources>

@@ -30,6 +30,14 @@
             android:name=".GameSelectionActivity"
             android:label="@string/title_activity_game_selection" >
         </activity>
+        <activity
+            android:name=".CreateGameActivity"
+            android:label="@string/title_activity_create_game" >
+        </activity>
+        <activity
+            android:name=".JoinGameActivity"
+            android:label="@string/title_activity_join_game" >
+        </activity>
     </application>
 
 </manifest>

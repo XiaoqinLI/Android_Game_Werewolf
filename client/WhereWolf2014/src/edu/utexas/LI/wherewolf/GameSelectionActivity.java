@@ -2,26 +2,30 @@ package edu.utexas.LI.wherewolf;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class GameSelectionActivity extends ListActivity {
+	private static final String TAG = "GameSelectionActivity";
+	private static ArrayList<Game> arrayOfGames = new ArrayList<Game>();
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game_selection);
 		
-		// Construct the data source
-		ArrayList<Game> arrayOfGames = new ArrayList<Game>();
-//		arrayOfGames.add(new Game(1, "eclipse", "Tom"));
-//		arrayOfGames.add(new Game(2, "twinlight", "George"));
-//		arrayOfGames.add(new Game(3, "new moon", "Abigail"));
-//		arrayOfGames.add(new Game(4, "daybreak", "Martha"));
 		// Create the adapter to convert the array to views
 		GameAdapter adapter = new GameAdapter(this, arrayOfGames);
 		// Attach the adapter to a ListView
@@ -32,6 +36,40 @@ public class GameSelectionActivity extends ListActivity {
 		adapter.add(new Game(2, "twinlight", "George"));
 		adapter.add(new Game(3, "new moon", "Abigail"));
 		adapter.add(new Game(4, "daybreak", "Martha"));
+		adapter.add(new Game(5, "eclipse", "Tom"));
+		adapter.add(new Game(6, "twinlight", "George"));
+		adapter.add(new Game(7, "new moon", "Abigail"));
+		adapter.add(new Game(8, "daybreak", "Martha"));
+		adapter.add(new Game(9, "eclipse", "Tom"));
+		adapter.add(new Game(10, "twinlight", "George"));
+		adapter.add(new Game(11, "new moon", "Abigail"));
+		adapter.add(new Game(12, "daybreak", "Martha"));
+		adapter.add(new Game(13, "eclipse", "Tom"));
+		adapter.add(new Game(14, "twinlight", "George"));
+		adapter.add(new Game(15, "new moon", "Abigail"));
+		adapter.add(new Game(16, "daybreak", "Martha"));
+		
+		gameListView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+
+				// Display a Toast message indicting the selected item
+//				Toast.makeText(getApplicationContext(),
+//						((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+				Log.v(TAG, "User joined a specific game from the list");
+				Intent joinGameIntent = new Intent(GameSelectionActivity.this, JoinGameActivity.class);
+				startActivity(joinGameIntent);
+			}
+		});
+		
+		final Button createGameButton = (Button) findViewById(R.id.create_new_game_button);		
+		createGameButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Log.v(TAG, "User pressed the create new game button");
+				Intent createGameIntent = new Intent(GameSelectionActivity.this, CreateGameActivity.class);
+				startActivity(createGameIntent);			
+			}
+		});
 	}
 
 	@Override

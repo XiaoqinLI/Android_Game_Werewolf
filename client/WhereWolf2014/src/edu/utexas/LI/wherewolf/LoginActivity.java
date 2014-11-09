@@ -4,15 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
-	private static final String TAG = "loginactivity";
+	private static final String TAG = "LoginActivity";
 	private static final int GET_TEXT_REQUEST_CODE = 1;
 	private EditText usernameEdit;
 	private EditText passwordEdit;
@@ -39,8 +41,20 @@ public class LoginActivity extends Activity {
 		loginButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Log.v(TAG, "User pressed the login button");
-				Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
-				startActivity(loginIntent);			
+				if (usernameEdit.getText().toString().length() != 0 && passwordEdit.getText().toString().length() != 0){				
+					Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
+					startActivity(loginIntent);			
+				}
+				else{
+					Toast toast = new Toast(getApplicationContext());
+
+			        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+			        toast.setDuration(Toast.LENGTH_LONG);
+			        
+			        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
+
+			        toast.show();
+				}
 			}
 		});
 	}
