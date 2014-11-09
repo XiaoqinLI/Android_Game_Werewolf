@@ -1,17 +1,20 @@
 package edu.utexas.LI.wherewolf;
 
 import java.util.ArrayList;
+
 import android.app.ListActivity;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class MainScreenActivity extends ListActivity {
 	private static final String TAG = "MainScreenActivity";
@@ -38,6 +41,40 @@ public class MainScreenActivity extends ListActivity {
 				// do nothing
 			}
 		});
+		
+		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
+		final SeekBar sk = (SeekBar) findViewById(R.id.daytime_seekbar);
+//		MyOnChangeListener changeListener = new MyOnChangeListener();
+//		changeListener.setCircadianViewWidget(circadianWidget);
+//		seekbar.setOnSeekBarChangeListener( changeListener );
+		
+		sk.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {       
+
+		    @Override       
+		    public void onStopTrackingTouch(SeekBar seekBar) {      
+		        // TODO Auto-generated method stub      
+		    }       
+
+		    @Override       
+		    public void onStartTrackingTouch(SeekBar seekBar) {     
+		        // TODO Auto-generated method stub      
+		    }       
+
+		    @Override       
+		    public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {     
+		        // TODO Auto-generated method stub      
+
+//		        t1.setTextSize(progress);
+//		        Toast.makeText(getApplicationContext(), String.valueOf(progress),Toast.LENGTH_LONG).show();
+
+		    }       
+		});     
+
+		
+
+		
+		
+		
 	}
 
 	@Override
@@ -58,4 +95,6 @@ public class MainScreenActivity extends ListActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	
 }
