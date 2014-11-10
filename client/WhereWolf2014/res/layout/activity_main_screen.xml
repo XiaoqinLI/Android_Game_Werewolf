@@ -18,13 +18,13 @@
             android:layout_height="40dp"
             android:text="@string/hello_world"
             android:textColor="#FFFFFF" />
-        
+        <!--  
         <view
 			android:id="@+id/circadian"
 			android:layout_width="fill_parent"
 			android:layout_height="300dp"
 			class="edu.utexas.LI.wherewolf.CircadianWidgetView" />
-		
+		-->
         <SeekBar
             android:id="@+id/daytime_seekbar"
             android:layout_width="match_parent"       

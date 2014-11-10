@@ -47,12 +47,6 @@ public class RegisterActivity extends Activity {
 		
 		if (password.equals(confirmPassword) && password.length() != 0 && username.length() != 0){
 			Log.i(TAG,"Entered Registration Succeeded");
-//			@SuppressWarnings("deprecation")
-//			SharedPreferences sharedPref  = this.getSharedPreferences("myPrefs", MODE_WORLD_WRITEABLE);
-//			SharedPreferences.Editor prefsEditor = sharedPref.edit();
-//			prefsEditor.putString("username", username);
-//			prefsEditor.putString("password", password);
-//			prefsEditor.commit();
 			
 			Intent explicitCallbackIntent = new Intent(this, LoginActivity.class);
 			explicitCallbackIntent.putExtra("Explicit_Activity", username);// (String name, String value)

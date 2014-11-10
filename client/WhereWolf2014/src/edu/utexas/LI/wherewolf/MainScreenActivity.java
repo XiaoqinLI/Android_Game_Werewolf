@@ -3,6 +3,8 @@ package edu.utexas.LI.wherewolf;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -19,6 +22,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 public class MainScreenActivity extends ListActivity {
 	private static final String TAG = "MainScreenActivity";
 	private static ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
+	
+	private void clearSavedData(){
+		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+		SharedPreferences.Editor editor = myPrefs.edit();
+		editor.clear();
+        editor.commit();
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +52,7 @@ public class MainScreenActivity extends ListActivity {
 			}
 		});
 		
-		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
+//		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
 		final SeekBar sk = (SeekBar) findViewById(R.id.daytime_seekbar);
 //		MyOnChangeListener changeListener = new MyOnChangeListener();
 //		changeListener.setCircadianViewWidget(circadianWidget);
@@ -68,13 +78,19 @@ public class MainScreenActivity extends ListActivity {
 //		        Toast.makeText(getApplicationContext(), String.valueOf(progress),Toast.LENGTH_LONG).show();
 
 		    }       
-		});     
-
+		});
 		
-
-		
-		
-		
+		final Button logoutButton = (Button) findViewById(R.id.logout_button);		
+		logoutButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Log.v(TAG, "User pressed the register button");
+				clearSavedData();
+				Intent explicitIntent = new Intent(MainScreenActivity.this, LoginActivity.class);
+				explicitIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+				explicitIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(explicitIntent);
+			}
+		});	
 	}
 
 	@Override

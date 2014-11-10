@@ -52,7 +52,7 @@ public class GameSelectionActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Log.v(TAG, "User joined a specific game from the list");
-				Intent joinGameIntent = new Intent(GameSelectionActivity.this, GameLobbyActivity.class);
+				Intent joinGameIntent = new Intent(GameSelectionActivity.this, GameLobbyActivity.class).putExtra("selectedGameID", id);
 				startActivity(joinGameIntent);
 			}
 		});

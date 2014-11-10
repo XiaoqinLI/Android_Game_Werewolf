@@ -3,7 +3,9 @@ package edu.utexas.LI.wherewolf;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,12 +13,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class GameLobbyActivity extends ListActivity {
 	private static final String TAG = "GameLobbyActivity";
 	private static ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
+	private long currentGameID;
+	
+	private void saveCurrentGameID(){	
+		currentGameID = getIntent().getLongExtra("selectedGameID", -100);
+		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+		SharedPreferences.Editor editor = myPrefs.edit();
+		editor.putLong("currentGameID", currentGameID);
+		editor.commit();
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +58,7 @@ public class GameLobbyActivity extends ListActivity {
 		startGameButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Log.v(TAG, "User pressed the create new game button");
+				saveCurrentGameID();
 				Intent createGameIntent = new Intent(GameLobbyActivity.this, MainScreenActivity.class);
 				startActivity(createGameIntent);			
 			}

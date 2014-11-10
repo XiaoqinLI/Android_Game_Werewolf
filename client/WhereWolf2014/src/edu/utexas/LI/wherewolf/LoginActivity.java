@@ -1,12 +1,12 @@
 package edu.utexas.LI.wherewolf;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +18,18 @@ public class LoginActivity extends Activity {
 	private static final int GET_TEXT_REQUEST_CODE = 1;
 	private EditText usernameEdit;
 	private EditText passwordEdit;
+		
+	private void signIn(){
+		usernameEdit = (EditText) findViewById(R.id.usernameText);
+		passwordEdit = (EditText) findViewById(R.id.passwordText);		
+		String username = usernameEdit.getText().toString();
+		String password = passwordEdit.getText().toString();
+		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+		SharedPreferences.Editor editor = myPrefs.edit();
+		editor.putString("username", username);
+		editor.putString("password", password);
+		editor.commit();
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +39,26 @@ public class LoginActivity extends Activity {
 		
 		usernameEdit = (EditText) findViewById(R.id.usernameText);
 		passwordEdit = (EditText) findViewById(R.id.passwordText);
+		
+		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);//  Preferences(Context.MODE_PRIVATE);
+        String storedUsername = myPrefs.getString("username", "");
+        String storedPassword = myPrefs.getString("password", "");
+        Long currentGameID = myPrefs.getLong("currentGameID", -100);
+
+        if ((currentGameID != null && currentGameID != -100))
+        {
+        	Log.v(TAG, "Saved current game detected. Launching game main screen");
+			Intent explicitIntent = new Intent(LoginActivity.this, MainScreenActivity.class);
+			startActivity(explicitIntent);
+        }
+		
+        else if ((storedUsername != null && !storedUsername.isEmpty()) && (storedPassword != null && !storedPassword.isEmpty()))
+        {
+        	Log.v(TAG, "Saved username and password detected. Launching game selection screen");
+			Intent explicitIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
+			startActivity(explicitIntent);
+        }
+		       
 		
 		final Button registerButton = (Button) findViewById(R.id.registerButton);		
 		registerButton.setOnClickListener(new View.OnClickListener() {
@@ -40,8 +72,11 @@ public class LoginActivity extends Activity {
 		final Button loginButton = (Button) findViewById(R.id.loginButton);		
 		loginButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				
+				
 				Log.v(TAG, "User pressed the login button");
-				if (usernameEdit.getText().toString().length() != 0 && passwordEdit.getText().toString().length() != 0){				
+				if (usernameEdit.getText().toString().length() != 0 && passwordEdit.getText().toString().length() != 0){	
+					signIn();
 					Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
 					startActivity(loginIntent);			
 				}
