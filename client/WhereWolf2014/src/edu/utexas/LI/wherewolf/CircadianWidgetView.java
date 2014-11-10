@@ -4,13 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.View;
 
 public class CircadianWidgetView extends View{
 	private Paint canvasPaint, drawPaint;
-	private Bitmap canvasBitmap, moonBitmap, sunBitmap, nightBitmap;
+	private Bitmap canvasBitmap, moonBitmap, sunBitmap, nightBitmap, dayBitmap;
 	private Canvas drawCanvas;
 	private double currentTime;
 	
@@ -27,6 +29,8 @@ public class CircadianWidgetView extends View{
 		// the corresponding names (moon, night, etc)
 		moonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.moon);
 		nightBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.night);
+		sunBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sun);
+		dayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.day);
 	}
 	
 	//	Implement the changeTime method. 
@@ -45,20 +49,23 @@ public class CircadianWidgetView extends View{
 		int iH = moonBitmap.getHeight() / 2;
 
 		// draw the backdrop here
+		drawCanvas.drawBitmap(nightBitmap, 0, 0, drawPaint); 
 
 		// calculate the angle the moon should appear in the sky
 		double theta = Math.PI / 2 + Math.PI * currentTime / 12;
-
+		double suntheta = Math.PI / 2 + Math.PI * (currentTime+12) / 12;
 		// calculate the x and y coordinates of where to draw the images
 		// keep in mind the coordinates are the top left of the images
 		// so you can use the bitmap width and height to compensate.
-
 		double moonPosX = w / 2 - w / 3 * Math.cos(theta);
-		double moonPosY = w / 2 - w / 3 * Math.sin(theta); // replace this with your value
-
+		double moonPosY = w / 2 + w / 3 * Math.sin(theta); // replace this with your value
+		double sunPosX = w / 2 - w / 3 * Math.cos(suntheta);
+		double sunPosY = w / 2 + w / 3 * Math.sin(suntheta); // replace this with your value
 		drawCanvas.drawBitmap(moonBitmap, 
-				(int) moonPosX - iW, (int) moonPosY + iH, drawPaint); 
-
+				(int) moonPosX - iW, (int) moonPosY + iH, drawPaint);
+		drawCanvas.drawBitmap(sunBitmap, 
+				(int) sunPosX - iW, (int) sunPosY + iH, drawPaint);
+		canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
 		// draw your sun and other things here as well.
 		// experiment with drawCanvas.drawText for putting labels of whether it is day
 		// or night.
@@ -69,7 +76,7 @@ public class CircadianWidgetView extends View{
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-
+//		canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 		canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		drawCanvas = new Canvas(canvasBitmap);
 	}

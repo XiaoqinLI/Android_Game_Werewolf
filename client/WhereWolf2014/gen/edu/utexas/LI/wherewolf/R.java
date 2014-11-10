@@ -9,6 +9,103 @@ package edu.utexas.LI.wherewolf;
 
 public final class R {
     public static final class attr {
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int swipeActionLeft=0x7f010008;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int swipeActionRight=0x7f010009;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeAnimationTime=0x7f010001;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeBackView=0x7f010006;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeCloseAllItemsWhenMoveList=0x7f010004;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeDrawableChecked=0x7f01000a;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeDrawableUnchecked=0x7f01000b;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeFrontView=0x7f010005;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>both</code></td><td>1</td><td></td></tr>
+<tr><td><code>right</code></td><td>2</td><td></td></tr>
+<tr><td><code>left</code></td><td>3</td><td></td></tr>
+</table>
+         */
+        public static final int swipeMode=0x7f010007;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeOffsetLeft=0x7f010002;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeOffsetRight=0x7f010003;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeOpenOnLongPress=0x7f010000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -22,56 +119,65 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int buttonbggray=0x7f020000;
-        public static final int buttonbgpurple=0x7f020001;
-        public static final int cloud2=0x7f020002;
-        public static final int cloud3=0x7f020003;
-        public static final int day=0x7f020004;
-        public static final int dusk1=0x7f020005;
-        public static final int dusk2=0x7f020006;
-        public static final int edittextbackground=0x7f020007;
-        public static final int ic_launcher=0x7f020008;
-        public static final int moon=0x7f020009;
-        public static final int night=0x7f02000a;
-        public static final int purplebg=0x7f02000b;
-        public static final int purplelogobg=0x7f02000c;
-        public static final int sun=0x7f02000d;
-        public static final int villagerfemale=0x7f02000e;
-        public static final int villagermale=0x7f02000f;
-        public static final int werewolflogo=0x7f020010;
-        public static final int wherewolfbg=0x7f020011;
-        public static final int wherewolfdesign3=0x7f020012;
-        public static final int wrong=0x7f020013;
-        public static final int wwlogo=0x7f020014;
+        public static final int background_front=0x7f020000;
+        public static final int buttonbggray=0x7f020001;
+        public static final int buttonbgpurple=0x7f020002;
+        public static final int cloud2=0x7f020003;
+        public static final int cloud3=0x7f020004;
+        public static final int day=0x7f020005;
+        public static final int dusk1=0x7f020006;
+        public static final int dusk2=0x7f020007;
+        public static final int edittextbackground=0x7f020008;
+        public static final int ic_launcher=0x7f020009;
+        public static final int moon=0x7f02000a;
+        public static final int night=0x7f02000b;
+        public static final int purplebg=0x7f02000c;
+        public static final int purplelogobg=0x7f02000d;
+        public static final int sun=0x7f02000e;
+        public static final int villagerfemale=0x7f02000f;
+        public static final int villagermale=0x7f020010;
+        public static final int werewolflogo=0x7f020011;
+        public static final int wherewolfbg=0x7f020012;
+        public static final int wherewolfdesign3=0x7f020013;
+        public static final int wrong=0x7f020014;
+        public static final int wwlogo=0x7f020015;
     }
     public static final class id {
-        public static final int LinearLayout1=0x7f080007;
-        public static final int action_settings=0x7f08001a;
-        public static final int admin_name=0x7f080012;
-        public static final int create_game_button=0x7f080003;
-        public static final int create_new_game_button=0x7f080006;
-        public static final int daytime_seekbar=0x7f08000b;
-        public static final int gameDescription=0x7f080002;
-        public static final int gameNameText=0x7f080000;
-        public static final int game_id=0x7f080010;
-        public static final int game_name=0x7f080011;
-        public static final int image=0x7f08000e;
-        public static final int loginButton=0x7f08000a;
-        public static final int logout_button=0x7f08000c;
-        public static final int passwordConfirmText=0x7f080018;
-        public static final int passwordText=0x7f080001;
-        public static final int player_id=0x7f080014;
-        public static final int player_img=0x7f080013;
-        public static final int player_votes=0x7f080016;
-        public static final int registerButton=0x7f080009;
-        public static final int register_layout=0x7f080017;
-        public static final int register_user_button=0x7f080019;
-        public static final int start_game_button=0x7f080005;
-        public static final int text=0x7f08000f;
-        public static final int textView1=0x7f080004;
-        public static final int toast_layout_root=0x7f08000d;
-        public static final int username=0x7f080015;
-        public static final int usernameText=0x7f080008;
+        public static final int LinearLayout1=0x7f08000e;
+        public static final int action_settings=0x7f080022;
+        public static final int admin_name=0x7f08001a;
+        public static final int both=0x7f080000;
+        public static final int choice=0x7f080004;
+        public static final int circadian=0x7f080012;
+        public static final int create_game_button=0x7f08000a;
+        public static final int create_new_game_button=0x7f08000d;
+        public static final int daytime_seekbar=0x7f080013;
+        public static final int dismiss=0x7f080005;
+        public static final int gameDescription=0x7f080009;
+        public static final int gameNameText=0x7f080007;
+        public static final int game_id=0x7f080018;
+        public static final int game_name=0x7f080019;
+        public static final int image=0x7f080016;
+        public static final int left=0x7f080001;
+        public static final int loginButton=0x7f080011;
+        public static final int logout_button=0x7f080014;
+        public static final int none=0x7f080002;
+        public static final int passwordConfirmText=0x7f080020;
+        public static final int passwordText=0x7f080008;
+        public static final int player_id=0x7f08001c;
+        public static final int player_img=0x7f08001b;
+        public static final int player_votes=0x7f08001e;
+        public static final int registerButton=0x7f080010;
+        public static final int register_layout=0x7f08001f;
+        public static final int register_user_button=0x7f080021;
+        public static final int reveal=0x7f080006;
+        public static final int right=0x7f080003;
+        public static final int start_game_button=0x7f08000c;
+        public static final int text=0x7f080017;
+        public static final int textView1=0x7f08000b;
+        public static final int toast_layout_root=0x7f080015;
+        public static final int username=0x7f08001d;
+        public static final int usernameText=0x7f08000f;
     }
     public static final class layout {
         public static final int activity_create_game=0x7f030000;
@@ -146,4 +252,212 @@ public final class R {
          */
         public static final int AppTheme=0x7f060001;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a SwipeListView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #SwipeListView_swipeActionLeft edu.utexas.LI.wherewolf:swipeActionLeft}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeActionRight edu.utexas.LI.wherewolf:swipeActionRight}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeAnimationTime edu.utexas.LI.wherewolf:swipeAnimationTime}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeBackView edu.utexas.LI.wherewolf:swipeBackView}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeCloseAllItemsWhenMoveList edu.utexas.LI.wherewolf:swipeCloseAllItemsWhenMoveList}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeDrawableChecked edu.utexas.LI.wherewolf:swipeDrawableChecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeDrawableUnchecked edu.utexas.LI.wherewolf:swipeDrawableUnchecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeFrontView edu.utexas.LI.wherewolf:swipeFrontView}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeMode edu.utexas.LI.wherewolf:swipeMode}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeOffsetLeft edu.utexas.LI.wherewolf:swipeOffsetLeft}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeOffsetRight edu.utexas.LI.wherewolf:swipeOffsetRight}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeOpenOnLongPress edu.utexas.LI.wherewolf:swipeOpenOnLongPress}</code></td><td></td></tr>
+           </table>
+           @see #SwipeListView_swipeActionLeft
+           @see #SwipeListView_swipeActionRight
+           @see #SwipeListView_swipeAnimationTime
+           @see #SwipeListView_swipeBackView
+           @see #SwipeListView_swipeCloseAllItemsWhenMoveList
+           @see #SwipeListView_swipeDrawableChecked
+           @see #SwipeListView_swipeDrawableUnchecked
+           @see #SwipeListView_swipeFrontView
+           @see #SwipeListView_swipeMode
+           @see #SwipeListView_swipeOffsetLeft
+           @see #SwipeListView_swipeOffsetRight
+           @see #SwipeListView_swipeOpenOnLongPress
+         */
+        public static final int[] SwipeListView = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003,
+            0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007,
+            0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b
+        };
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeActionLeft}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name edu.utexas.LI.wherewolf:swipeActionLeft
+        */
+        public static final int SwipeListView_swipeActionLeft = 8;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeActionRight}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name edu.utexas.LI.wherewolf:swipeActionRight
+        */
+        public static final int SwipeListView_swipeActionRight = 9;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeAnimationTime}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name edu.utexas.LI.wherewolf:swipeAnimationTime
+        */
+        public static final int SwipeListView_swipeAnimationTime = 1;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeBackView}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name edu.utexas.LI.wherewolf:swipeBackView
+        */
+        public static final int SwipeListView_swipeBackView = 6;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeCloseAllItemsWhenMoveList}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name edu.utexas.LI.wherewolf:swipeCloseAllItemsWhenMoveList
+        */
+        public static final int SwipeListView_swipeCloseAllItemsWhenMoveList = 4;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeDrawableChecked}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name edu.utexas.LI.wherewolf:swipeDrawableChecked
+        */
+        public static final int SwipeListView_swipeDrawableChecked = 10;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeDrawableUnchecked}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name edu.utexas.LI.wherewolf:swipeDrawableUnchecked
+        */
+        public static final int SwipeListView_swipeDrawableUnchecked = 11;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeFrontView}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name edu.utexas.LI.wherewolf:swipeFrontView
+        */
+        public static final int SwipeListView_swipeFrontView = 5;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeMode}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>both</code></td><td>1</td><td></td></tr>
+<tr><td><code>right</code></td><td>2</td><td></td></tr>
+<tr><td><code>left</code></td><td>3</td><td></td></tr>
+</table>
+          @attr name edu.utexas.LI.wherewolf:swipeMode
+        */
+        public static final int SwipeListView_swipeMode = 7;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeOffsetLeft}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name edu.utexas.LI.wherewolf:swipeOffsetLeft
+        */
+        public static final int SwipeListView_swipeOffsetLeft = 2;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeOffsetRight}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name edu.utexas.LI.wherewolf:swipeOffsetRight
+        */
+        public static final int SwipeListView_swipeOffsetRight = 3;
+        /**
+          <p>This symbol is the offset where the {@link edu.utexas.LI.wherewolf.R.attr#swipeOpenOnLongPress}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name edu.utexas.LI.wherewolf:swipeOpenOnLongPress
+        */
+        public static final int SwipeListView_swipeOpenOnLongPress = 0;
+    };
 }

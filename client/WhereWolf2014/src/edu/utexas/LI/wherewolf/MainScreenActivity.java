@@ -2,6 +2,8 @@ package edu.utexas.LI.wherewolf;
 
 import java.util.ArrayList;
 
+import edu.utexas.LI.wherewolf.SwipeDetector.Action;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +20,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 
 public class MainScreenActivity extends ListActivity {
 	private static final String TAG = "MainScreenActivity";
@@ -35,7 +38,11 @@ public class MainScreenActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_screen);
 		// Create the adapter to convert the array to views
+//		if time == XXXX{
 		MainScreenPlayerAdapter adapter = new MainScreenPlayerAdapter(this, arrayOfPlayers);
+//		}
+//		else
+//			PlayerAdapter adapter = new MainScreenPlayerAdapter(this, arrayOfPlayers);
 		// Attach the adapter to a ListView
 		ListView playerListView = getListView();
 		playerListView.setAdapter(adapter);
@@ -44,15 +51,34 @@ public class MainScreenActivity extends ListActivity {
 		adapter.add(new Player(2, "villagermale", "George", 3));
 		adapter.add(new Player(3, "villagerfemale", "Abigail", 1));
 		adapter.add(new Player(4, "villagerfemale", "Martha", 0));
+		
+		final SwipeDetector swipeDetector = new SwipeDetector();
+		playerListView.setOnTouchListener(swipeDetector);		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Log.v(TAG, "Hit on a player, doing nothing");
-				// do nothing
+				if (swipeDetector.swipeDetected()) {
+		            if (swipeDetector.getAction() == SwipeDetector.Action.LR) {
+
+		                Toast.makeText(getApplicationContext(),
+		                    "Left to right", Toast.LENGTH_SHORT).show();
+
+		            }
+		            if (swipeDetector.getAction() == SwipeDetector.Action.RL) {
+
+		                Toast.makeText(getApplicationContext(),
+		                    "Right to left", Toast.LENGTH_SHORT).show();
+
+		            }
+		        }
+				
 			}
-		});
+		});		
 		
-//		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
+		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
+		
 		final SeekBar sk = (SeekBar) findViewById(R.id.daytime_seekbar);
 //		MyOnChangeListener changeListener = new MyOnChangeListener();
 //		changeListener.setCircadianViewWidget(circadianWidget);
@@ -73,7 +99,9 @@ public class MainScreenActivity extends ListActivity {
 		    @Override       
 		    public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {     
 		        // TODO Auto-generated method stub      
-
+		    	// progress(time) from 0 - 99, (100)
+		    	circadianWidget.changeTime(progress);
+		    	
 //		        t1.setTextSize(progress);
 //		        Toast.makeText(getApplicationContext(), String.valueOf(progress),Toast.LENGTH_LONG).show();
 
