@@ -16,30 +16,39 @@
 			android:id="@+id/circadian"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			android:layout_weight="1.8"
+			android:layout_weight="1.65"
 			class="edu.utexas.LI.wherewolf.CircadianWidgetView" />
 
         <SeekBar
             android:id="@+id/daytime_seekbar"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-			android:layout_weight="0.2"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.35" />
+
     </LinearLayout>
 
     <LinearLayout
+        
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
         android:orientation="vertical" >
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="wrap_content"         
-            android:layout_height="0dp"
-            android:layout_weight="2.6"  
-            android:layout_marginTop="5dp" />
+        <com.fortysevendeg.swipelistview.SwipeListView
+            xmlns:swipe="http://schemas.android.com/apk/res-auto"
+	        android:id="@+id/list_of_players"
+	        android:layout_width="match_parent"
+	        android:layout_height="0dp"
+            android:layout_weight="2.6"
+	        android:layout_marginTop="10dp"
+	        android:listSelector="#00000000"
+	        swipe:swipeBackView="@+id/back"
+	        swipe:swipeCloseAllItemsWhenMoveList="true"
+	        swipe:swipeDrawableChecked="@drawable/choice_selected"
+	        swipe:swipeDrawableUnchecked="@drawable/choice_unselected"
+	        swipe:swipeFrontView="@+id/front" />
 
         <Button
             android:id="@+id/logout_button"
@@ -49,6 +58,7 @@
             android:layout_marginBottom="10dp"           
             android:background="@drawable/buttonbggray"
             android:text="@string/logout" />
+	
     </LinearLayout>
 
 </LinearLayout>

@@ -41,10 +41,10 @@ public class GameLobbyActivity extends ListActivity {
 		ListView playerListView = getListView();
 		playerListView.setAdapter(adapter);
 		adapter.clear();
-		adapter.add(new Player(1, "villagermale", "Tom", 5));
-		adapter.add(new Player(2, "villagermale", "George", 3));
-		adapter.add(new Player(3, "villagerfemale", "Abigail", 1));
-		adapter.add(new Player(4, "villagerfemale", "Martha", 0));
+		adapter.add(new Player(1, null,"villagermale", "Tom", 5));
+		adapter.add(new Player(2, null, "villagermale", "George", 3));
+		adapter.add(new Player(3, null, "villagerfemale", "Abigail", 1));
+		adapter.add(new Player(4, null, "villagerfemale", "Martha", 0));
 		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,

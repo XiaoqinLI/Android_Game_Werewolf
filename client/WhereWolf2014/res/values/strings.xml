@@ -26,5 +26,10 @@
     <string name="empty_string">&#160;</string>
     <string name="title_activity_main_screen">MainScreenActivity</string>
     <string name="logout">Log out</string>
+    
+    <string name="profile_pic">Profile Picture</string>
+    <string name="attack">Attack</string>
+    <string name="vote">Vote</string>
+       
 
 </resources>
