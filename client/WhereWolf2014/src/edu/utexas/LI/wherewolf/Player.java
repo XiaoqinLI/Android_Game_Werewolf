@@ -4,10 +4,10 @@ public class Player {
 	private int PlayerId;
 	private String playerName;
 	private String profilePicUrl;
-	private int numVotes;
+	private String numVotes;
 	private Drawable profPic;
 	
-	public Player(int playerId, Drawable profPic, String profilePicUrl, String name, int numVotes) {
+	public Player(int playerId, Drawable profPic, String profilePicUrl, String name, String numVotes) {
 		this.PlayerId = playerId;
 		this.profilePicUrl = profilePicUrl;
 		this.playerName = name;
@@ -47,11 +47,11 @@ public class Player {
 		this.profilePicUrl = profilePicUrl;
 	}
 
-	public int getNumVotes() {
+	public String getNumVotes() {
 		return this.numVotes;
 	}
 
-	public void setNumVotes(int numVotes) {
+	public void setNumVotes(String numVotes) {
 		this.numVotes = numVotes;
 	}	
 }

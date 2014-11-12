@@ -25,7 +25,8 @@
             android:layout_height="0dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_weight="0.35" />
+            android:layout_weight="0.35" 
+            android:max="48"/>
 
     </LinearLayout>
 

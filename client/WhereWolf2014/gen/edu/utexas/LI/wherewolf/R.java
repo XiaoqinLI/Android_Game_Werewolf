@@ -119,23 +119,23 @@ containing a value of this type.
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int background_back=0x7f020000;
-        public static final int background_front=0x7f020001;
-        public static final int buttonbggray=0x7f020002;
-        public static final int buttonbgpurple=0x7f020003;
-        public static final int choice_selected=0x7f020004;
-        public static final int choice_unselected=0x7f020005;
-        public static final int cloud2=0x7f020006;
-        public static final int cloud3=0x7f020007;
-        public static final int day=0x7f020008;
-        public static final int dusk1=0x7f020009;
-        public static final int dusk2=0x7f02000a;
-        public static final int edittextbackground=0x7f02000b;
-        public static final int ic_launcher=0x7f02000c;
-        public static final int moon=0x7f02000d;
-        public static final int night=0x7f02000e;
-        public static final int purplebg=0x7f02000f;
-        public static final int purplelogobg=0x7f020010;
+        public static final int background_front_black=0x7f020000;
+        public static final int buttonbggray=0x7f020001;
+        public static final int buttonbgpurple=0x7f020002;
+        public static final int choice_selected=0x7f020003;
+        public static final int choice_unselected=0x7f020004;
+        public static final int cloud2=0x7f020005;
+        public static final int cloud3=0x7f020006;
+        public static final int day=0x7f020007;
+        public static final int dusk1=0x7f020008;
+        public static final int dusk2=0x7f020009;
+        public static final int edittextbackground=0x7f02000a;
+        public static final int ic_launcher=0x7f02000b;
+        public static final int moon=0x7f02000c;
+        public static final int night=0x7f02000d;
+        public static final int purplebg=0x7f02000e;
+        public static final int purplelogobg=0x7f02000f;
+        public static final int slider_bg=0x7f020010;
         public static final int sun=0x7f020011;
         public static final int villagerfemale=0x7f020012;
         public static final int villagermale=0x7f020013;
@@ -147,9 +147,9 @@ containing a value of this type.
     }
     public static final class id {
         public static final int LinearLayout1=0x7f08000e;
-        public static final int action_settings=0x7f08002a;
+        public static final int action_settings=0x7f080029;
         public static final int admin_name=0x7f08001d;
-        public static final int attack_button=0x7f080022;
+        public static final int attack_vote_button=0x7f080022;
         public static final int back=0x7f080015;
         public static final int both=0x7f080000;
         public static final int choice=0x7f080004;
@@ -169,17 +169,17 @@ containing a value of this type.
         public static final int loginButton=0x7f080011;
         public static final int logout_button=0x7f080017;
         public static final int none=0x7f080002;
-        public static final int num_votes=0x7f080026;
-        public static final int passwordConfirmText=0x7f080028;
+        public static final int num_votes=0x7f080025;
+        public static final int passwordConfirmText=0x7f080027;
         public static final int passwordText=0x7f080008;
         public static final int player_id=0x7f08001f;
         public static final int player_img=0x7f08001e;
         public static final int player_name=0x7f080024;
         public static final int player_votes=0x7f080021;
-        public static final int prof_pic=0x7f080025;
+        public static final int prof_pic=0x7f080023;
         public static final int registerButton=0x7f080010;
-        public static final int register_layout=0x7f080027;
-        public static final int register_user_button=0x7f080029;
+        public static final int register_layout=0x7f080026;
+        public static final int register_user_button=0x7f080028;
         public static final int reveal=0x7f080006;
         public static final int right=0x7f080003;
         public static final int start_game_button=0x7f08000c;
@@ -188,7 +188,6 @@ containing a value of this type.
         public static final int toast_layout_root=0x7f080018;
         public static final int username=0x7f080020;
         public static final int usernameText=0x7f08000f;
-        public static final int vote_button=0x7f080023;
     }
     public static final class layout {
         public static final int activity_create_game=0x7f030000;
@@ -266,8 +265,6 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f060001;
-        /**  For ListView Swiping 
-         */
         public static final int MyListBackContent=0x7f060002;
         public static final int MyListButtonAction=0x7f060004;
         public static final int MyListFrontContent=0x7f060003;

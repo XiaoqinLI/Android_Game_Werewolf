@@ -15,19 +15,28 @@ import android.widget.Toast;
 
 public class MainScreenPlayerAdapter extends ArrayAdapter<Player> {
 
-	List<Player>   data;
+	List<Player> data;
 	Context context;
 	int layoutResID;
-
+	private boolean isNight;
+	
 	public MainScreenPlayerAdapter(Context context, int layoutResourceId, List<Player> data) {
 		super(context, layoutResourceId, data);
 
 		this.data=data;
 		this.context=context;
 		this.layoutResID=layoutResourceId;
+		isNight = false;
 
 
 		// TODO Auto-generated constructor stub
+	}
+	public void setIsNight(boolean isNight){
+		this.isNight = isNight;
+	}
+
+	public boolean checkIsNight(){
+		return isNight;
 	}
 
 	@Override
@@ -48,8 +57,7 @@ public class MainScreenPlayerAdapter extends ArrayAdapter<Player> {
 			holder.profPic = (ImageView)row.findViewById(R.id.prof_pic);
 			holder.playerName = (TextView)row.findViewById(R.id.player_name);
 			holder.numVotes = (TextView)row.findViewById(R.id.num_votes);
-			holder.attackButton=(Button)row.findViewById(R.id.attack_button);
-			holder.voteButton=(Button)row.findViewById(R.id.vote_button);
+			holder.attackVoteButton=(Button)row.findViewById(R.id.attack_vote_button);
 			row.setTag(holder);
 		}
 		else
@@ -62,38 +70,42 @@ public class MainScreenPlayerAdapter extends ArrayAdapter<Player> {
 		holder.playerId.setText(String.valueOf(playerdata.getPlayerId()));
 		holder.profPic.setImageDrawable(playerdata.getProfPic());
 		holder.playerName.setText(playerdata.getName());
-		holder.numVotes.setText(String.valueOf(playerdata.getNumVotes()));
-
-		holder.attackButton.setOnClickListener(new View.OnClickListener() {
-
+		
+		 if (isNight)
+	        {
+	        	holder.attackVoteButton.setText("Attack");
+	        	holder.numVotes.setText("");
+	        }
+	        else
+	        {
+	        	holder.attackVoteButton.setText("Vote");
+	            holder.numVotes.setText(playerdata.getNumVotes());
+	        }
+		
+//		holder.numVotes.setText(playerdata.getNumVotes());
+		holder.attackVoteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Toast.makeText(context, "Attack Button Clicked",Toast.LENGTH_SHORT).show();
+				 if (isNight)
+                 {
+                     Toast.makeText(context, "Attack Button Clicked",Toast.LENGTH_SHORT).show();
+
+                 }
+                 else
+                 {
+                     Toast.makeText(context, "Vote Button Clicked",Toast.LENGTH_SHORT).show();
+                 }
 			}
-		});
-
-		holder.voteButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Toast.makeText(context, "Vote Button Clicked",Toast.LENGTH_SHORT).show();
-			}
-		});
-
+		});		
 		return row;
-
 	}
 
 	static class NewsHolder{
-
 		TextView playerId;
 		ImageView profPic;
 		TextView playerName;
 		TextView numVotes;
-		Button attackButton;
-		Button voteButton;
+		Button attackVoteButton;
 	}
 
 }

@@ -6,13 +6,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Paint.Align;
 import android.util.AttributeSet;
 import android.view.View;
 
 public class CircadianWidgetView extends View{
-	private Paint canvasPaint, drawSunMoonPaint, drawNightPaint, drawDayPaint, drawDuskPaint, draw2DuskPaint;
+	private Paint canvasPaint, drawSunMoonPaint, drawNightPaint, drawDayPaint, drawDuskPaint, draw2DuskPaint, textPaint;
 	private Bitmap canvasBitmap, moonBitmap, sunBitmap, nightBitmap, dayBitmap, duskBitmap, dusk2Bitmap;
 	private Canvas drawCanvas;
 	private int currentTime;
@@ -29,6 +28,7 @@ public class CircadianWidgetView extends View{
 		drawDuskPaint = new Paint();
 		draw2DuskPaint = new Paint();
 		drawSunMoonPaint = new Paint();
+		textPaint = new Paint();
 		canvasPaint = new Paint(Paint.DITHER_FLAG);
 		// be sure that you have pngs or jpgs in your drawables folder with 
 		// the corresponding names (moon, night, etc)
@@ -48,6 +48,7 @@ public class CircadianWidgetView extends View{
 	}
 	
 	//	Implement the onDraw function:
+	@Override
 	protected void onDraw(Canvas canvas) {
 		double w = drawCanvas.getWidth();
 		double h = drawCanvas.getHeight();
@@ -91,6 +92,20 @@ public class CircadianWidgetView extends View{
 			drawNightPaint.setAlpha(0);
 		drawCanvas.drawBitmap(nightBitmap, 0, 0, drawNightPaint);
 		
+		int textXPos = (canvas.getWidth() / 2);
+		int textYPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
+		
+		textPaint.setTextAlign(Align.CENTER);
+	    textPaint.setTextSize(30);
+	    textPaint.setColor(Color.WHITE);
+		if (currentTime % 24>=6 && currentTime % 24<=18){
+			drawCanvas.drawText("night", textXPos, textXPos, textPaint);
+		}
+		else{
+			drawCanvas.drawText("day", textXPos, textXPos, textPaint);
+		}
+			
+		
 		// calculate the angle the moon should appear in the sky
 		double theta = Math.PI / 2 + Math.PI * currentTime / 12;
 		double suntheta = Math.PI / 2 + Math.PI * (currentTime+12) / 12;
@@ -98,9 +113,9 @@ public class CircadianWidgetView extends View{
 		// keep in mind the coordinates are the top left of the images
 		// so you can use the bitmap width and height to compensate.
 		double moonPosX = w / 2 - w / 3 * Math.cos(theta);
-		double moonPosY = w / 2 + w / 3 * Math.sin(theta); // replace this with your value
+		double moonPosY = w / 2 + 1.5*w / 3 * Math.sin(theta); // replace this with your value
 		double sunPosX = w / 2 - w / 3 * Math.cos(suntheta);
-		double sunPosY = w / 2 + w / 3 * Math.sin(suntheta); // replace this with your value
+		double sunPosY = w / 2 + 1.5*w / 3 * Math.sin(suntheta); // replace this with your value
 		drawCanvas.drawBitmap(moonBitmap, 
 				(int) moonPosX - iW, (int) moonPosY + iH, drawSunMoonPaint);
 		drawCanvas.drawBitmap(sunBitmap, 

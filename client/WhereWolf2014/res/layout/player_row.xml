@@ -12,17 +12,10 @@
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/attack_button"
+                android:id="@+id/attack_vote_button"
                 style="@style/MyListButtonAction"
-                android:text="@string/attack" />
+                android:text="@string/vote" />
         
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/vote_button"
-                style="@style/MyListButtonAction"
-                android:text="@string/vote" /> 
- 
     </LinearLayout>
     
      <LinearLayout
@@ -30,32 +23,33 @@
             android:tag="front"
             style="@style/MyListFrontContent">
  
-
-         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                style="@style/MyListTitle"
-                android:id="@+id/player_id"/>
-        
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                style="@style/MyListTitle"
-                android:id="@+id/player_name"/>
-
-        <ImageView
+		
+         <ImageView
                 style="@style/MyListImage"
                 android:id="@+id/prof_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/profile_pic"/>
-
+         
+         <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:textColor="#FFFFFF"
+                style="@style/MyListTitle"
+                android:id="@+id/player_id"/>
+        
         <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:gravity="left"
+                style="@style/MyListTitle"
+                android:id="@+id/player_name"/>
+
+        <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:gravity="right"
                 style="@style/MyListTitle"
                 android:id="@+id/num_votes"/>
         

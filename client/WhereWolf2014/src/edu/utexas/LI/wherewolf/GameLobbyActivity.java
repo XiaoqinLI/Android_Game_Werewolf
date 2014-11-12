@@ -3,7 +3,6 @@ package edu.utexas.LI.wherewolf;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -41,10 +39,10 @@ public class GameLobbyActivity extends ListActivity {
 		ListView playerListView = getListView();
 		playerListView.setAdapter(adapter);
 		adapter.clear();
-		adapter.add(new Player(1, null,"villagermale", "Tom", 5));
-		adapter.add(new Player(2, null, "villagermale", "George", 3));
-		adapter.add(new Player(3, null, "villagerfemale", "Abigail", 1));
-		adapter.add(new Player(4, null, "villagerfemale", "Martha", 0));
+		adapter.add(new Player(1, null,"villagermale", "Tom", String.valueOf(5)));
+		adapter.add(new Player(2, null, "villagermale", "George", String.valueOf(3)));
+		adapter.add(new Player(3, null, "villagerfemale", "Abigail", String.valueOf(1)));
+		adapter.add(new Player(4, null, "villagerfemale", "Martha", String.valueOf(0)));
 		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
