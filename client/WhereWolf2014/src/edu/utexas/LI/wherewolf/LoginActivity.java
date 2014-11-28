@@ -1,14 +1,17 @@
 package edu.utexas.LI.wherewolf;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginActivity extends Activity {
@@ -154,4 +157,53 @@ public class LoginActivity extends Activity {
 	 * R.id.action_settings) { return true; } return
 	 * super.onOptionsItemSelected(item); }
 	 */
+	//
+	private class SigninTask extends AsyncTask<Void, Integer, SigninResponse> {
+	
+	    @Override
+	    protected SigninResponse doInBackground(Void... request) {
+	
+	        final EditText nameTV = (EditText) findViewById(R.id.usernameText);
+	        final EditText passTV = (EditText) findViewById(R.id.passwordText);
+	        
+	        String username = nameTV.getText().toString();
+	        String password = passTV.getText().toString();
+	        
+	        SigninRequest signinRequest = new SigninRequest(username, password);
+	        
+	        return signinRequest.execute(new WherewolfNetworking());
+  	    }
+	
+	    protected void onPostExecute(SigninResponse result) {
+	    	
+	    	Log.v(TAG, "Signed in user has player id " + result.getPlayerID());
+
+//	        final TextView errorText = (TextView) findViewById(R.id.error_text);
+	        if (result.getStatus().equals("success")) {
+	            	
+	            final EditText nameTV = (EditText) findViewById(R.id.usernameText);
+	            final EditText passTV = (EditText) findViewById(R.id.passwordText);
+	            
+	            WherewolfPreferences pref = new WherewolfPreferences(LoginActivity.this);
+	            pref.setCreds(nameTV.getText().toString(), passTV.getText().toString());
+
+//	            errorText.setText("");
+	            Log.v(TAG, "Signing in");
+	            Intent intent = new Intent(LoginActivity.this, GameSelectionActivity.class);
+	            startActivity(intent);
+	            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+	        } else {
+//	            do something with bad password     
+//	        	errorText.setText(result.getErrorMessage());
+	        	Toast toast = new Toast(getApplicationContext());
+
+		        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+		        toast.setDuration(Toast.LENGTH_LONG);
+		        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
+		        toast.show();
+	        }
+	
+	    }
+	
+	}
 }
