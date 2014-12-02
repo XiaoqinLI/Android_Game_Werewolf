@@ -12,7 +12,7 @@
     <string name="passwordConfirm">&#160;Comfirm your password</string>
     <string name="needtoregister">Need an account?</string>
     <string name="wrong_string">Wrong</string>
-    <string name="toast_string">Empty Name or Password not matched</string>
+    <string name="toast_string">Invalid Username/Password or Username already exists</string>
     <string name="title_activity_game_selection">GameSelectionActivity</string>
     <string name="gameSelector">Please select a game:</string>
     <string name="create_new_game">Create New Game</string>
