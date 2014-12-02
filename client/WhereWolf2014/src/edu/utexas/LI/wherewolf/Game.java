@@ -4,11 +4,13 @@ public class Game {
 	private int gameId;
 	private String gameName;
 	private String adminName;
+	private String description;
 	
-	public Game(int gameId, String gameName, String adminName) {
+	public Game(int gameId, String gameName, String adminName, String description) {
 		this.gameId = gameId;
 		this.gameName = gameName;
 		this.adminName = adminName;
+		this.description = description;
 	}
 
 	public int getGameId() {
@@ -34,7 +36,14 @@ public class Game {
 	public void setAdminName(String adminName) {
 		this.adminName = adminName;
 	}
-	
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	
 
 }

@@ -127,34 +127,3 @@ public class RegisterActivity extends Activity {
 	}
 }
 
-
-
-
-
-//private void signupClicked() {
-//
-//	Log.i(TAG,"Entered signupClicked()");		
-//	String username = usernameEdit.getText().toString();
-//	String password = passwordEdit.getText().toString();
-//	String confirmPassword = confirmPasswordEdit.getText().toString();
-//
-//	if (password.equals(confirmPassword) && password.length() != 0 && username.length() != 0){
-//		Log.i(TAG,"Entered Registration Succeeded");
-//
-//		Intent explicitCallbackIntent = new Intent(this, LoginActivity.class);
-//		explicitCallbackIntent.putExtra("Explicit_Activity", username);// (String name, String value)
-//		setResult(RESULT_OK, explicitCallbackIntent);
-//		this.finish();
-//	}
-//	else{
-//		Toast toast = new Toast(getApplicationContext());
-//
-//		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-//		toast.setDuration(Toast.LENGTH_LONG);
-//
-//		toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
-//
-//		toast.show();
-//	}
-//
-//}

@@ -13,12 +13,11 @@ public class CreateGameRequest extends BasicRequest{
 	protected String gamename;
 	protected String description;
 	
-	public CreateGameRequest( String name, String description) {       
+	public CreateGameRequest( String username, String password, String gameName, String description) {       
 		super(username, password);
-		this.gamename = name;
-		this.description = description;        
+		this.gamename = gameName;
+		this.description = description;       
 	}
-
 
 	@Override
 	public String getURL() {
@@ -37,6 +36,8 @@ public class CreateGameRequest extends BasicRequest{
 		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 		urlParameters.add(new BasicNameValuePair("game_name", gamename));
 		urlParameters.add(new BasicNameValuePair("description", description));
+		urlParameters.add(new BasicNameValuePair("username", username));
+		urlParameters.add(new BasicNameValuePair("password", password));
 		return urlParameters;
 	}
 
@@ -56,14 +57,17 @@ public class CreateGameRequest extends BasicRequest{
 
 		try {
 			JSONObject jObject = net.sendRequest(this);
-
+			
 			String status = jObject.getString("status");
 
 			if (status.equals("success"))
 			{
-				return new CreateGameResponse("success", "created game");
+				CreateGameResponse successResponse;
+				successResponse = this.processResponse(jObject);
+				return successResponse;
+//				return new CreateGameResponse("success", "created game");
 			} else {
-				String errorMessage = jObject.getString("error");
+				String errorMessage = jObject.getString("status");
 				return new CreateGameResponse("failure", errorMessage);
 			}
 
@@ -73,7 +77,6 @@ public class CreateGameRequest extends BasicRequest{
 		} catch (JSONException e) {
 			return new CreateGameResponse("failure", "could not parse JSON.");
 		}
-
 	}
 
 	// Basic getters and setters go here

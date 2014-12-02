@@ -4,9 +4,9 @@ public final class CreateGameResponse extends BasicResponse {
 
 	protected int gameID;
 
-	public CreateGameResponse (String status, String message)
+	public CreateGameResponse (String status, String errorMessage)
 	{
-		super(status, message);
+		super(status, errorMessage);
 	}
 
 	public CreateGameResponse (String status, String message, int gameID)

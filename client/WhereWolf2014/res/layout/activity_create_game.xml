@@ -18,7 +18,7 @@
         android:background="@drawable/edittextbackground"
         android:ems="10"
         android:hint="@string/new_game_name"
-        android:inputType="textPassword" />
+        android:inputType="textVisiblePassword" />
 
     <EditText
         android:id="@+id/passwordText"
@@ -41,7 +41,7 @@
         android:background="@drawable/edittextbackground"
         android:ems="10"
         android:hint="@string/game_description"
-        android:inputType="textPassword" />
+        android:inputType="textVisiblePassword" />
 
     <Button
         android:id="@+id/create_game_button"

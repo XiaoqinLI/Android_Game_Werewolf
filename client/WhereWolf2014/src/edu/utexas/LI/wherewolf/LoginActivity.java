@@ -20,18 +20,6 @@ public class LoginActivity extends Activity {
 	private static final int GET_TEXT_REQUEST_CODE = 1;
 	private EditText usernameEdit;
 	private EditText passwordEdit;
-		
-	private void signIn(){
-		usernameEdit = (EditText) findViewById(R.id.usernameText);
-		passwordEdit = (EditText) findViewById(R.id.passwordText);		
-		String username = usernameEdit.getText().toString();
-		String password = passwordEdit.getText().toString();
-		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-		SharedPreferences.Editor editor = myPrefs.edit();
-		editor.putString("username", username);
-		editor.putString("password", password);
-		editor.commit();
-	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +30,6 @@ public class LoginActivity extends Activity {
 		usernameEdit = (EditText) findViewById(R.id.usernameText);
 		passwordEdit = (EditText) findViewById(R.id.passwordText);
 		WherewolfPreferences myPrefs = new WherewolfPreferences(LoginActivity.this);
-//		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);//  Preferences(Context.MODE_PRIVATE);
         String storedUsername = myPrefs.getUsername();
         String storedPassword = myPrefs.getPassword();
         Long currentGameID = (long) myPrefs.getCurrentGameID();
@@ -73,30 +60,21 @@ public class LoginActivity extends Activity {
 		
 		final Button loginButton = (Button) findViewById(R.id.loginButton);		
 		loginButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				
-				
+			public void onClick(View v) {			
 				Log.v(TAG, "User pressed the login button");
 				if (usernameEdit.getText().toString().length() != 0 && passwordEdit.getText().toString().length() != 0){	
-//					signIn();
 					String username = usernameEdit.getText().toString();
 					String password = passwordEdit.getText().toString();
 					
 					LoginRequest request = new LoginRequest(username, password);
 					SigninTask loginTask = new SigninTask();
-					loginTask.execute(request);
-					
-//					Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
-//					startActivity(loginIntent);			
+					loginTask.execute(request);					
 				}
 				else{
 					Toast toast = new Toast(getApplicationContext());
-
 			        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-			        toast.setDuration(Toast.LENGTH_LONG);
-			        
+			        toast.setDuration(Toast.LENGTH_LONG);		        
 			        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
-
 			        toast.show();
 				}
 			}
@@ -168,7 +146,6 @@ public class LoginActivity extends Activity {
 	private class SigninTask extends AsyncTask<LoginRequest, Integer, LoginResponse> {
 	
 	    @Override
-//	    protected LoginResponse doInBackground(LoginRequest request) {
 	    protected LoginResponse doInBackground(LoginRequest... request) {
 	
 	        final EditText nameTV = (EditText) findViewById(R.id.usernameText);
@@ -214,15 +191,4 @@ public class LoginActivity extends Activity {
 	
 	}
 	
-//	private void signIn(){
-//		usernameEdit = (EditText) findViewById(R.id.usernameText);
-//		passwordEdit = (EditText) findViewById(R.id.passwordText);		
-//		String username = usernameEdit.getText().toString();
-//		String password = passwordEdit.getText().toString();
-//		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-//		SharedPreferences.Editor editor = myPrefs.edit();
-//		editor.putString("username", username);
-//		editor.putString("password", password);
-//		editor.commit();
-//	}
 }
