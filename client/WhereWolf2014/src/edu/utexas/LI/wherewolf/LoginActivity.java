@@ -41,11 +41,11 @@ public class LoginActivity extends Activity {
 		
 		usernameEdit = (EditText) findViewById(R.id.usernameText);
 		passwordEdit = (EditText) findViewById(R.id.passwordText);
-		
-		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);//  Preferences(Context.MODE_PRIVATE);
-        String storedUsername = myPrefs.getString("username", "");
-        String storedPassword = myPrefs.getString("password", "");
-        Long currentGameID = myPrefs.getLong("currentGameID", -100);
+		WherewolfPreferences myPrefs = new WherewolfPreferences(LoginActivity.this);
+//		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);//  Preferences(Context.MODE_PRIVATE);
+        String storedUsername = myPrefs.getUsername();
+        String storedPassword = myPrefs.getPassword();
+        Long currentGameID = (long) myPrefs.getCurrentGameID();
 
         if ((currentGameID != null && currentGameID != -100))
         {
@@ -78,9 +78,16 @@ public class LoginActivity extends Activity {
 				
 				Log.v(TAG, "User pressed the login button");
 				if (usernameEdit.getText().toString().length() != 0 && passwordEdit.getText().toString().length() != 0){	
-					signIn();
-					Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
-					startActivity(loginIntent);			
+//					signIn();
+					String username = usernameEdit.getText().toString();
+					String password = passwordEdit.getText().toString();
+					
+					LoginRequest request = new LoginRequest(username, password);
+					SigninTask loginTask = new SigninTask();
+					loginTask.execute(request);
+					
+//					Intent loginIntent = new Intent(LoginActivity.this, GameSelectionActivity.class);
+//					startActivity(loginIntent);			
 				}
 				else{
 					Toast toast = new Toast(getApplicationContext());
@@ -158,10 +165,11 @@ public class LoginActivity extends Activity {
 	 * super.onOptionsItemSelected(item); }
 	 */
 	//
-	private class SigninTask extends AsyncTask<Void, Integer, SigninResponse> {
+	private class SigninTask extends AsyncTask<LoginRequest, Integer, LoginResponse> {
 	
 	    @Override
-	    protected SigninResponse doInBackground(Void... request) {
+//	    protected LoginResponse doInBackground(LoginRequest request) {
+	    protected LoginResponse doInBackground(LoginRequest... request) {
 	
 	        final EditText nameTV = (EditText) findViewById(R.id.usernameText);
 	        final EditText passTV = (EditText) findViewById(R.id.passwordText);
@@ -169,12 +177,12 @@ public class LoginActivity extends Activity {
 	        String username = nameTV.getText().toString();
 	        String password = passTV.getText().toString();
 	        
-	        SigninRequest signinRequest = new SigninRequest(username, password);
+	        LoginRequest loginRequest = new LoginRequest(username, password);
 	        
-	        return signinRequest.execute(new WherewolfNetworking());
+	        return loginRequest.execute(new WherewolfNetworking());
   	    }
 	
-	    protected void onPostExecute(SigninResponse result) {
+	    protected void onPostExecute(LoginResponse result) {
 	    	
 	    	Log.v(TAG, "Signed in user has player id " + result.getPlayerID());
 
@@ -184,8 +192,8 @@ public class LoginActivity extends Activity {
 	            final EditText nameTV = (EditText) findViewById(R.id.usernameText);
 	            final EditText passTV = (EditText) findViewById(R.id.passwordText);
 	            
-	            WherewolfPreferences pref = new WherewolfPreferences(LoginActivity.this);
-	            pref.setCreds(nameTV.getText().toString(), passTV.getText().toString());
+	            WherewolfPreferences myPrefs = new WherewolfPreferences(LoginActivity.this);
+	            myPrefs.setCreds(nameTV.getText().toString(), passTV.getText().toString());
 
 //	            errorText.setText("");
 	            Log.v(TAG, "Signing in");
@@ -196,14 +204,25 @@ public class LoginActivity extends Activity {
 //	            do something with bad password     
 //	        	errorText.setText(result.getErrorMessage());
 	        	Toast toast = new Toast(getApplicationContext());
-
 		        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 		        toast.setDuration(Toast.LENGTH_LONG);
-		        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
+		        toast.setView(getLayoutInflater().inflate(R.layout.custom_toast_login,null));
 		        toast.show();
 	        }
 	
 	    }
 	
 	}
+	
+//	private void signIn(){
+//		usernameEdit = (EditText) findViewById(R.id.usernameText);
+//		passwordEdit = (EditText) findViewById(R.id.passwordText);		
+//		String username = usernameEdit.getText().toString();
+//		String password = passwordEdit.getText().toString();
+//		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
+//		SharedPreferences.Editor editor = myPrefs.edit();
+//		editor.putString("username", username);
+//		editor.putString("password", password);
+//		editor.commit();
+//	}
 }

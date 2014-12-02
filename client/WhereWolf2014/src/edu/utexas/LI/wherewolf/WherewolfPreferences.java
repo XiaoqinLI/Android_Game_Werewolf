@@ -33,9 +33,9 @@ public class WherewolfPreferences {
 	      return sharedPreferences.getString("password", "");
 	  }
 	  
-	  public int getCurrentGameID()
+	  public long getCurrentGameID()
 	  {
-	      return sharedPreferences.getInt("currentGame", 0);
+	      return sharedPreferences.getLong("currentGame", -100);
 	  }
 	  
 	  public void setCreds(String username, String password)

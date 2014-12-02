@@ -35,8 +35,6 @@ public class RegisterActivity extends Activity {
 		firstNameEdit = (EditText) findViewById(R.id.first_name);
 		lastNameEdit = (EditText) findViewById(R.id.last_name);
 		
-
-		
 		usernameEdit.setText("Apple");
 		passwordEdit.setText("12345678");
 		confirmPasswordEdit.setText("12345678");

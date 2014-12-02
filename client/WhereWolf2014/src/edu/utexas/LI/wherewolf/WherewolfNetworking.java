@@ -56,11 +56,10 @@ public class WherewolfNetworking {
 			HttpUriRequest request;
 
 			if (basicRequest.getRequestType() == RequestType.GET) {
-				request = new HttpGet(url);
-
-				request.setHeader("Content-type", "application/json");
+				HttpGet getRequest = new HttpGet(url);
+				getRequest.setHeader("Content-type", "application/json");
 				// add authentication stuff here.
-
+				request = getRequest;
 			} else if (requestType == RequestType.POST) {
 
 				HttpPost postRequest = new HttpPost(url);
