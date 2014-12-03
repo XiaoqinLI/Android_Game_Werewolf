@@ -62,12 +62,14 @@ public class GameSelectionActivity extends ListActivity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				Log.v(TAG, "User joined a specific game from the list");
-				selectedGameID = id+1;
+				clickedGame = (Game) gameListView.getItemAtPosition(position);
+				long clickedGameId = (long) clickedGame.getGameId();
+				selectedGameID = clickedGameId;
 				WherewolfPreferences myPrefs = new WherewolfPreferences(GameSelectionActivity.this);
 				String storedUsername = myPrefs.getUsername();
 		        String storedPassword = myPrefs.getPassword();
 		        
-				GameSelectionRequest request = new GameSelectionRequest(storedUsername, storedPassword, id+1);
+				GameSelectionRequest request = new GameSelectionRequest(storedUsername, storedPassword, selectedGameID);
 				JoinGameTask joinGameTask = new JoinGameTask();
 				joinGameTask.execute(request);
 				

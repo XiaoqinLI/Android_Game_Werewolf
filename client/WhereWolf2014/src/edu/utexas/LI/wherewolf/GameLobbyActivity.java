@@ -2,9 +2,14 @@ package edu.utexas.LI.wherewolf;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,22 +28,28 @@ public class GameLobbyActivity extends ListActivity {
 	private static final String TAG = "GameLobbyActivity";
 	private static ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
 	private long currentGameID;
-	
+	PlayerAdapter adapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game_lobby);
 		
-		// Create the adapter to convert the array to views
-		PlayerAdapter adapter = new PlayerAdapter(this, arrayOfPlayers);
-		// Attach the adapter to a ListView
-		ListView playerListView = getListView();
+        currentGameID = getIntent().getLongExtra("selectedGameID", -100);
+        new GetPlayersTask().execute();
+        adapter = new PlayerAdapter(this, arrayOfPlayers);
+        final ListView playerListView = getListView();
 		playerListView.setAdapter(adapter);
-		adapter.clear();
-		adapter.add(new Player(1, null,"villagermale", "Tom", String.valueOf(5)));
-		adapter.add(new Player(2, null, "villagermale", "George", String.valueOf(3)));
-		adapter.add(new Player(3, null, "villagerfemale", "Abigail", String.valueOf(1)));
-		adapter.add(new Player(4, null, "villagerfemale", "Martha", String.valueOf(0)));
+
+		// Create the adapter to convert the array to views
+//		PlayerAdapter adapter = new PlayerAdapter(this, arrayOfPlayers);
+		// Attach the adapter to a ListView
+//		ListView playerListView = getListView();
+//		adapter.clear();
+//		adapter.add(new Player(1, null,"villagermale", "Tom", String.valueOf(5)));
+//		adapter.add(new Player(2, null, "villagermale", "George", String.valueOf(3)));
+//		adapter.add(new Player(3, null, "villagerfemale", "Abigail", String.valueOf(1)));
+//		adapter.add(new Player(4, null, "villagerfemale", "Martha", String.valueOf(0)));
 		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -48,6 +59,7 @@ public class GameLobbyActivity extends ListActivity {
 			}
 		});
 		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		final Button startGameButton = (Button) findViewById(R.id.start_game_button);		
 		startGameButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -115,6 +127,64 @@ public class GameLobbyActivity extends ListActivity {
 	
 	    }
 	
+	}
+	
+	 
+	private class GetPlayersTask extends AsyncTask<Void, Integer, GetPlayersResponse>{
+		
+		@Override
+		protected GetPlayersResponse doInBackground(Void... request){
+			
+			WherewolfPreferences myPrefs = new WherewolfPreferences(GameLobbyActivity.this);
+			String storedUsername = myPrefs.getUsername();
+	        String storedPassword = myPrefs.getPassword();
+	        currentGameID = getIntent().getLongExtra("selectedGameID", -100);
+			
+			GetPlayersRequest getPlayersRequest = new GetPlayersRequest(storedUsername, storedPassword, currentGameID);
+			return getPlayersRequest.execute(new WherewolfNetworking());
+		}
+		
+		protected void onPostExecute(GetPlayersResponse result){
+			
+	        if (result.getStatus().equals("success")) {
+	        	
+	        	arrayOfPlayers.clear();
+	        	
+				JSONArray jArray = result.getPlayers();
+				
+				for (int i=0; i<jArray.length(); i++){
+					try{
+						JSONObject oneObject = jArray.getJSONObject(i);
+						// Pulling Items from array
+						int playerId = oneObject.getInt("playerid");
+						Drawable profPic = null;
+						String profPicUrl;
+						String playerName = oneObject.getString("playername");
+						int numVotes = 0;
+						
+						if (playerName.startsWith("an") || playerName.startsWith("pa"))
+						{
+							profPicUrl = "villagerfemale";
+						}
+						else
+						{
+							profPicUrl = "villagermale";
+						}
+						
+						arrayOfPlayers.add(new Player(playerId, profPic, profPicUrl, playerName, String.valueOf(numVotes))); 	
+						adapter.notifyDataSetChanged();
+					}                                    
+					catch(JSONException e){
+						Log.v(TAG, "JSON Exception was thrown");
+					}
+				}
+	        } else {
+	            // do something with bad password
+	        	Toast.makeText(GameLobbyActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
+	        }
+
+			
+		}
 	}
 	
 }

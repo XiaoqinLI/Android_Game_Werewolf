@@ -27,7 +27,6 @@ public class PlayerAdapter extends ArrayAdapter<Player>{
 	    ImageView profileImg = (ImageView) convertView.findViewById(R.id.player_img);
 	    TextView playerNameTV = (TextView) convertView.findViewById(R.id.username);
 	    TextView playerIdTV = (TextView) convertView.findViewById(R.id.player_id);
-	    TextView playervotesTV = (TextView) convertView.findViewById(R.id.player_votes);    
 	    // Populate the data into the template view using the data object
 	    if (player.getProfilePicUrl().equals("villagerfemale")){
 	    	profileImg.setImageResource(R.drawable.villagerfemale);
