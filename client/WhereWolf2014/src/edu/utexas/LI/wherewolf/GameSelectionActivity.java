@@ -6,22 +6,29 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class GameSelectionActivity extends ListActivity {
@@ -68,6 +75,40 @@ public class GameSelectionActivity extends ListActivity {
 			}
 		});
 		
+		gameListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					final int idx, long id) {
+
+				AlertDialog.Builder deleteBuilder = new AlertDialog.Builder(GameSelectionActivity.this);
+				deleteBuilder.setTitle("Delete");
+				deleteBuilder.setMessage("Delete This Game?");
+				deleteBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+						clickedGame = (Game) gameListView.getItemAtPosition(idx);
+						Log.v(TAG, "CLICKED GAME: " + clickedGame.getGameId());
+						new LeaveGameTask().execute();
+						new GetGameListTask().execute();
+						dialog.dismiss();
+						return;
+					}
+				});
+
+				deleteBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {		
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				});
+				AlertDialog alert = deleteBuilder.create();
+				alert.show();
+				return true;
+			}
+		}); 
+		
 		final Button createGameButton = (Button) findViewById(R.id.create_new_game_button);		
 		createGameButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -103,6 +144,7 @@ public class GameSelectionActivity extends ListActivity {
 	  overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 	}
 	
+	//AsyncTask
 	private class JoinGameTask extends AsyncTask<GameSelectionRequest, Integer, GameSelectionResponse> {
 
 		@Override
@@ -183,30 +225,74 @@ public class GameSelectionActivity extends ListActivity {
 		}
 	}
 	
-//	private class LeaveGameTask extends AsyncTask<Void, Integer, LeaveGameResponse>{
-//
-//		@Override
-//		protected LeaveGameResponse doInBackground(Void... request){
-//
-//			SharedPreferences sharedPreferences = getSharedPreferences("edu.utexas.bleiweiss.wherewolf.prefs", Context.MODE_PRIVATE);
-//			String username = sharedPreferences.getString("username", "");
-//			String password = sharedPreferences.getString("password", "");
-//
-//			LeaveGameRequest leaveGameRequest = new LeaveGameRequest(username, password, clickedGame);
-//			return leaveGameRequest.execute(new WherewolfNetworking());
-//		}
-//
-//		protected void onPostExecute(LeaveGameResponse result){
-//
-//			if (result.getStatus().equals("success")) {
-//				Toast.makeText(GameSelectionActivity.this, "Deleted.", Toast.LENGTH_LONG).show();
-//			} else {
-//				// do something with bad password
-//				Toast.makeText(GameSelectionActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
-//			}
-//
-//
-//		}
-//	}
+	private class LeaveGameTask extends AsyncTask<Void, Integer, LeaveGameResponse>{
+
+		@Override
+		protected LeaveGameResponse doInBackground(Void... request){
+
+			WherewolfPreferences myPrefs = new WherewolfPreferences(GameSelectionActivity.this);
+			String storedUsername = myPrefs.getUsername();
+	        String storedPassword = myPrefs.getPassword();
+
+			LeaveGameRequest leaveGameRequest = new LeaveGameRequest(storedUsername, storedPassword, clickedGame);
+			return leaveGameRequest.execute(new WherewolfNetworking());
+		}
+
+		protected void onPostExecute(LeaveGameResponse result){
+
+			if (result.getStatus().equals("success")) {
+				Toast.makeText(GameSelectionActivity.this, "Deleted.", Toast.LENGTH_LONG).show();
+			} else {
+				// do something with bad password
+				Toast.makeText(GameSelectionActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
+			}
+
+
+		}
+	}
+	
+	@Override
+	protected void onStart() {
+		Log.i(TAG, "started the game selection activity");
+		super.onStart();
+		
+		new GetGameListTask().execute();
+	}
+
+	@Override
+	protected void onRestart() {
+		Log.i(TAG, "restarted the game selection activity");
+		super.onRestart();
+		
+		// adapter.clear();
+		new GetGameListTask().execute();
+	}
+
+	@Override
+	protected void onResume() {
+		Log.i(TAG, "resumed the game selection activity");
+		super.onResume();
+		
+		new GetGameListTask().execute();
+		
+	}
+
+	@Override
+	protected void onPause() {
+		Log.i(TAG, "pause the game selection activity");
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		Log.i(TAG, "stopped the game selection activity");
+		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.i(TAG, "destroyed the game selection activity");
+		super.onDestroy();
+	}
 	
 }

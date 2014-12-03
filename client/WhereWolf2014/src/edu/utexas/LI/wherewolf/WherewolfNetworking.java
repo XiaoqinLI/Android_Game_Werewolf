@@ -74,11 +74,9 @@ public class WherewolfNetworking {
 
 
 			} else if (requestType == RequestType.DELETE) {
-
-				HttpDelete deleteRequest = new HttpDelete(url);
-
+				HttpDelete deleteRequest = new HttpDelete(url);			
+				deleteRequest.setHeader("Content-type", "application/json");
 				request = deleteRequest;
-				request.setHeader("Content-type", "application/json");
 
 			} else if (requestType == RequestType.PUT) {
 
