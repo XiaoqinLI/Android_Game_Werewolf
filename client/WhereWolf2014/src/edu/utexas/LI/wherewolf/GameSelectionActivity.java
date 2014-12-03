@@ -12,9 +12,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,32 +27,29 @@ import android.widget.Toast;
 public class GameSelectionActivity extends ListActivity {
 	private static final String TAG = "GameSelectionActivity";
 	private static ArrayList<Game> arrayOfGames = new ArrayList<Game>();
+	
 	private long selectedGameID;
 	
-
+	GameAdapter adapter;
+	Game clickedGame;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game_selection);
-		
+		Log.i(TAG, "got in the game selection activity");
 		// Create the adapter to convert the array to views
-		GameAdapter adapter = new GameAdapter(this, arrayOfGames);
-		// Attach the adapter to a ListView
-		ListView gameListView = getListView();
+		
+		new GetGameListTask().execute();
+		adapter = new GameAdapter(this, arrayOfGames);
+		final ListView gameListView = getListView();
+		
+//		GameAdapter adapter = new GameAdapter(this, arrayOfGames);
 		gameListView.setAdapter(adapter);
-		adapter.clear();
-		adapter.add(new Game(1, "NightHunt", "michael", ""));
-		adapter.add(new Game(2, "twinlight", "dwight", ""));
-		adapter.add(new Game(3, "new moon", "jim", ""));
-		adapter.add(new Game(4, "daybreak", "pam", ""));
-//		update_game('michael', 'paper01', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('dwight', 'paper02', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('jim', 'paper03', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('pam', 'paper04', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('ryan', 'paper05', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('andy', 'paper06', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('angela', 'paper07', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
-//	    update_game('toby', 'paper08', current_game_id, random.uniform(minValue, maxValue), random.uniform(minValue, maxValue))
+		
+		LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.item_game, gameListView, false);               
+//        gameListView.addHeaderView(header, null, false);	
 		
 		gameListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -133,5 +132,81 @@ public class GameSelectionActivity extends ListActivity {
 			}
 		}
 	}
+	
+	private class GetGameListTask extends AsyncTask<Void, Integer, GetGamesResponse>{
+
+		@Override
+		protected GetGamesResponse doInBackground(Void... request){
+			
+			WherewolfPreferences myPrefs = new WherewolfPreferences(GameSelectionActivity.this);			
+			String username = myPrefs.getUsername();
+			String password = myPrefs.getPassword();
+
+			GetGamesRequest getGamesRequest = new GetGamesRequest(username, password);
+			return getGamesRequest.execute(new WherewolfNetworking());
+		}
+
+		protected void onPostExecute(GetGamesResponse result){
+
+			if (result.getStatus().equals("success")) {
+
+				arrayOfGames.clear();
+
+				JSONArray jArray = result.getGames();
+
+				for (int i=0; i<jArray.length(); i++){
+					try{
+						JSONObject oneObject = jArray.getJSONObject(i);
+						// Pulling Items from array
+						int gameID = oneObject.getInt("game_id");
+						String gameName = oneObject.getString("name");
+						String adminName = oneObject.getString("admin_name");
+
+						arrayOfGames.add(new Game(gameID, gameName, adminName,"")); 	
+						adapter.notifyDataSetChanged();
+					}                                    
+					catch(JSONException e){
+						Log.v(TAG, "JSON Exception was thrown");
+					}
+				}
+				
+			} else {
+				// do something with bad password
+				Toast toast = new Toast(getApplicationContext());
+				toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+				toast.setDuration(Toast.LENGTH_LONG);
+				toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
+				toast.show();
+			}
+
+
+		}
+	}
+	
+//	private class LeaveGameTask extends AsyncTask<Void, Integer, LeaveGameResponse>{
+//
+//		@Override
+//		protected LeaveGameResponse doInBackground(Void... request){
+//
+//			SharedPreferences sharedPreferences = getSharedPreferences("edu.utexas.bleiweiss.wherewolf.prefs", Context.MODE_PRIVATE);
+//			String username = sharedPreferences.getString("username", "");
+//			String password = sharedPreferences.getString("password", "");
+//
+//			LeaveGameRequest leaveGameRequest = new LeaveGameRequest(username, password, clickedGame);
+//			return leaveGameRequest.execute(new WherewolfNetworking());
+//		}
+//
+//		protected void onPostExecute(LeaveGameResponse result){
+//
+//			if (result.getStatus().equals("success")) {
+//				Toast.makeText(GameSelectionActivity.this, "Deleted.", Toast.LENGTH_LONG).show();
+//			} else {
+//				// do something with bad password
+//				Toast.makeText(GameSelectionActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
+//			}
+//
+//
+//		}
+//	}
 	
 }

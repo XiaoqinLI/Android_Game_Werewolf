@@ -5,7 +5,10 @@ public class Game {
 	private String gameName;
 	private String adminName;
 	private String description;
+	private int status;
 	
+
+
 	public Game(int gameId, String gameName, String adminName, String description) {
 		this.gameId = gameId;
 		this.gameName = gameName;
@@ -45,5 +48,12 @@ public class Game {
 		this.description = description;
 	}
 	
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
 
 }
