@@ -45,7 +45,7 @@ public class CreateGameRequest extends BasicRequest{
 	{
 
 		JSONObject jResults = jObject.getJSONObject("results");
-		int gameID = jResults.getInt("game_id");
+		long gameID = (long) jResults.getInt("game_id");
 
 		return new CreateGameResponse("success",
 				"Successfully created the game",

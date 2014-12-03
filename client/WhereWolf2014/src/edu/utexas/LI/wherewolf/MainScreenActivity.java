@@ -30,10 +30,8 @@ public class MainScreenActivity extends Activity {
 	List<Player> playerData;
 	
 	private void clearSavedData(){
-		SharedPreferences myPrefs = this.getSharedPreferences("myPrefs", MODE_PRIVATE);
-		SharedPreferences.Editor editor = myPrefs.edit();
-		editor.clear();
-        editor.commit();
+    	WherewolfPreferences myPrefs = new WherewolfPreferences(MainScreenActivity.this);
+    	myPrefs.clearData();
 	}
 	
 	@Override

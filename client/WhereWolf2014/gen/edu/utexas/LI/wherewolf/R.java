@@ -153,7 +153,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int LinearLayout1=0x7f09000e;
-        public static final int action_settings=0x7f090029;
+        public static final int action_settings=0x7f09002b;
         public static final int admin_name=0x7f09001d;
         public static final int attack_vote_button=0x7f090022;
         public static final int back=0x7f090015;
@@ -164,12 +164,14 @@ containing a value of this type.
         public static final int create_new_game_button=0x7f09000d;
         public static final int daytime_seekbar=0x7f090013;
         public static final int dismiss=0x7f090005;
+        public static final int first_name=0x7f090028;
         public static final int front=0x7f090016;
         public static final int gameDescription=0x7f090009;
         public static final int gameNameText=0x7f090007;
         public static final int game_id=0x7f09001b;
         public static final int game_name=0x7f09001c;
         public static final int image=0x7f090019;
+        public static final int last_name=0x7f090029;
         public static final int left=0x7f090001;
         public static final int list_of_players=0x7f090014;
         public static final int loginButton=0x7f090011;
@@ -185,7 +187,7 @@ containing a value of this type.
         public static final int prof_pic=0x7f090023;
         public static final int registerButton=0x7f090010;
         public static final int register_layout=0x7f090026;
-        public static final int register_user_button=0x7f090028;
+        public static final int register_user_button=0x7f09002a;
         public static final int reveal=0x7f090006;
         public static final int right=0x7f090003;
         public static final int start_game_button=0x7f09000c;
@@ -202,10 +204,12 @@ containing a value of this type.
         public static final int activity_login=0x7f030003;
         public static final int activity_main_screen=0x7f030004;
         public static final int custom_toast=0x7f030005;
-        public static final int item_game=0x7f030006;
-        public static final int item_player=0x7f030007;
-        public static final int player_row=0x7f030008;
-        public static final int register_layout=0x7f030009;
+        public static final int custom_toast_creategame=0x7f030006;
+        public static final int custom_toast_login=0x7f030007;
+        public static final int item_game=0x7f030008;
+        public static final int item_player=0x7f030009;
+        public static final int player_row=0x7f03000a;
+        public static final int register_layout=0x7f03000b;
     }
     public static final class menu {
         public static final int create_game=0x7f080000;
@@ -217,31 +221,33 @@ containing a value of this type.
     public static final class string {
         public static final int action_settings=0x7f060002;
         public static final int app_name=0x7f060000;
-        public static final int attack=0x7f06001a;
+        public static final int attack=0x7f06001c;
         public static final int clickme=0x7f060006;
-        public static final int create_game=0x7f06000f;
-        public static final int create_new_game=0x7f06000e;
-        public static final int empty_string=0x7f060016;
-        public static final int gameSelector=0x7f06000d;
-        public static final int game_description=0x7f060011;
-        public static final int game_players=0x7f060013;
+        public static final int create_game=0x7f060011;
+        public static final int create_new_game=0x7f060010;
+        public static final int empty_string=0x7f060018;
+        public static final int gameSelector=0x7f06000f;
+        public static final int game_description=0x7f060013;
+        public static final int game_players=0x7f060015;
         public static final int hello_world=0x7f060001;
         public static final int login=0x7f060003;
-        public static final int logout=0x7f060018;
+        public static final int logout=0x7f06001a;
         public static final int needtoregister=0x7f060009;
-        public static final int new_game_name=0x7f060010;
+        public static final int new_game_name=0x7f060012;
         public static final int password=0x7f060007;
         public static final int passwordConfirm=0x7f060008;
-        public static final int profile_pic=0x7f060019;
+        public static final int profile_pic=0x7f06001b;
         public static final int register=0x7f060004;
-        public static final int start_game=0x7f060012;
-        public static final int title_activity_create_game=0x7f060014;
-        public static final int title_activity_game_selection=0x7f06000c;
-        public static final int title_activity_join_game=0x7f060015;
-        public static final int title_activity_main_screen=0x7f060017;
+        public static final int start_game=0x7f060014;
+        public static final int title_activity_create_game=0x7f060016;
+        public static final int title_activity_game_selection=0x7f06000e;
+        public static final int title_activity_join_game=0x7f060017;
+        public static final int title_activity_main_screen=0x7f060019;
+        public static final int toast_create_game_string=0x7f06000d;
+        public static final int toast_login_string=0x7f06000c;
         public static final int toast_string=0x7f06000b;
         public static final int username=0x7f060005;
-        public static final int vote=0x7f06001b;
+        public static final int vote=0x7f06001d;
         public static final int wrong_string=0x7f06000a;
     }
     public static final class style {

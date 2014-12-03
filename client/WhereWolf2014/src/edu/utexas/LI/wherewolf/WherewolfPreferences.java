@@ -47,10 +47,16 @@ public class WherewolfPreferences {
 	      editor.commit();
 	  }
 	  
-	  public void setCurrentGameID(int gameID)
+	  public void setCurrentGameID(long gameID)
 	  {
 	      SharedPreferences.Editor editor = sharedPreferences.edit();
-	      editor.putInt("currentGame", gameID);
+	      editor.putLong("currentGame", gameID);
+	      editor.commit();
+	  }
+	  
+	  public void clearData(){
+		  SharedPreferences.Editor editor = sharedPreferences.edit();
+		  editor.clear();
 	      editor.commit();
 	  }
 	  

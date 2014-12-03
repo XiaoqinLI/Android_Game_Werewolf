@@ -23,8 +23,6 @@ public class RegisterActivity extends Activity {
 	private EditText firstNameEdit;
 	private EditText lastNameEdit;
 	
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

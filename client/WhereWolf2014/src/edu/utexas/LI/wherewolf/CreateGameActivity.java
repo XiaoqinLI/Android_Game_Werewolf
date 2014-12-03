@@ -32,10 +32,7 @@ public class CreateGameActivity extends Activity {
 		gameNameEdit = (EditText) findViewById(R.id.gameNameText);
 		gamePasswordEdit = (EditText) findViewById(R.id.passwordText);
 		gameDescriptionEdit = (EditText) findViewById(R.id.gameDescription);
-		gameNameEdit.setText("Apple");
-		gameNameEdit.setText("Apple");
-		gamePasswordEdit.setText("123456");
-		gameDescriptionEdit.setText("Good");
+		gameDescriptionEdit.setText("Ready");
 
 		
 		final Button createGameButton = (Button) findViewById(R.id.create_game_button);		
@@ -104,9 +101,9 @@ public class CreateGameActivity extends Activity {
 
 			if (result.getStatus().equals("success"))
 			{				
-				WherewolfPreferences myPrefs = new WherewolfPreferences(CreateGameActivity.this);
-	            myPrefs.setCurrentGameID(result.getGameID());
-				Intent intent = new Intent(CreateGameActivity.this, GameLobbyActivity.class);
+//				WherewolfPreferences myPrefs = new WherewolfPreferences(CreateGameActivity.this);
+//	            myPrefs.setCurrentGameID(result.getGameID());
+				Intent intent = new Intent(CreateGameActivity.this, GameLobbyActivity.class).putExtra("selectedGameID", result.getGameID());
 				startActivity(intent);
 				overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);				
 			} else {
