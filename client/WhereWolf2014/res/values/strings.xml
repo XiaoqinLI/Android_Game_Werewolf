@@ -15,6 +15,7 @@
     <string name="toast_string">Invalid Username/Password or Username already exists</string>
     <string name="toast_login_string">Invalid Username or Password</string>
     <string name="toast_create_game_string">Invalid Game Name</string>
+    <string name="toast_join_game_string">game not in the lobby mode (started or ended), please select another one</string>
     <string name="title_activity_game_selection">GameSelectionActivity</string>
     <string name="gameSelector">Please select a game:</string>
     <string name="create_new_game">Create New Game</string>
