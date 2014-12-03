@@ -8,20 +8,18 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GameSelectionRequest extends BasicRequest {
+import edu.utexas.LI.wherewolf.BasicRequest.RequestType;
+
+public class LeaveGameLobbyRequest extends BasicRequest{
 	protected long gameID;
-	
-	public GameSelectionRequest(String username, String password, long gameId) {
+	public LeaveGameLobbyRequest(String username, String password, long gameId) {
 		super(username, password);
-		// TODO Auto-generated constructor stub
 		this.gameID = gameId;
 	}
 
 	@Override
 	public String getURL() {
-		// TODO Auto-generated method stub
-		String url = "/v1/game/" + Long.toString(gameID) + "/lobby";
-		return url;
+		return "/v1/gamequit/"+Long.toString(gameID);
 	}
 
 	@Override
@@ -39,28 +37,21 @@ public class GameSelectionRequest extends BasicRequest {
 	}
 
 	@Override
-	public GameSelectionResponse execute(WherewolfNetworking net) {
+	public LeaveGameLobbyResponse execute(WherewolfNetworking net) {
 		try{
 			JSONObject response = net.sendRequest(this);
 			if (response.getString("status").equals("success"))
 			{
-				return new GameSelectionResponse("success", "joined game successfully");
+				return new LeaveGameLobbyResponse("success", "quit game successfully");
 			} else {
 				String errorMessage = response.getString("status");
-				return new GameSelectionResponse("failure", errorMessage);
+				return new LeaveGameLobbyResponse("failure", errorMessage);
 			}
 		} catch (JSONException e){
-			return new GameSelectionResponse ("failure", "could not join game"); 
+			return new LeaveGameLobbyResponse ("failure", "could not join game"); 
 		} catch (WherewolfNetworkException ex){
-			return new GameSelectionResponse ("faillure", "could not communicate with the server");
-		}
+			return new LeaveGameLobbyResponse ("faillure", "could not communicate with the server");
+		}	
 	}
 
-	public long getGameId() {
-		return gameID;
-	}
-
-	public void setGameId(int gameId) {
-		this.gameID = gameId;
-	}
 }

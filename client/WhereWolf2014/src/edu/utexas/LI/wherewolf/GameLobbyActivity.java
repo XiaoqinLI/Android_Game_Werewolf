@@ -8,18 +8,17 @@ import org.json.JSONObject;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -36,20 +35,13 @@ public class GameLobbyActivity extends ListActivity {
 		setContentView(R.layout.activity_game_lobby);
 		
         currentGameID = getIntent().getLongExtra("selectedGameID", -100);
+		// Create the adapter to convert the array to views
         new GetPlayersTask().execute();
         adapter = new PlayerAdapter(this, arrayOfPlayers);
         final ListView playerListView = getListView();
 		playerListView.setAdapter(adapter);
 
-		// Create the adapter to convert the array to views
-//		PlayerAdapter adapter = new PlayerAdapter(this, arrayOfPlayers);
-		// Attach the adapter to a ListView
-//		ListView playerListView = getListView();
-//		adapter.clear();
-//		adapter.add(new Player(1, null,"villagermale", "Tom", String.valueOf(5)));
-//		adapter.add(new Player(2, null, "villagermale", "George", String.valueOf(3)));
-//		adapter.add(new Player(3, null, "villagerfemale", "Abigail", String.valueOf(1)));
-//		adapter.add(new Player(4, null, "villagerfemale", "Martha", String.valueOf(0)));
+
 		
 		playerListView.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -74,7 +66,65 @@ public class GameLobbyActivity extends ListActivity {
 			}
 		});	
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if (keyCode == KeyEvent.KEYCODE_BACK ) {
+	    	WherewolfPreferences myPrefs = new WherewolfPreferences(GameLobbyActivity.this);
+			String storedUsername = myPrefs.getUsername();
+	        String storedPassword = myPrefs.getPassword();
+	        currentGameID = getIntent().getLongExtra("selectedGameID", -100);
+	    	LeaveGameLobbyRequest request = new LeaveGameLobbyRequest(storedUsername, storedPassword,currentGameID);
+	    	LeaveGameLobbyTask leaveGameLobbyTask = new LeaveGameLobbyTask();
+	    	leaveGameLobbyTask.execute(request);
+	    	
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}	
 
+	@Override
+	protected void onStart() {
+		Log.i(TAG, "started the game lobby activity");
+		super.onStart();
+		adapter.clear();
+		new GetPlayersTask().execute();
+	}
+
+	@Override
+	protected void onRestart() {
+		Log.i(TAG, "restarted the game lobby activity");
+		super.onRestart();
+		adapter.clear();
+		new GetPlayersTask().execute();
+	}
+
+	@Override
+	protected void onResume() {
+		Log.i(TAG, "resumed the game lobby activity");
+		super.onResume();
+		adapter.clear();
+		new GetPlayersTask().execute();
+		
+	}
+
+	@Override
+	protected void onPause() {
+		Log.i(TAG, "pause the game lobby activity");
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		Log.i(TAG, "stopped the game lobby activity");
+		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.i(TAG, "destroyed the game lobby activity");
+		super.onDestroy();
+	}	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -123,13 +173,12 @@ public class GameLobbyActivity extends ListActivity {
 		    	Intent createGameIntent = new Intent(GameLobbyActivity.this, MainScreenActivity.class);
 		    	startActivity(createGameIntent);	
 		    	overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-	    	}
-	
+	    	}	
 	    }
 	
 	}
-	
 	 
+	
 	private class GetPlayersTask extends AsyncTask<Void, Integer, GetPlayersResponse>{
 		
 		@Override
@@ -184,6 +233,31 @@ public class GameLobbyActivity extends ListActivity {
 	        }
 
 			
+		}
+	}
+	
+	private class LeaveGameLobbyTask extends AsyncTask<LeaveGameLobbyRequest, Integer, LeaveGameLobbyResponse>{
+
+		@Override
+		protected LeaveGameLobbyResponse doInBackground(LeaveGameLobbyRequest... request){
+
+			WherewolfPreferences myPrefs = new WherewolfPreferences(GameLobbyActivity.this);
+			String storedUsername = myPrefs.getUsername();
+	        String storedPassword = myPrefs.getPassword();
+	        currentGameID = getIntent().getLongExtra("selectedGameID", -100);
+
+			LeaveGameLobbyRequest leaveGameLobbyRequest = new LeaveGameLobbyRequest(storedUsername, storedPassword, currentGameID);
+			return leaveGameLobbyRequest.execute(new WherewolfNetworking());
+		}
+
+		protected void onPostExecute(LeaveGameLobbyResponse result){
+
+			if (result.getStatus().equals("success")) {
+				Toast.makeText(GameLobbyActivity.this, "Left game", Toast.LENGTH_LONG).show();
+			} else {
+				// do something with bad password
+				Toast.makeText(GameLobbyActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 	

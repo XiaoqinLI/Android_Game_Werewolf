@@ -17,9 +17,6 @@ public class LoginRequest extends BasicRequest {
 		super(username, password);
 	}
 
-	/**
-	 * Put the URL to your API endpoint here
-	 */
 	@Override
 	public String getURL() {
 		return "/v1/checkpassword";
