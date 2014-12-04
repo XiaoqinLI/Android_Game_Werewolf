@@ -3,6 +3,10 @@ package edu.utexas.LI.wherewolf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 
@@ -11,6 +15,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,16 +25,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class MainScreenActivity extends Activity {
 	
 	private static final String TAG = "MainScreenActivity";
-	
-	SwipeListView swipelistview;
+	private static ArrayList<Player> playerData = new ArrayList<Player>();
+	private long currentGameID;
 	MainScreenPlayerAdapter adapter;
-	List<Player> playerData;
-	
+	SwipeListView swipelistview;
+
 	private void clearSavedData(){
     	WherewolfPreferences myPrefs = new WherewolfPreferences(MainScreenActivity.this);
     	myPrefs.clearData();
@@ -38,9 +45,14 @@ public class MainScreenActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_screen);
-		
+    	WherewolfPreferences myPrefs = new WherewolfPreferences(MainScreenActivity.this);
+    	
+        currentGameID = myPrefs.getCurrentGameID();
+        
+		new GetPlayersTask().execute();
+
 		swipelistview=(SwipeListView)findViewById(R.id.list_of_players);
-		playerData=new ArrayList<Player>();
+		
 		adapter=new MainScreenPlayerAdapter (this, R.layout.player_row, playerData);
 		
 		swipelistview.setSwipeListViewListener(new BaseSwipeListViewListener() {
@@ -104,20 +116,15 @@ public class MainScreenActivity extends Activity {
 
 		swipelistview.setAdapter(adapter);
 
-		playerData.add(new Player(1, getResources().getDrawable(R.drawable.villagermale), "", "Michael", String.valueOf(1)));
-		playerData.add(new Player(2, getResources().getDrawable(R.drawable.villagerfemale), "", "Pam", String.valueOf(5)));
-		playerData.add(new Player(3, getResources().getDrawable(R.drawable.villagermale), "", "Toby", String.valueOf(8)));
-		playerData.add(new Player(4, getResources().getDrawable(R.drawable.villagermale), "",  "Jim", String.valueOf(0)));
-		playerData.add(new Player(5, getResources().getDrawable(R.drawable.villagerfemale), "",  "Angela", String.valueOf(4)));
-
 		adapter.notifyDataSetChanged();
-		
+//		
 		// Widget
 		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
 		
 		//SeekBar
 		final SeekBar sk = (SeekBar) findViewById(R.id.daytime_seekbar);	
-		sk.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {    
+		sk.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {   
+			boolean progressIsNight;
 						
 		    @Override       
 		    public void onStopTrackingTouch(SeekBar seekBar) {      
@@ -131,31 +138,20 @@ public class MainScreenActivity extends Activity {
 
 		    @Override       
 		    public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {     
-		        // TODO Auto-generated method stub      
 		    	circadianWidget.changeTime(progress);
-		    	if (progress % 24>=6 && progress % 24<=18){
-		    		adapter.clear();
-		    		playerData.add(new Player(1, getResources().getDrawable(R.drawable.villagermale), "", "Michael", ""));
-		    		playerData.add(new Player(2, getResources().getDrawable(R.drawable.villagerfemale), "", "Pam", ""));
-		    		playerData.add(new Player(3, getResources().getDrawable(R.drawable.villagermale), "", "Toby", ""));
-		    		playerData.add(new Player(4, getResources().getDrawable(R.drawable.villagermale), "",  "Jim", ""));
-		    		playerData.add(new Player(5, getResources().getDrawable(R.drawable.villagerfemale), "",  "Angela", ""));
+		    	
+		    	progressIsNight = (progress % 24 >=6 && progress % 24 <= 18);
+		    	
+		    	if (progressIsNight)
+		    	{
 		    		adapter.setIsNight(true);
 		    		adapter.notifyDataSetChanged();
-//					drawCanvas.drawText("night", textXPos, textXPos, textPaint);
-				}
-				else{
-					adapter.clear();
-					playerData.add(new Player(1, getResources().getDrawable(R.drawable.villagermale), "", "Michael", String.valueOf(1)));
-					playerData.add(new Player(2, getResources().getDrawable(R.drawable.villagerfemale), "", "Pam", String.valueOf(5)));
-					playerData.add(new Player(3, getResources().getDrawable(R.drawable.villagermale), "", "Toby", String.valueOf(8)));
-					playerData.add(new Player(4, getResources().getDrawable(R.drawable.villagermale), "",  "Jim", String.valueOf(0)));
-					playerData.add(new Player(5, getResources().getDrawable(R.drawable.villagerfemale), "",  "Angela", String.valueOf(4)));
-//					drawCanvas.drawText("day", textXPos, textXPos, textPaint);
+		    	}
+		    	else
+		    	{
 		    		adapter.setIsNight(false);
 		    		adapter.notifyDataSetChanged();
-
-				}
+		    	}
 
 		    }       
 		});
@@ -191,6 +187,49 @@ public class MainScreenActivity extends Activity {
 	
 	}
 	
+	@Override
+	protected void onStart() {
+		Log.i(TAG, "started the game lobby activity");
+		super.onStart();
+		adapter.clear();
+		new GetPlayersTask().execute();
+	}
+
+	@Override
+	protected void onRestart() {
+		Log.i(TAG, "restarted the game lobby activity");
+		super.onRestart();
+		adapter.clear();
+		new GetPlayersTask().execute();
+	}
+
+	@Override
+	protected void onResume() {
+		Log.i(TAG, "resumed the game lobby activity");
+		super.onResume();
+		adapter.clear();
+		new GetPlayersTask().execute();
+		
+	}
+
+	@Override
+	protected void onPause() {
+		Log.i(TAG, "pause the game lobby activity");
+		super.onPause();
+	}
+
+	@Override
+	protected void onStop() {
+		Log.i(TAG, "stopped the game lobby activity");
+		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.i(TAG, "destroyed the game lobby activity");
+		super.onDestroy();
+	}	
+	
 	public int convertDpToPixel(float dp) {
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		float px = dp * (metrics.densityDpi / 160f);
@@ -216,5 +255,64 @@ public class MainScreenActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
-	
+	private class GetPlayersTask extends AsyncTask<Void, Integer, GetPlayersResponse>{
+
+		@Override
+		protected GetPlayersResponse doInBackground(Void... request){
+
+			WherewolfPreferences myPrefs = new WherewolfPreferences(MainScreenActivity.this);
+			String storedUsername = myPrefs.getUsername();
+			String storedPassword = myPrefs.getPassword();
+			currentGameID = myPrefs.getCurrentGameID();
+
+
+			GetPlayersRequest getPlayersRequest = new GetPlayersRequest(storedUsername, storedPassword, currentGameID);
+			return getPlayersRequest.execute(new WherewolfNetworking());
+		}
+
+		protected void onPostExecute(GetPlayersResponse result){
+
+			if (result.getStatus().equals("success")) {
+
+				playerData.clear();
+
+				JSONArray jArray = result.getPlayers();
+
+				for (int i=0; i<jArray.length(); i++){
+					try{
+						JSONObject oneObject = jArray.getJSONObject(i);
+						// Pulling Items from array
+						int playerId = oneObject.getInt("playerid");
+						Drawable profPic = null;
+						String profPicUrl;
+						String playerName = oneObject.getString("playername");
+						int numVotes = 0;
+
+						if (playerName.startsWith("an") || playerName.startsWith("pa"))
+						{
+							profPicUrl = "villagerfemale";
+						}
+						else
+						{
+							profPicUrl = "villagermale";
+						}
+						//						playerData.add(new Player(1, getResources().getDrawable(R.drawable.villagermale), "", "Michael", String.valueOf(1)));
+
+						playerData.add(new Player(playerId, profPic, profPicUrl, playerName, String.valueOf(numVotes))); 	
+						adapter.notifyDataSetChanged();
+					}                                    
+					catch(JSONException e){
+						Log.v(TAG, "JSON Exception was thrown");
+					}
+				}
+			} else {
+				// do something with bad password
+				Toast.makeText(MainScreenActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
+			}
+
+
+		}
+	}
+
+
 }
