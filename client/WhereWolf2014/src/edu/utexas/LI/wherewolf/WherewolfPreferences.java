@@ -60,4 +60,39 @@ public class WherewolfPreferences {
 	      editor.commit();
 	  }
 	  
+	  public long getTime()
+	  {
+		  // DateTimeFormatter df =
+	      return sharedPreferences.getLong("currentTime", 0);
+		  
+	  }
+	  
+	  public void setTime(long time)
+	  {
+	      SharedPreferences.Editor editor = sharedPreferences.edit();
+	      editor.putLong("currentTime", time);
+	      editor.commit();
+	  }
+
+	  public float getLatitude() {
+		  // TODO Auto-generated method stub
+		  return sharedPreferences.getFloat("lat", -1000);
+	  }
+
+	  public float getLongitude() {
+		  // TODO Auto-generated method stub
+		  return sharedPreferences.getFloat("lng", -1000);
+	  }
+
+	  public void setLatitude(double lat) {
+		  SharedPreferences.Editor editor = sharedPreferences.edit();
+		  editor.putFloat("lat", (float) lat);
+		  editor.commit();
+	  }
+
+	  public void setLongitude(double lng) {
+		  SharedPreferences.Editor editor = sharedPreferences.edit();
+		  editor.putFloat("lng", (float) lng);
+		  editor.commit();
+	  }
 }

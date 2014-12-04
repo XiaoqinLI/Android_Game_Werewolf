@@ -244,6 +244,8 @@ public class GameSelectionActivity extends ListActivity {
 
 			if (result.getStatus().equals("success")) {
 				Toast.makeText(GameSelectionActivity.this, "Deleted.", Toast.LENGTH_LONG).show();
+				WherewolfPreferences myPrefs = new WherewolfPreferences(GameSelectionActivity.this);
+				myPrefs.setCurrentGameID(-100);
 			} else {
 				// do something with bad password
 				Toast.makeText(GameSelectionActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();

@@ -27,6 +27,7 @@ import android.util.Log;
 public class WherewolfNetworking {
 
 	private static final String TAG = "NetWorking";
+	
 	private static final String fullhost = "http://192.168.1.8:5000";
 	private static final String loadBalancer = "wherewolfLB-1277079358.us-west-2.elb.amazonaws.com";	 
 
@@ -75,8 +76,8 @@ public class WherewolfNetworking {
 
 			} else if (requestType == RequestType.DELETE) {
 				HttpDelete deleteRequest = new HttpDelete(url);			
-				deleteRequest.setHeader("Content-type", "application/json");
 				request = deleteRequest;
+	            request.setHeader("Content-type", "application/json");
 
 			} else if (requestType == RequestType.PUT) {
 
@@ -138,4 +139,90 @@ public class WherewolfNetworking {
 		throw new WherewolfNetworkException("Network problem");
 
 	}
+
+
+	public String getJsonFromServer(String url, RequestType requestType,
+			String username, String password, List<NameValuePair> payload) {
+
+		InputStream inputStream = null;
+		String result = null;
+
+		try {
+
+			final DefaultHttpClient httpClient = new DefaultHttpClient();
+
+			// HttpUriRequest request;
+			HttpResponse response;
+
+			if (requestType == RequestType.GET) {
+				HttpGet getRequest = new HttpGet(url);
+				getRequest.setHeader("Content-type", "application/json");
+
+				// add authentication stuff here.
+				if (!username.equals("")) {
+					String authorizationString = "Basic "
+							+ Base64.encodeToString(
+									(username + ":" + password).getBytes(),
+									Base64.NO_WRAP);
+					getRequest.setHeader("Authorization", authorizationString);
+				}
+
+				response = httpClient.execute(getRequest);
+
+			} else if (requestType == RequestType.POST) {
+
+				HttpPost postRequest = new HttpPost(url);
+				postRequest.setHeader("Content-type",
+						"application/x-www-form-urlencoded");
+
+				if (!payload.equals("")) {
+
+					postRequest.setEntity(new UrlEncodedFormEntity(payload));
+				}
+
+				// add authentication stuff here.
+				if (!username.equals("")) {
+					String authorizationString = "Basic "
+							+ Base64.encodeToString(
+									(username + ":" + password).getBytes(),
+									Base64.NO_WRAP);
+					postRequest.setHeader("Authorization", authorizationString);
+				}
+
+				response = httpClient.execute(postRequest);
+
+			} else {
+				return null;
+			}
+
+			// execute the request here.
+			// HttpResponse response = httpClient.execute(request);
+			HttpEntity entity = response.getEntity();
+
+			inputStream = entity.getContent();
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					inputStream, "UTF-8"), 8);
+			StringBuilder sb = new StringBuilder();
+
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+
+			result = sb.toString();
+		} catch (Exception e) {
+			Log.e(TAG, "Problem with response from server" + e.toString());
+
+		} finally {
+			try {
+				if (inputStream != null)
+					inputStream.close();
+			} catch (Exception ex) {
+			}
+		}
+
+		return result;
+	}	
+	
 }

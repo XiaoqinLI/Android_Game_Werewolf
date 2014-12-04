@@ -15,13 +15,15 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.widget.Toast;
 import android.os.Process;
 
 public class WherewolfService extends Service implements LocationListener{
 
 	private static final String TAG = "Wherewolf Service";
+	
 	// number of milliseconds before a location update
-	private static final int REPORT_PERIOD = 5000;
+	private static final int REPORT_PERIOD = 10000;
 	private static final int MIN_CHANGE = 0;
 
 	// allows us to prevent the CPU from going to sleep.
@@ -32,40 +34,11 @@ public class WherewolfService extends Service implements LocationListener{
 
 	// we will use this handler to run asynchronous tasks through
 	private Handler handler;
+	private Looper mServiceLooper;
 
 	private boolean isNight = false;
 	private Game currentGame = null;
 	private Player currentPlayer = null;
-
-	private Looper mServiceLooper;
-
-	//	private LocationListener listener = new LocationListener() {
-	//	    @Override
-	//	    public void onLocationChanged(Location location) {
-	//	        
-	//	        if (location != null) {
-	//	            // do something with new location
-	//	            double latitude = location.getLatitude();
-	//	            double longitude = location.getLongitude();
-	//	            
-
-	//	        }
-	//
-	//	    }		
-	//
-	//		@Override
-	//		public void onProviderDisabled(String arg0) {			
-	//		}
-	//
-	//		@Override
-	//		public void onProviderEnabled(String arg0) {			
-	//		}
-	//
-	//		@Override
-	//		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {		
-	//		} 
-	//
-	//	};
 
 	public void setNight()
 	{
@@ -111,7 +84,9 @@ public class WherewolfService extends Service implements LocationListener{
 	@Override
 	public void onCreate(){
 		super.onCreate();
-
+		
+		Log.v(TAG, "Service is working");
+		
 		HandlerThread thread = new HandlerThread("WherewolfThread", Process.THREAD_PRIORITY_BACKGROUND);
 
 		thread.start();
@@ -121,9 +96,12 @@ public class WherewolfService extends Service implements LocationListener{
 
 		locationManager = (LocationManager) getApplicationContext()
 				.getSystemService(Context.LOCATION_SERVICE);
+		
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 
 		wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DoNotSleep");
+		
+		setNight();
 	}
 
 	@Override
@@ -140,38 +118,94 @@ public class WherewolfService extends Service implements LocationListener{
 	public void onDestroy() {
 		locationManager.removeUpdates(WherewolfService.this);
 	}
-
+	
+	private void showLocation(String msg){
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+	}
+	
 	@Override
-	public void onLocationChanged(Location location) {
-		if (location != null) {
+	public void onLocationChanged(Location location){
+		
+		
+		
+		if (location != null){
+			WherewolfPreferences pref = new WherewolfPreferences(WherewolfService.this);
+			String username = pref.getUsername();
 
-			final String locMsg = "location changed "
-					+ location.getLatitude() + " "
-					+ location.getLongitude();
+			double latitudeCurrent = location.getLatitude();
+			double longitudeCurrent = location.getLongitude();
 
-			// Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-			//	          showLocation(locMsg);
+			if ( Math.abs(location.getLatitude() - pref.getLatitude()) > 0.0001 || Math.abs(location.getLongitude() - pref.getLongitude()) > 0.0001)
+			{
+				final String locMsg = "location changed " 
+						+ (float)location.getLatitude() + " "
+						+ (float)location.getLongitude();
+				pref.setLatitude(latitudeCurrent);
+				pref.setLongitude(longitudeCurrent);
 
-			Log.i(TAG, locMsg);
-			//	        send the notification to the server here.
-			//	        WherewolfNetworking net = new WherewolfNetworking();
-			//	            
-			// TODO: send the notification to the server here.
-			// Create a UpdateGameRequest class
-			// request.execute(new WherewolfNetworking())
-			// WherewolfNetworking net = new WherewolfNetworking();
+				showLocation(locMsg);
+				Log.i(TAG, locMsg);
+			}
+			
+			else{
+				final String locMsg = "current location: " 
+						+ pref.getLatitude() + " "
+						+ pref.getLongitude();
+				showLocation(locMsg);
+				Log.i(TAG, locMsg);
+			}
+			
+			ChangedLocationRequest request = new ChangedLocationRequest(pref.getUsername(),
+					pref.getPassword(), pref.getCurrentGameID(), location.getLatitude(), location.getLongitude());
+			ChangedLocationResponse result = request.execute(new WherewolfNetworking());
+						
+			if (result.getStatus().equals("success"))
+			{
+				pref.setTime(result.getCurrentTime()); 
+			}
 
-			// net.sendServerUpdate();
+		}		
+		else{
+			Toast.makeText(this, "Location is null", Toast.LENGTH_SHORT).show();
+		}
+		
+	}
 
-			// net.sendServerUpdate();
-			// Log.i(TAG, "Network is " + net.isNetworkAvailable(getApplicationContext()));
+	private LocationListener listener = new LocationListener(){
+		@Override
+		public void onLocationChanged(Location location)
+		{
+			if (location != null)
+			{
+				// do something with new location
+				double latitude = location.getLatitude();
+				double longitude = location.getLongitude();
 
-			//	           Message msg = handler.obtainMessage();
-			//	           msg.arg1 = ++counter;
-			//	           handler.sendMessage(msg);
+				// TODO: send the notification to the server here.
+				// Create a UpdateGameRequest class
+				// request.execute(new WherewolfNetworking())
+				Log.v("GPS", "Lat is " + latitude + " longitude " + longitude);
+			}
+		}
+
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			// TODO Auto-generated method stub
 
 		}
-	}
+
+		@Override
+		public void onProviderEnabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onProviderDisabled(String provider) {
+			// TODO Auto-generated method stub
+
+		}
+	};
 
 	@Override
 	public void onProviderDisabled(String provider) {

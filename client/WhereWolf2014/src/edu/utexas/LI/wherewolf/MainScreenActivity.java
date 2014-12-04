@@ -1,7 +1,10 @@
 package edu.utexas.LI.wherewolf;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +17,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,11 +43,42 @@ public class MainScreenActivity extends Activity {
     	myPrefs.clearData();
 	}
 	
+	void updateTime(){
+
+		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
+		final SeekBar seekbar = (SeekBar) findViewById(R.id.daytime_seekbar);
+
+		WherewolfPreferences myprefs = new WherewolfPreferences(this);
+		Long currentTime = myprefs.getTime();
+
+		// converts the epoch to hour in day
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(currentTime);
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int min = cal.get(Calendar.MINUTE);
+		final double t = (double)hour + (double)min/60.0f;
+
+		// tell circadian widget about the time change
+		Activity activity = MainScreenActivity.this;
+		activity.runOnUiThread(new Runnable() {
+			  public void run() {
+				Toast.makeText(MainScreenActivity.this, "Time: " + t, Toast.LENGTH_LONG).show();
+			  }
+			});
+		circadianWidget.changeTime((int)t, activity);
+		seekbar.setProgress((int) t);
+
+		// seekbar.setProgress((int)(t/24.0));
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_screen);
     	WherewolfPreferences myPrefs = new WherewolfPreferences(MainScreenActivity.this);
+    	
+    	Timer timer = new Timer();
+    	timer.schedule(new UpdateTimeTask(), 1000, 5*60000);
     	
         currentGameID = myPrefs.getCurrentGameID();
         
@@ -124,6 +157,7 @@ public class MainScreenActivity extends Activity {
 		//SeekBar
 		final SeekBar sk = (SeekBar) findViewById(R.id.daytime_seekbar);	
 		sk.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {   
+			
 			boolean progressIsNight;
 						
 		    @Override       
@@ -138,7 +172,10 @@ public class MainScreenActivity extends Activity {
 
 		    @Override       
 		    public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {     
-		    	circadianWidget.changeTime(progress);
+		    	
+		    	Activity activity = MainScreenActivity.this;
+		    	
+		    	circadianWidget.changeTime(progress, activity);
 		    	
 		    	progressIsNight = (progress % 24 >=6 && progress % 24 <= 18);
 		    	
@@ -255,6 +292,15 @@ public class MainScreenActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	class UpdateTimeTask extends TimerTask
+	{
+		@Override
+		public void run() {
+			
+			updateTime();
+		}
+	}
+	
 	private class GetPlayersTask extends AsyncTask<Void, Integer, GetPlayersResponse>{
 
 		@Override
@@ -310,9 +356,7 @@ public class MainScreenActivity extends Activity {
 				Toast.makeText(MainScreenActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
 			}
 
-
 		}
 	}
-
 
 }

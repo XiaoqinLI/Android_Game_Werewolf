@@ -108,6 +108,7 @@ public class RegisterActivity extends Activity {
 			Log.v(TAG, " passed the server");
 
 			if (result.getStatus().equals("success")) {
+				Toast.makeText(RegisterActivity.this, "Registered Successfully!", Toast.LENGTH_LONG).show();
 				String username = usernameEdit.getText().toString();
 				Intent explicitCallbackIntent = new Intent(RegisterActivity.this, LoginActivity.class);
 				explicitCallbackIntent.putExtra("Explicit_Activity", username);// (String name, String value)
@@ -115,11 +116,7 @@ public class RegisterActivity extends Activity {
 				finish();
 
 			} else {
-				Toast toast = new Toast(getApplicationContext());
-				toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-				toast.setDuration(Toast.LENGTH_LONG);
-				toast.setView(getLayoutInflater().inflate(R.layout.custom_toast,null));
-				toast.show();
+				Toast.makeText(RegisterActivity.this, result.getErrorMessage(), Toast.LENGTH_LONG).show();
 			}
 		}
 	}

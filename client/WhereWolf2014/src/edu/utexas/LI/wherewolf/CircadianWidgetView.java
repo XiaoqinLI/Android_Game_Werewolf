@@ -1,5 +1,6 @@
 package edu.utexas.LI.wherewolf;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,9 +43,14 @@ public class CircadianWidgetView extends View{
 	
 	//	Implement the changeTime method. 
 	//	This will be called by the OnProgressChangedListener when the slider is changed.
-	public void changeTime(int time) {
+	public void changeTime(int time, Activity activity) {
 		this.currentTime = time;	
-		invalidate(); // causes the onDraw method to be invoked
+//		invalidate(); // causes the onDraw method to be invoked
+		activity.runOnUiThread(new Runnable() {
+			  public void run() {
+				  invalidate();
+			  }
+			});
 	}
 	
 	//	Implement the onDraw function:

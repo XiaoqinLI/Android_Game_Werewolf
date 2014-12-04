@@ -27,8 +27,11 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.activity_login);
 		Log.i(TAG, "created the login activity");
 		
+		startService(new Intent(this, WherewolfService.class));
+		
 		usernameEdit = (EditText) findViewById(R.id.usernameText);
 		passwordEdit = (EditText) findViewById(R.id.passwordText);
+		
 		WherewolfPreferences myPrefs = new WherewolfPreferences(LoginActivity.this);
         String storedUsername = myPrefs.getUsername();
         String storedPassword = myPrefs.getPassword();
