@@ -63,40 +63,40 @@ public class CircadianWidgetView extends View{
 		int iH = moonBitmap.getHeight() / 2;
 
 		// draw the backdrop here
-		// day 
-		drawCanvas.drawBitmap(dayBitmap, 0, 0, drawDayPaint);
-		// dusk1
+		// night 
+		drawCanvas.drawBitmap(nightBitmap, 0, 0, drawNightPaint);
+		// dusk2
 		if (currentTime % 24 <= 5){
-			drawDuskPaint.setAlpha(50*(currentTime % 24));
+			draw2DuskPaint.setAlpha(50*(currentTime % 24));
 		}	
 		else if (currentTime % 24 >= 18 && currentTime % 24 <=23){
-			drawDuskPaint.setAlpha(50*(24 - currentTime%24));
+			draw2DuskPaint.setAlpha(50*(24 - currentTime%24));
+		}
+		else
+		draw2DuskPaint.setAlpha(0);
+		drawCanvas.drawBitmap(dusk2Bitmap, 0, 0, draw2DuskPaint);
+		
+		// dusk1
+		if (currentTime % 24 >= 7 && currentTime % 24 < 12){
+			drawDuskPaint.setAlpha(50*(currentTime % 24 - 6));
+		}	
+		else if (currentTime % 24 >= 13 && currentTime % 24 <18){
+			drawDuskPaint.setAlpha(50*(18 - currentTime%24));
 		}
 		else
 			drawDuskPaint.setAlpha(0);
 		drawCanvas.drawBitmap(duskBitmap, 0, 0, drawDuskPaint);
 		
-		// dusk2
-		if (currentTime % 24 >= 7 && currentTime % 24 < 12){
-			draw2DuskPaint.setAlpha(50*(currentTime % 24 - 6));
-		}	
-		else if (currentTime % 24 >= 13 && currentTime % 24 <18){
-			draw2DuskPaint.setAlpha(50*(18 - currentTime%24));
-		}
-		else
-			draw2DuskPaint.setAlpha(0);
-		drawCanvas.drawBitmap(dusk2Bitmap, 0, 0, draw2DuskPaint);
-		
-		// night
+		// day
 		if (currentTime % 24>=5 && currentTime % 24<=19){
 			if (currentTime / 12 % 2 == 0)	
-				drawNightPaint.setAlpha(currentTime%12*21);
+				drawDayPaint.setAlpha(currentTime%12*21);
 			else if (currentTime / 12 % 2 == 1)
-				drawNightPaint.setAlpha(255 - currentTime%12*21 );
+				drawDayPaint.setAlpha(255 - currentTime%12*21 );
 		}
 		else 
-			drawNightPaint.setAlpha(0);
-		drawCanvas.drawBitmap(nightBitmap, 0, 0, drawNightPaint);
+			drawDayPaint.setAlpha(0);
+		drawCanvas.drawBitmap(dayBitmap, 0, 0, drawDayPaint);
 		
 		int textXPos = (canvas.getWidth() / 2);
 		int textYPos = (int) ((canvas.getHeight() / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ;
@@ -105,10 +105,10 @@ public class CircadianWidgetView extends View{
 	    textPaint.setTextSize(30);
 	    textPaint.setColor(Color.WHITE);
 		if (currentTime % 24>=6 && currentTime % 24<=18){
-			drawCanvas.drawText("night", textXPos, textXPos, textPaint);
+			drawCanvas.drawText("day", textXPos, textXPos, textPaint);
 		}
 		else{
-			drawCanvas.drawText("day", textXPos, textXPos, textPaint);
+			drawCanvas.drawText("night", textXPos, textXPos, textPaint);
 		}
 			
 		
@@ -118,18 +118,16 @@ public class CircadianWidgetView extends View{
 		// calculate the x and y coordinates of where to draw the images
 		// keep in mind the coordinates are the top left of the images
 		// so you can use the bitmap width and height to compensate.
-		double moonPosX = w / 2 - w / 3 * Math.cos(theta);
-		double moonPosY = w / 2 + 1.5*w / 3 * Math.sin(theta); // replace this with your value
-		double sunPosX = w / 2 - w / 3 * Math.cos(suntheta);
-		double sunPosY = w / 2 + 1.5*w / 3 * Math.sin(suntheta); // replace this with your value
+		double sunPosX = w / 2 - w / 3 * Math.cos(theta);
+		double sunPosY = w / 2 + 1.5*w / 3 * Math.sin(theta); // replace this with your value
+		double moonPosX = w / 2 - w / 3 * Math.cos(suntheta);
+		double moonPosY = w / 2 + 1.5*w / 3 * Math.sin(suntheta); // replace this with your value
 		drawCanvas.drawBitmap(moonBitmap, 
 				(int) moonPosX - iW, (int) moonPosY + iH, drawSunMoonPaint);
 		drawCanvas.drawBitmap(sunBitmap, 
 				(int) sunPosX - iW, (int) sunPosY + iH, drawSunMoonPaint);
 		canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-		// draw your sun and other things here as well.
-		// experiment with drawCanvas.drawText for putting labels of whether it is day
-		// or night.
+
 
 	}
 	

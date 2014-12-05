@@ -3,6 +3,7 @@ package edu.utexas.LI.wherewolf;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,17 +53,18 @@ public class MainScreenActivity extends Activity {
 		Long currentTime = myprefs.getTime();
 
 		// converts the epoch to hour in day
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.setTimeInMillis(currentTime);
-		int hour = cal.get(Calendar.HOUR_OF_DAY);
-		int min = cal.get(Calendar.MINUTE);
-		final double t = (double)hour + (double)min/60.0f;
 
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("America/Chicago"));
+		cal.setTimeInMillis(currentTime * 1000);
+		final int hour = cal.get(Calendar.HOUR_OF_DAY);
+		final int min = cal.get(Calendar.MINUTE);
+		double t = (double)hour + (double)min/60.0f;
+		
 		// tell circadian widget about the time change
 		Activity activity = MainScreenActivity.this;
 		activity.runOnUiThread(new Runnable() {
 			  public void run() {
-				Toast.makeText(MainScreenActivity.this, "Time: " + t, Toast.LENGTH_LONG).show();
+				  Toast.makeText(MainScreenActivity.this, "Time: " + Integer.toString(hour) + ":" + Integer.toString(min), Toast.LENGTH_LONG).show();
 			  }
 			});
 		circadianWidget.changeTime((int)t, activity);
@@ -153,6 +155,7 @@ public class MainScreenActivity extends Activity {
 //		
 		// Widget
 		final CircadianWidgetView circadianWidget = (CircadianWidgetView) findViewById(R.id.circadian);
+		circadianWidget.changeTime(12, this);
 		
 		//SeekBar
 		final SeekBar sk = (SeekBar) findViewById(R.id.daytime_seekbar);	
@@ -177,7 +180,7 @@ public class MainScreenActivity extends Activity {
 		    	
 		    	circadianWidget.changeTime(progress, activity);
 		    	
-		    	progressIsNight = (progress % 24 >=6 && progress % 24 <= 18);
+		    	progressIsNight = (progress % 24 < 6 || progress % 24 > 18);
 		    	
 		    	if (progressIsNight)
 		    	{
