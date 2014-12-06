@@ -23,8 +23,22 @@ def welcome():
 
 @app.route('/healthcheck')
 def health_check():
-	return "healthy"
+    return "healthy"
 
+@app.route(rest_prefix+'/checkpassword', methods=["POST"])
+def check_password():
+    username = request.form['username']
+    password = request.form['password']
+    try:
+        auth_checker = dao.check_password(username, password)
+        if auth_checker:  # if auth correct
+            response = {"status": "success"}
+        else:
+            response = {"status": "failure(bad auth)"}
+    except NoUserExistsException:
+        response = {"status": "failure(No such a user)"}
+    finally:
+        return jsonify(response)
 
 @app.route(rest_prefix+'/register', methods=["POST"])
 def create_user():  # Done
@@ -44,6 +58,47 @@ def create_user():  # Done
         finally:
             return jsonify(response)
 
+@app.route('/v1/games', methods=["GET"])
+def get_games():
+    db = WherewolfDao()
+    response = {}
+    try:
+        allGames = db.get_games()
+        response["games"] = []
+        for i in allGames:
+            row = {}
+            row["game_id"] = i["game_id"]
+            row["name"] = i["name"]
+            row["admin_name"] = i["admin_name"]
+            response["games"].append(row)
+        response["status"] = "success"
+    except Exception:
+        response["status"] = "failure(could not retrieve data)"
+    return jsonify(response)
+
+@app.route('/v1/game/<game_ID>/players', methods=["POST"])
+def get_players(game_ID):
+    db = WherewolfDao()
+    username = request.form['username']
+    password = request.form['password']
+    game_id = request.form['game_id']
+
+    response = {}
+    try:
+        allplayers = db.get_player_names(game_id)
+        response["players"] = []
+        for i in allplayers:
+            row = {}
+            row["playername"] = i["playername"]
+            row["playerid"] = i["playerid"]
+            response["players"].append(row)
+
+        response["status"] = "success"
+    except Exception:
+        response["status"] = "failure(could not retrieve players)"
+    return jsonify(response)
+
+
 @app.route(rest_prefix+'/game', methods=["POST"])
 def create_game():  # Done
     username = request.form['username']
@@ -62,7 +117,7 @@ def create_game():  # Done
     finally:
         return jsonify(response)
 
-@app.route(rest_prefix+'/game/'+'<game_ID>', methods=["DELETE"])
+@app.route(rest_prefix+'/gamedel/'+'<game_ID>', methods=["POST"])
 def leave_game(game_ID):   # Done
     username = request.form['username']
     game_id = request.form['game_id']
@@ -80,6 +135,17 @@ def leave_game(game_ID):   # Done
             return jsonify(response)
     except NoUserExistsException:
         response = {"status": "failure(bad auth)"}
+        return jsonify(response)
+
+@app.route(rest_prefix+'/gamequit/'+'<game_ID>', methods=["POST"])
+def quit_game(game_ID):   # Done
+    username = request.form['username']
+    try:
+        dao.quit_game(username)
+        response = {"status": "success"}
+        return jsonify(response)
+    except NoUserExistsException:
+        response = {"status": "failure(I have no idea why )"}
         return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/lobby', methods=["POST"])
@@ -146,6 +212,30 @@ def get_game_info(game_ID):  # Done
             gameInfo[key] = str(gameInfo[key])
     gameInfo['players'] = players
     return jsonify(gameInfo)
+
+@app.route(rest_prefix + '/game/' + '<gameID>'+'/locationInfo', methods=["POST"])
+def update_game_info(gameID):
+    username = request.form['username']
+    password = request.form['password']
+    lat = request.form["lat"]
+    lng = request.form["lng"]
+
+    lat = float(lat.encode('utf-8'))
+    lng = float(lng.encode('utf-8'))
+
+    response = {}
+
+    try:
+        dao.set_location(username, lat, lng)
+        response["status"] = "success"
+        response["info"] = "updated position"
+    except Exception:
+        response["status"] = "failure"
+        response["info"] = "could not update position"
+
+    response["current_time"] = time.time()
+
+    return jsonify(response)
 
 @app.route(rest_prefix+'/game/'+'<game_ID>'+'/vote', methods=["POST"])
 def cast_vote(game_ID): # Done

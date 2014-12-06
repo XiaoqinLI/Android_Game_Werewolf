@@ -29,15 +29,19 @@ class BadArgumentsException(Exception):
 
 class WherewolfDao(object):
 
-    def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='12131415'):
+    # def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='12131415'):
+    def __init__(self, dbname='wherewolf', pgusername='postgres', pgpasswd='121314'):
+
         self.dbname = dbname
-        self.host = host
+        # self.host = host
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
         print ('connection to database {}, user: {}, password: {}'.format(dbname, pgusername, pgpasswd))
 
     def get_db(self):
-        return psycopg2.connect(host=self.host,database=self.dbname,user=self.pgusername,password=self.pgpasswd)
+		return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
+
+        # return psycopg2.connect(host=self.host,database=self.dbname,user=self.pgusername,password=self.pgpasswd)
 
     def create_user(self, username, password, firstname, lastname): # create gameuser, tested
         """ registers a new player in the system """
@@ -410,7 +414,23 @@ class WherewolfDao(object):
             cur.execute(cmd, (game_id,werewolf_id))
             conn.commit()
 
-    # game methods    
+    def get_player_names(self, gameid):
+        conn = self.get_db()
+        players = []
+        with conn:
+            cur = conn.cursor()
+            cmd = ('select gameuser.username, gameuser.current_player from gameuser, '
+                    'player where gameuser.current_player=player.player_id and '
+                    'player.game_id=%s')
+            cur.execute(cmd, (gameid,))
+            for row in cur.fetchall():
+                p = {}
+                p["playername"] = row[0]
+                p["playerid"] = row[1]
+                players.append(p)
+        return players
+
+    # game methods
     def join_game(self, username, gameid): # tested
         conn = self.get_db()
         with conn:
@@ -422,7 +442,12 @@ class WherewolfDao(object):
                 typechecker = typechecker[0]
 
             if typechecker != None:
-                return False
+                # return true for now
+                # cmd2 = ('update gameuser set current_player=%s where username=%s')
+                # cur.execute(cmd2, (cur.fetchone()[0], username));
+                # conn.commit()
+                return True
+                # return False
             else:
                 cmd1 = ('INSERT INTO player ( is_dead, lat, lng, game_id) '
                         'VALUES ( %s, %s, %s, %s) returning player_id')
@@ -444,14 +469,41 @@ class WherewolfDao(object):
         conn = self.get_db()
         with conn:
             cur = conn.cursor()
+
+            sql_inventory = ('delete from inventory using player where '
+                    'inventory.playerid=player.player_id and player.game_id=%s')
+            cur.execute(sql_inventory, (game_id,))
+
+            sql_player_stat = ('delete from player_stat using player where '
+                    'player_stat.player_id=player.player_id and player.game_id=%s')
+            cur.execute(sql_player_stat, (game_id,))
+
+            sql_treasure = ('delete from treasure using landmark where '
+                    'treasure.landmark_id=landmark.landmark_id and landmark.game_id=%s')
+            cur.execute(sql_treasure, (game_id,))
+
+            sql_vote = ('delete from vote where game_id=%s')
+            cur.execute(sql_vote, (game_id,))
+
+            sql_landmark = ('delete from landmark where game_id=%s')
+            cur.execute(sql_landmark, (game_id,))
+
             if player_id == None:
                 cmd = '''UPDATE player set game_id = null where game_id=%s'''
                 cur.execute(cmd, (game_id,))
-                conn.commit()
+
             else:
                 cmd = '''UPDATE player set game_id = null where game_id=%s and player_id=%s'''
                 cur.execute(cmd, (game_id, player_id))
-                conn.commit()
+                # conn.commit()
+
+            sql_player = ('delete from player where game_id=%s')
+            cur.execute(sql_player, (game_id,))
+
+            sql_game = ('delete from game where game_id=%s')
+            cur.execute(sql_game, (game_id,))
+
+            conn.commit()
 
     def create_game(self, username, gamename, description = ""): # tested
         ''' returns the game id for that game '''
@@ -510,20 +562,21 @@ class WherewolfDao(object):
             else:
                 return None
 
-    def get_games(self):  #tested
+    def get_games(self):
         conn = self.get_db()
-        games = []
         with conn:
+            allGames = []
             cur = conn.cursor()
-            cmd = ('SELECT game_id, name, status from game')
+            cmd = ("SELECT game.game_id, game.name, game.status, gameuser.username from game, gameuser where game.admin_id = gameuser.user_id")
             cur.execute(cmd)
             for row in cur.fetchall():
-                d = {}
-                d["game_id"] = row[0]
-                d["name"] = row[1]
-                d["status"] = row[2]
-                games.append(d)
-        return games
+                gameEntry = {}
+                gameEntry["game_id"] = row[0]
+                gameEntry["name"] = row[1]
+                gameEntry["status"] = row[2]
+                gameEntry["admin_name"] = row[3]
+                allGames.append(gameEntry)
+        return allGames
 
     def set_game_status(self, username, game_id, status): #tested
         conn = self.get_db()
