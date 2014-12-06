@@ -33,7 +33,7 @@ def leave_game(username, password, game_id): # Done
     Then, delete the game if exist.
     '''
     payload = {'username': username, 'password':password, 'game_id': game_id}
-    r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id),
+    r = requests.post(hostname + rest_prefix + "/gamedel/" + str(game_id),
                         auth=(username, password), data=payload)
     print r
     response = r.json()
