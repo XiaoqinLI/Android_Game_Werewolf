@@ -32,7 +32,7 @@ class WherewolfDao(object):
 
     def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='12131415'):
         self.dbname = dbname
-        # self.host = host
+        self.host = host
         self.pgusername = pgusername
         self.pgpasswd = pgpasswd
         print ('connection to database {}, user: {}, password: {}'.format(dbname, pgusername, pgpasswd))
