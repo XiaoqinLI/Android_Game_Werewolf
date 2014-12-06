@@ -28,10 +28,9 @@ class BadArgumentsException(Exception):
         return 'Exception: ' + self.err
 
 class WherewolfDao(object):
+    # def __init__(self, dbname='wherewolf', pgusername='postgres', pgpasswd='121314'):
 
-    # def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='12131415'):
-    def __init__(self, dbname='wherewolf', pgusername='postgres', pgpasswd='121314'):
-
+    def __init__(self, host='wherewolf.cmhlzluxo6vv.us-west-2.rds.amazonaws.com', dbname='wherewolf', pgusername='daybreaklee', pgpasswd='12131415'):
         self.dbname = dbname
         # self.host = host
         self.pgusername = pgusername
@@ -39,9 +38,8 @@ class WherewolfDao(object):
         print ('connection to database {}, user: {}, password: {}'.format(dbname, pgusername, pgpasswd))
 
     def get_db(self):
-		return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
-
-        # return psycopg2.connect(host=self.host,database=self.dbname,user=self.pgusername,password=self.pgpasswd)
+        # return psycopg2.connect(database=self.dbname,user=self.pgusername,password=self.pgpasswd)
+        return psycopg2.connect(host=self.host,database=self.dbname,user=self.pgusername,password=self.pgpasswd)
 
     def create_user(self, username, password, firstname, lastname): # create gameuser, tested
         """ registers a new player in the system """
