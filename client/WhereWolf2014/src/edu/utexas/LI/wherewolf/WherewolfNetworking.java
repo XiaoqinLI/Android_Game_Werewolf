@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import edu.utexas.LI.wherewolf.BasicRequest.RequestType;
 
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
@@ -28,8 +27,8 @@ public class WherewolfNetworking {
 
 	private static final String TAG = "NetWorking";
 	
-	private static final String fullhost = "http://192.168.1.8:5000";
-	private static final String loadBalancer = "wherewolfLB-1277079358.us-west-2.elb.amazonaws.com";	 
+//	private static final String fullhost = "http://192.168.1.8:5000";
+	private static final String fullhost = "http://wherewolfLB-1277079358.us-west-2.elb.amazonaws.com";	 
 
 	public WherewolfNetworking() {
 

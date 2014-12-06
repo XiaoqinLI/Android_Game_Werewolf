@@ -8,7 +8,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.utexas.LI.wherewolf.BasicRequest.RequestType;
 
 public class LeaveGameLobbyRequest extends BasicRequest{
 	protected long gameID;
