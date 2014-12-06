@@ -31,7 +31,7 @@ def leave_game(username, password, game_id): # Done
     Then, delete the game if exist.
     '''
     payload = {'username': username, 'password':password, 'game_id': game_id}
-    r = requests.delete(hostname + rest_prefix + "/game/" + str(game_id),
+    r = requests.post(hostname + rest_prefix + "/gamedel/" + str(game_id),
                         auth=(username, password), data=payload)
     print r
     response = r.json()
@@ -357,13 +357,13 @@ if __name__ == "__main__":
     print "Game status: {}".format(current_game_info['status'])
     print "------------------game ended----------------------------------------------------"
     #Set all the game's users' current player field to NULL
-    print "------------------everyone left the game----------------------------------------"
-    leave_game(admin_name, admin_pwd, current_game_id)
     print "------------------Assigning Achievements----------------------------------------"
     assign_achievement()
     print "----------------Show all achievement made in last game--------------------------"
     all_achievement = get_all_achievement()
     pprint(all_achievement)
+    print "------------------everyone left the game----------------------------------------"
+    leave_game(admin_name, admin_pwd, current_game_id)
 
 
 
